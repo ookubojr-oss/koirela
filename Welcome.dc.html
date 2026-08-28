@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', sans-serif; }
+    a { color: #F2837B; } a:hover { color: #E96F66; }
+  </style>
+</helmet>
+<div style="position: relative; display: flex; flex-direction: column; align-items: center; width: 390px; height: 844px; background: #574E66; box-sizing: border-box; overflow: hidden">
+
+  <!-- Background blobs -->
+  <svg width="390" height="844" viewBox="0 0 390 844" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute; top: 0; left: 0">
+    <path d="M390 0H180c40 90 130 70 160 150 24 64 50 80 50 80V0Z" fill="#635A73"></path>
+    <circle cx="40" cy="120" r="70" fill="#635A73"></circle>
+    <circle cx="352" cy="330" r="10" fill="#F2837B" opacity="0.55"></circle>
+    <circle cx="30" cy="420" r="6" fill="#F9D9D5" opacity="0.5"></circle>
+    <path d="M0 844h390V700c-90-50-150 30-240 10S30 660 0 700v144Z" fill="#4A4258"></path>
+    <circle cx="330" cy="640" r="5" fill="#F9D9D5" opacity="0.45"></circle>
+  </svg>
+
+  <!-- Logo -->
+  <div style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 96px">
+    <div style="font-family: 'Pacifico', cursive; font-size: 46px; color: #FFFFFF; line-height: 1.2">KoiRela</div>
+    <div style="font-size: 11px; letter-spacing: 0.34em; color: rgba(255, 255, 255, 0.65)">恋愛セラピスト</div>
+  </div>
+
+  <!-- Illustration: overlapping chat bubbles -->
+  <div style="position: relative; margin-top: 64px">
+    <svg width="230" height="170" viewBox="0 0 230 170" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="8" y="18" width="128" height="82" rx="24" fill="#FFFFFF"></rect>
+      <path d="M40 98l-8 26 30-24" fill="#FFFFFF"></path>
+      <path d="M72 44c-4.5-6.5-13.5-7-18-1.7-4 4.7-3 11.7 1.6 16L72 74l16.4-15.7c4.6-4.3 5.6-11.3 1.6-16-4.5-5.3-13.5-4.8-18 1.7Z" fill="#F2837B"></path>
+      <rect x="104" y="66" width="118" height="72" rx="22" fill="#F2837B"></rect>
+      <path d="M196 136l6 24-26-20" fill="#F2837B"></path>
+      <circle cx="140" cy="102" r="6" fill="#FFFFFF"></circle>
+      <circle cx="163" cy="102" r="6" fill="rgba(255,255,255,0.7)"></circle>
+      <circle cx="186" cy="102" r="6" fill="rgba(255,255,255,0.4)"></circle>
+      <circle cx="210" cy="30" r="4" fill="#F9D9D5"></circle>
+      <path d="M24 132l3 8 8 3-8 3-3 8-3-8-8-3 8-3 3-8Z" fill="#F9D9D5"></path>
+    </svg>
+  </div>
+
+  <!-- Copy -->
+  <div style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 18px; margin-top: 56px; padding: 0 40px">
+    <div style="font-size: 20px; font-weight: 700; letter-spacing: 0.08em; color: #FFFFFF; text-align: center; line-height: 1.9">恋の悩みを、<br>話せる相手がいる。</div>
+    <div style="font-size: 12.5px; line-height: 2; letter-spacing: 0.05em; color: rgba(255, 255, 255, 0.65); text-align: center">匿名OK。恋愛セラピストと、<br>1通からはじめられるチャット相談。</div>
+  </div>
+
+  <!-- CTA -->
+  <div style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 22px; margin-top: auto; margin-bottom: 56px; width: 100%; padding: 0 32px; box-sizing: border-box">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 56px; background: #F2837B; border-radius: 999px; box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22); font-size: 15px; font-weight: 700; letter-spacing: 0.08em; color: #FFFFFF; box-sizing: border-box">無料でチャットをはじめる
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </div>
+    <div style="font-size: 12px; letter-spacing: 0.06em; color: rgba(255, 255, 255, 0.6)">アカウントをお持ちの方は <span style="color: #F9B9B2; font-weight: 700">ログイン</span></div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

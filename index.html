@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KoiRela | 恋愛セラピスト チャット相談</title>
+<meta name="description" content="恋の悩みを、話せる相手がいる。匿名OK、1通からはじめられる恋愛セラピストとのチャット相談。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --plum: #574E66;
+    --plum2: #635A73;
+    --plum-deep: #4A4258;
+    --coral: #F2837B;
+    --coral-deep: #E96F66;
+    --pink-bg: #FBEAE8;
+    --sheet: #FDF4F2;
+    --ink: #3A3547;
+    --muted: #9A93A6;
+    --muted2: #B9AEB9;
+    --line: #F1EFF4;
+    --green: #7BC493;
+    --pastel-pink: #F9D9D5;
+    --pastel-purple: #DCD6F0;
+    --pastel-peach: #F6E3C5;
+    --pastel-mint: #D5E8DC;
+    --pastel-rose: #F5D0DC;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    font-family: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', sans-serif;
+    background: #EFE6EE;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+  }
+  .phone {
+    position: relative;
+    width: 100%;
+    max-width: 390px;
+    height: 100dvh;
+    max-height: 844px;
+    background: var(--plum);
+    overflow: hidden;
+  }
+  @media (min-width: 480px) {
+    .phone { border-radius: 36px; box-shadow: 0 40px 90px rgba(74, 66, 88, 0.4); }
+  }
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .screen.active { display: flex; opacity: 1; }
+  button { font: inherit; border: none; background: none; padding: 0; cursor: pointer; color: inherit; -webkit-tap-highlight-color: transparent; }
+
+  /* ---------- Welcome ---------- */
+  .welcome { background: var(--plum); align-items: center; overflow: hidden; }
+  .welcome-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .welcome-logo { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 88px; }
+  .brand { font-family: 'Pacifico', cursive; font-size: 46px; color: #fff; line-height: 1.2; }
+  .brand-sub { font-size: 11px; letter-spacing: 0.34em; color: rgba(255, 255, 255, 0.65); padding-left: 0.34em; }
+  .welcome-illust { position: relative; margin-top: 56px; }
+  .welcome-copy { position: relative; display: flex; flex-direction: column; align-items: center; gap: 18px; margin-top: 48px; padding: 0 40px; }
+  .welcome-title { font-size: 20px; font-weight: 700; letter-spacing: 0.08em; color: #fff; text-align: center; line-height: 1.9; }
+  .welcome-body { font-size: 12.5px; line-height: 2; letter-spacing: 0.05em; color: rgba(255, 255, 255, 0.65); text-align: center; }
+  .welcome-cta { position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: auto; margin-bottom: max(40px, env(safe-area-inset-bottom, 0px) + 28px); width: 100%; padding: 0 32px; }
+  .btn-primary {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; height: 56px; background: var(--coral); border-radius: 999px;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
+    font-size: 15px; font-weight: 700; letter-spacing: 0.08em; color: #fff;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .btn-primary:active { transform: scale(0.97); background: var(--coral-deep); }
+  .welcome-login { font-size: 12px; letter-spacing: 0.06em; color: rgba(255, 255, 255, 0.6); }
+  .welcome-login span { color: #F9B9B2; font-weight: 700; }
+
+  /* ---------- Shared: sheet + tab bar ---------- */
+  .sheet {
+    display: flex; flex-direction: column; flex: 1; min-height: 0;
+    background: #fff; border-radius: 28px 28px 0 0;
+  }
+  .tabbar {
+    display: flex; align-items: center; justify-content: space-around;
+    background: #fff; border-top: 1px solid var(--line);
+    padding: 10px 8px calc(14px + env(safe-area-inset-bottom, 0px));
+  }
+  .tab { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 72px; padding: 4px 0; font-size: 10px; color: #B9B3C4; }
+  .tab svg { stroke: #B9B3C4; }
+  .tab.on { color: var(--coral); font-weight: 700; }
+  .tab.on svg { stroke: var(--coral); }
+
+  /* ---------- Home ---------- */
+  .home { background: var(--plum); }
+  .home-head { display: flex; flex-direction: column; gap: 18px; padding: 22px 24px; }
+  .home-top { display: flex; align-items: center; justify-content: space-between; }
+  .icon-btn { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; background: rgba(255, 255, 255, 0.12); }
+  .seg { display: flex; align-items: center; gap: 10px; }
+  .seg-pill { display: flex; align-items: center; justify-content: center; height: 44px; padding: 0 24px; border-radius: 999px; font-size: 13px; letter-spacing: 0.06em; color: rgba(255, 255, 255, 0.6); }
+  .seg-pill.on { background: var(--coral); font-weight: 700; color: #fff; }
+  .home-sheet { gap: 22px; padding: 26px 24px 0; overflow: hidden; }
+  .sec-head { display: flex; align-items: center; justify-content: space-between; }
+  .sec-title { font-size: 14px; font-weight: 700; letter-spacing: 0.06em; color: var(--ink); }
+  .sec-link { font-size: 11.5px; font-weight: 500; letter-spacing: 0.06em; color: var(--coral); }
+  .reco-row { display: flex; align-items: flex-start; gap: 16px; margin-top: 14px; overflow-x: auto; scrollbar-width: none; }
+  .reco-row::-webkit-scrollbar { display: none; }
+  .reco { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; }
+  .reco-name { font-size: 11px; color: var(--ink); }
+  .avatar { position: relative; display: flex; align-items: center; justify-content: center; border-radius: 999px; font-weight: 700; color: var(--plum); flex-shrink: 0; }
+  .avatar .dot { position: absolute; right: 1px; bottom: 1px; width: 12px; height: 12px; border-radius: 999px; background: var(--green); border: 2px solid #fff; }
+  .chats { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; }
+  .chat-row { display: flex; align-items: center; gap: 14px; padding: 13px 4px; width: 100%; text-align: left; border-bottom: 1px solid var(--line); }
+  .chat-row:last-of-type { border-bottom: none; }
+  .chat-mid { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 0; }
+  .chat-name-row { display: flex; align-items: center; gap: 8px; }
+  .chat-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+  .badge { font-size: 9px; font-weight: 500; border-radius: 999px; padding: 3px 8px; white-space: nowrap; }
+  .badge.casual { color: var(--coral); background: #FDEDEB; }
+  .badge.pro { color: #fff; background: var(--plum); }
+  .chat-preview { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chat-side { display: flex; flex-direction: column; align-items: flex-end; gap: 7px; flex-shrink: 0; }
+  .chat-time { font-size: 10.5px; color: var(--muted); }
+  .unread { display: flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 999px; background: var(--coral); font-size: 10px; font-weight: 700; color: #fff; }
+  .fab {
+    position: absolute; right: 20px; bottom: 92px;
+    display: flex; align-items: center; justify-content: center;
+    width: 56px; height: 56px; border-radius: 20px; background: var(--coral);
+    box-shadow: 0 12px 24px rgba(242, 131, 123, 0.4);
+    transition: transform 0.15s ease;
+  }
+  .fab:active { transform: scale(0.94); }
+
+  /* ---------- Find ---------- */
+  .find { background: var(--pink-bg); }
+  .find-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 14px; }
+  .find-title { font-size: 16px; font-weight: 700; letter-spacing: 0.08em; color: var(--ink); }
+  .icon-btn.light { background: #fff; }
+  .chips { display: flex; align-items: center; gap: 8px; padding: 2px 20px 14px; overflow-x: auto; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { display: flex; align-items: center; justify-content: center; height: 40px; padding: 0 16px; background: #fff; border-radius: 999px; font-size: 11.5px; color: #6E6880; white-space: nowrap; flex-shrink: 0; }
+  .chip.on { background: var(--plum); font-weight: 700; color: #fff; padding: 0 18px; }
+  .cards { display: flex; flex-direction: column; gap: 14px; flex: 1; min-height: 0; padding: 2px 20px 16px; overflow-y: auto; }
+  .t-card { display: flex; flex-direction: column; gap: 14px; background: #fff; border-radius: 24px; padding: 18px; box-shadow: 0 10px 26px rgba(87, 78, 102, 0.07); flex-shrink: 0; }
+  .t-top { display: flex; align-items: center; gap: 14px; }
+  .t-info { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
+  .t-name-row { display: flex; align-items: center; gap: 8px; }
+  .t-name { font-size: 15px; font-weight: 700; color: var(--ink); }
+  .rating { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: var(--ink); }
+  .rating small { font-size: 11px; font-weight: 400; color: var(--muted); }
+  .t-bio { font-size: 12px; line-height: 1.9; color: #6E6880; background: #FBF7F6; border-radius: 14px; padding: 12px 16px; }
+  .t-foot { display: flex; align-items: center; justify-content: space-between; }
+  .price { display: flex; align-items: baseline; gap: 5px; font-size: 11px; color: var(--muted); }
+  .price b { font-size: 17px; font-weight: 700; color: var(--coral); }
+  .btn-small { display: flex; align-items: center; justify-content: center; height: 44px; padding: 0 26px; background: var(--coral); border-radius: 999px; font-size: 12.5px; font-weight: 700; letter-spacing: 0.06em; color: #fff; transition: transform 0.15s ease, background 0.15s ease; }
+  .btn-small:active { transform: scale(0.96); background: var(--coral-deep); }
+
+  /* ---------- Chat ---------- */
+  .chat { background: var(--plum); }
+  .chat-head { display: flex; align-items: center; gap: 12px; padding: 18px 20px; }
+  .chat-head-info { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+  .chat-head-name { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; color: #fff; }
+  .badge.head { color: #fff; background: rgba(255, 255, 255, 0.16); }
+  .chat-head-status { font-size: 11px; color: rgba(255, 255, 255, 0.6); }
+  .chat-sheet { background: var(--sheet); padding: 20px 16px 0; gap: 0; }
+  .msgs { display: flex; flex-direction: column; gap: 14px; flex: 1; min-height: 0; overflow-y: auto; padding-bottom: 12px; }
+  .sys-chip { align-self: center; font-size: 10.5px; color: var(--muted2); background: #fff; border-radius: 999px; padding: 5px 14px; flex-shrink: 0; }
+  .sys-chip.lock { display: flex; align-items: center; gap: 6px; color: #A08F9E; background: #F7E6E3; padding: 6px 14px; }
+  .msg-l { display: flex; align-items: flex-end; gap: 8px; align-self: flex-start; max-width: 82%; }
+  .msg-l .avatar { margin-bottom: 20px; }
+  .msg-l-col { display: flex; flex-direction: column; gap: 5px; }
+  .bubble-l { background: #fff; border-radius: 18px 18px 18px 4px; padding: 13px 16px; font-size: 13px; line-height: 1.9; color: var(--ink); box-shadow: 0 4px 14px rgba(87, 78, 102, 0.05); }
+  .msg-r { display: flex; flex-direction: column; gap: 5px; align-self: flex-end; align-items: flex-end; max-width: 78%; }
+  .bubble-r { background: var(--coral); border-radius: 18px 18px 4px 18px; padding: 13px 16px; font-size: 13px; line-height: 1.9; color: #fff; box-shadow: 0 6px 16px rgba(242, 131, 123, 0.28); }
+  .msg-time { font-size: 9.5px; color: var(--muted2); padding: 0 6px; }
+  .typing { display: flex; align-items: center; gap: 8px; align-self: flex-start; }
+  .typing-bubble { display: flex; align-items: center; gap: 5px; background: #fff; border-radius: 18px 18px 18px 4px; padding: 14px 16px; box-shadow: 0 4px 14px rgba(87, 78, 102, 0.05); }
+  .typing-bubble i { width: 6px; height: 6px; border-radius: 999px; background: var(--muted2); animation: blink 1.2s infinite; }
+  .typing-bubble i:nth-child(2) { animation-delay: 0.2s; }
+  .typing-bubble i:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%, 60%, 100% { opacity: 0.25; } 30% { opacity: 1; } }
+  .composer { display: flex; flex-direction: column; gap: 7px; padding: 10px 0 calc(12px + env(safe-area-inset-bottom, 0px)); flex-shrink: 0; }
+  .composer-row { display: flex; align-items: center; gap: 10px; }
+  .input-pill { display: flex; align-items: center; gap: 10px; flex: 1; background: #fff; border-radius: 999px; padding: 6px 16px; box-shadow: 0 6px 18px rgba(87, 78, 102, 0.06); }
+  .input-pill input { flex: 1; min-width: 0; border: none; outline: none; font: inherit; font-size: 13px; color: var(--ink); background: transparent; padding: 8px 0; }
+  .input-pill input::placeholder { color: var(--muted2); }
+  .send-btn { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 999px; background: var(--coral); box-shadow: 0 8px 20px rgba(242, 131, 123, 0.4); flex-shrink: 0; transition: transform 0.15s ease, background 0.15s ease; }
+  .send-btn:active { transform: scale(0.94); background: var(--coral-deep); }
+  .escrow-note { align-self: center; font-size: 10px; color: var(--muted2); text-align: center; }
+
+  .av-pink { background: var(--pastel-pink); }
+  .av-purple { background: var(--pastel-purple); }
+  .av-peach { background: var(--pastel-peach); }
+  .av-mint { background: var(--pastel-mint); }
+  .av-rose { background: var(--pastel-rose); }
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- ========== Welcome ========== -->
+  <section id="screen-welcome" class="screen welcome active">
+    <svg class="welcome-bg" viewBox="0 0 390 844" fill="none" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <path d="M390 0H180c40 90 130 70 160 150 24 64 50 80 50 80V0Z" fill="#635A73"/>
+      <circle cx="40" cy="120" r="70" fill="#635A73"/>
+      <circle cx="352" cy="330" r="10" fill="#F2837B" opacity="0.55"/>
+      <circle cx="30" cy="420" r="6" fill="#F9D9D5" opacity="0.5"/>
+      <path d="M0 844h390V700c-90-50-150 30-240 10S30 660 0 700v144Z" fill="#4A4258"/>
+      <circle cx="330" cy="640" r="5" fill="#F9D9D5" opacity="0.45"/>
+    </svg>
+    <div class="welcome-logo">
+      <div class="brand">KoiRela</div>
+      <div class="brand-sub">恋愛セラピスト</div>
+    </div>
+    <div class="welcome-illust">
+      <svg width="230" height="170" viewBox="0 0 230 170" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="8" y="18" width="128" height="82" rx="24" fill="#FFFFFF"/>
+        <path d="M40 98l-8 26 30-24" fill="#FFFFFF"/>
+        <path d="M72 44c-4.5-6.5-13.5-7-18-1.7-4 4.7-3 11.7 1.6 16L72 74l16.4-15.7c4.6-4.3 5.6-11.3 1.6-16-4.5-5.3-13.5-4.8-18 1.7Z" fill="#F2837B"/>
+        <rect x="104" y="66" width="118" height="72" rx="22" fill="#F2837B"/>
+        <path d="M196 136l6 24-26-20" fill="#F2837B"/>
+        <circle cx="140" cy="102" r="6" fill="#FFFFFF"/>
+        <circle cx="163" cy="102" r="6" fill="rgba(255,255,255,0.7)"/>
+        <circle cx="186" cy="102" r="6" fill="rgba(255,255,255,0.4)"/>
+        <circle cx="210" cy="30" r="4" fill="#F9D9D5"/>
+        <path d="M24 132l3 8 8 3-8 3-3 8-3-8-8-3 8-3 3-8Z" fill="#F9D9D5"/>
+      </svg>
+    </div>
+    <div class="welcome-copy">
+      <div class="welcome-title">恋の悩みを、<br>話せる相手がいる。</div>
+      <div class="welcome-body">匿名OK。恋愛セラピストと、<br>1通からはじめられるチャット相談。</div>
+    </div>
+    <div class="welcome-cta">
+      <button class="btn-primary" onclick="show('home')">無料でチャットをはじめる
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="welcome-login">アカウントをお持ちの方は <span>ログイン</span></div>
+    </div>
+  </section>
+
+  <!-- ========== Home ========== -->
+  <section id="screen-home" class="screen home">
+    <div class="home-head">
+      <div class="home-top">
+        <div class="brand" style="font-size: 24px">KoiRela</div>
+        <button class="icon-btn" aria-label="通知">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9Z" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.7 21a2 2 0 0 1-3.4 0" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="seg">
+        <button class="seg-pill on">相談中</button>
+        <button class="seg-pill" onclick="show('find')">聞き手をさがす</button>
+      </div>
+    </div>
+    <div class="sheet home-sheet">
+      <div>
+        <div class="sec-head">
+          <div class="sec-title">おすすめの聞き手</div>
+          <button class="sec-link" onclick="show('find')">すべて見る</button>
+        </div>
+        <div class="reco-row">
+          <button class="reco" onclick="show('chat')"><span class="avatar av-pink" style="width:56px;height:56px;font-size:20px">あ<span class="dot"></span></span><span class="reco-name">あいり</span></button>
+          <button class="reco" onclick="show('find')"><span class="avatar av-purple" style="width:56px;height:56px;font-size:20px">ゆ<span class="dot"></span></span><span class="reco-name">ゆい</span></button>
+          <button class="reco" onclick="show('find')"><span class="avatar av-peach" style="width:56px;height:56px;font-size:20px">け</span><span class="reco-name">けんた</span></button>
+          <button class="reco" onclick="show('find')"><span class="avatar av-mint" style="width:56px;height:56px;font-size:20px">み<span class="dot"></span></span><span class="reco-name">みほ</span></button>
+          <button class="reco" onclick="show('find')"><span class="avatar av-rose" style="width:56px;height:56px;font-size:20px">た</span><span class="reco-name">たくや</span></button>
+        </div>
+      </div>
+      <div class="chats">
+        <div class="sec-head" style="margin-bottom: 6px">
+          <div class="sec-title">相談中のチャット</div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#B9B3C4" stroke-width="1.6"/><path d="m21 21-4.35-4.35" stroke="#B9B3C4" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <button class="chat-row" onclick="show('chat')">
+          <span class="avatar av-pink" style="width:52px;height:52px;font-size:19px">あ</span>
+          <span class="chat-mid">
+            <span class="chat-name-row"><span class="chat-name">あいり</span><span class="badge casual">恋愛アドバイザー</span></span>
+            <span class="chat-preview">その後、彼から連絡はありましたか？</span>
+          </span>
+          <span class="chat-side"><span class="chat-time">22:41</span><span class="unread">1</span></span>
+        </button>
+        <button class="chat-row" onclick="show('chat')">
+          <span class="avatar av-purple" style="width:52px;height:52px;font-size:19px">ゆ</span>
+          <span class="chat-mid">
+            <span class="chat-name-row"><span class="chat-name">ゆい</span><span class="badge pro">認定セラピスト</span></span>
+            <span class="chat-preview">前回の続き、いつでもどうぞ。</span>
+          </span>
+          <span class="chat-side"><span class="chat-time">昨日</span></span>
+        </button>
+        <button class="chat-row" onclick="show('chat')">
+          <span class="avatar av-rose" style="width:52px;height:52px;font-size:19px">た</span>
+          <span class="chat-mid">
+            <span class="chat-name-row"><span class="chat-name">たくや</span><span class="badge casual">恋愛アドバイザー</span></span>
+            <span class="chat-preview">それは、しんどかったですね。</span>
+          </span>
+          <span class="chat-side"><span class="chat-time">月曜</span></span>
+        </button>
+      </div>
+      <div class="tabbar">
+        <button class="tab on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5V21h-6v-6h-6v6H3V10.5Z" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>ホーム</button>
+        <button class="tab" onclick="show('find')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke-width="1.8"/><path d="m21 21-4.35-4.35" stroke-width="1.8" stroke-linecap="round"/></svg>さがす</button>
+        <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke-width="1.8"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" stroke-width="1.8" stroke-linecap="round"/></svg>マイページ</button>
+      </div>
+    </div>
+    <button class="fab" onclick="show('find')" aria-label="新しい相談">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10Z" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8v6M9 11h6" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round"/></svg>
+    </button>
+  </section>
+
+  <!-- ========== Find ========== -->
+  <section id="screen-find" class="screen find">
+    <div class="find-head">
+      <button class="icon-btn light" onclick="show('home')" aria-label="戻る">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 18 9 12l6-6" stroke="#574E66" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="find-title">聞き手をさがす</div>
+      <button class="icon-btn light" aria-label="絞り込み">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M7 12h10M10 18h4" stroke="#574E66" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="chips">
+      <button class="chip on" data-track="all">すべて</button>
+      <button class="chip" data-track="casual">恋愛アドバイザー</button>
+      <button class="chip" data-track="pro">認定セラピスト</button>
+    </div>
+    <div class="cards" id="cards">
+      <div class="t-card" data-track="casual">
+        <div class="t-top">
+          <span class="avatar av-pink" style="width:60px;height:60px;font-size:22px">あ<span class="dot" style="width:13px;height:13px"></span></span>
+          <div class="t-info">
+            <div class="t-name-row"><span class="t-name">あいり</span><span class="badge casual">恋愛アドバイザー</span></div>
+            <div class="rating"><svg width="13" height="13" viewBox="0 0 24 24" fill="#F2B84B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2Z"/></svg>4.9 <small>(124件)</small></div>
+          </div>
+        </div>
+        <div class="t-bio">恋愛は、ひとりで抱えなくて大丈夫。まとまっていない話のまま、聞かせてください。</div>
+        <div class="t-foot">
+          <div class="price">チャット1通 <b>100円〜</b></div>
+          <button class="btn-small" onclick="show('chat')">相談する</button>
+        </div>
+      </div>
+      <div class="t-card" data-track="pro">
+        <div class="t-top">
+          <span class="avatar av-purple" style="width:60px;height:60px;font-size:22px">ゆ<span class="dot" style="width:13px;height:13px"></span></span>
+          <div class="t-info">
+            <div class="t-name-row"><span class="t-name">ゆい</span><span class="badge pro">認定セラピスト</span></div>
+            <div class="rating"><svg width="13" height="13" viewBox="0 0 24 24" fill="#F2B84B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2Z"/></svg>4.8 <small>(102件)</small></div>
+          </div>
+        </div>
+        <div class="t-bio">繰り返してしまう恋のパターン、根っこから一緒に見つめます。資格を持つ聞き手です。</div>
+        <div class="t-foot">
+          <div class="price">チャット1通 <b>300円〜</b></div>
+          <button class="btn-small" onclick="show('chat')">相談する</button>
+        </div>
+      </div>
+      <div class="t-card" data-track="casual">
+        <div class="t-top">
+          <span class="avatar av-peach" style="width:60px;height:60px;font-size:22px">け</span>
+          <div class="t-info">
+            <div class="t-name-row"><span class="t-name">けんた</span><span class="badge casual">恋愛アドバイザー</span></div>
+            <div class="rating"><svg width="13" height="13" viewBox="0 0 24 24" fill="#F2B84B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2Z"/></svg>4.9 <small>(76件)</small></div>
+          </div>
+        </div>
+        <div class="t-bio">誰かに話すだけで、心は軽くなります。男性目線の意見も、そっとお伝えします。</div>
+        <div class="t-foot">
+          <div class="price">チャット1通 <b>100円〜</b></div>
+          <button class="btn-small" onclick="show('chat')">相談する</button>
+        </div>
+      </div>
+      <div class="t-card" data-track="pro">
+        <div class="t-top">
+          <span class="avatar av-mint" style="width:60px;height:60px;font-size:22px">み<span class="dot" style="width:13px;height:13px"></span></span>
+          <div class="t-info">
+            <div class="t-name-row"><span class="t-name">みほ</span><span class="badge pro">認定セラピスト</span></div>
+            <div class="rating"><svg width="13" height="13" viewBox="0 0 24 24" fill="#F2B84B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2Z"/></svg>4.9 <small>(88件)</small></div>
+          </div>
+        </div>
+        <div class="t-bio">心理カウンセラーとして10年。恋愛と自己肯定感のご相談が得意です。</div>
+        <div class="t-foot">
+          <div class="price">チャット1通 <b>300円〜</b></div>
+          <button class="btn-small" onclick="show('chat')">相談する</button>
+        </div>
+      </div>
+    </div>
+    <div class="tabbar">
+      <button class="tab" onclick="show('home')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5V21h-6v-6h-6v6H3V10.5Z" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>ホーム</button>
+      <button class="tab on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke-width="1.8"/><path d="m21 21-4.35-4.35" stroke-width="1.8" stroke-linecap="round"/></svg>さがす</button>
+      <button class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke-width="1.8"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" stroke-width="1.8" stroke-linecap="round"/></svg>マイページ</button>
+    </div>
+  </section>
+
+  <!-- ========== Chat ========== -->
+  <section id="screen-chat" class="screen chat">
+    <div class="chat-head">
+      <button onclick="show('home')" aria-label="戻る" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin-left:-10px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M15 18 9 12l6-6" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <span class="avatar av-pink" style="width:44px;height:44px;font-size:17px">あ<span class="dot" style="border-color:#574E66"></span></span>
+      <div class="chat-head-info">
+        <div class="chat-head-name">あいり <span class="badge head">恋愛アドバイザー</span></div>
+        <div class="chat-head-status">オンライン・すぐに返信できます</div>
+      </div>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="4.5" r="1.4" fill="#FFFFFF"/><circle cx="10" cy="10" r="1.4" fill="#FFFFFF"/><circle cx="10" cy="15.5" r="1.4" fill="#FFFFFF"/></svg>
+    </div>
+    <div class="sheet chat-sheet">
+      <div class="msgs" id="msgs">
+        <div class="sys-chip" id="date-chip">今日</div>
+        <div class="sys-chip lock">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><rect x="4" y="10" width="16" height="11" rx="3" stroke="#A08F9E" stroke-width="1.8"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="#A08F9E" stroke-width="1.8" stroke-linecap="round"/></svg>
+          匿名で相談をはじめました
+        </div>
+      </div>
+      <div class="composer">
+        <div class="composer-row">
+          <div class="input-pill">
+            <input id="chat-input" type="text" placeholder="メッセージを書く…" autocomplete="off" enterkeyhint="send">
+          </div>
+          <button class="send-btn" id="send-btn" aria-label="送信">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9h11M10 4.5 14.5 9 10 13.5" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="escrow-note">次の1通：100円(相談が完了するまで決済は確定しません)</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  function show(name) {
+    document.querySelectorAll('.screen').forEach(function (s) { s.classList.remove('active'); });
+    document.getElementById('screen-' + name).classList.add('active');
+    if (name === 'chat' && !chatStarted) startChat();
+  }
+
+  // Find: track filter
+  document.querySelectorAll('.chip').forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      document.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('on'); });
+      chip.classList.add('on');
+      var track = chip.dataset.track;
+      document.querySelectorAll('.t-card').forEach(function (card) {
+        card.style.display = (track === 'all' || card.dataset.track === track) ? '' : 'none';
+      });
+    });
+  });
+
+  // Chat demo
+  var msgs = document.getElementById('msgs');
+  var input = document.getElementById('chat-input');
+  var chatStarted = false;
+  var replyIndex = 0;
+  var replies = [
+    'そうだったんですね。話してくれてありがとうございます。もう少し詳しく聞かせてもらえますか？',
+    'その気持ち、とても自然なことだと思います。いつ頃からそう感じていますか？',
+    'うんうん、聞いています。そのとき、あなたはどう感じましたか？',
+    'ゆっくりで大丈夫ですよ。ここでは、焦らなくていいので。'
+  ];
+
+  function nowTime() {
+    var d = new Date();
+    return d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0');
+  }
+
+  function addLeft(text) {
+    var wrap = document.createElement('div');
+    wrap.className = 'msg-l';
+    wrap.innerHTML = '<span class="avatar av-pink" style="width:28px;height:28px;font-size:11px">あ</span>' +
+      '<div class="msg-l-col"><div class="bubble-l"></div><div class="msg-time"></div></div>';
+    wrap.querySelector('.bubble-l').textContent = text;
+    wrap.querySelector('.msg-time').textContent = nowTime();
+    msgs.appendChild(wrap);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function addRight(text) {
+    var wrap = document.createElement('div');
+    wrap.className = 'msg-r';
+    wrap.innerHTML = '<div class="bubble-r"></div><div class="msg-time"></div>';
+    wrap.querySelector('.bubble-r').textContent = text;
+    wrap.querySelector('.msg-time').textContent = nowTime();
+    msgs.appendChild(wrap);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function showTyping() {
+    var t = document.createElement('div');
+    t.className = 'typing';
+    t.id = 'typing';
+    t.innerHTML = '<span class="avatar av-pink" style="width:28px;height:28px;font-size:11px">あ</span>' +
+      '<div class="typing-bubble"><i></i><i></i><i></i></div>';
+    msgs.appendChild(t);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function hideTyping() {
+    var t = document.getElementById('typing');
+    if (t) t.remove();
+  }
+
+  function therapistSay(text, delay) {
+    setTimeout(showTyping, delay);
+    setTimeout(function () { hideTyping(); addLeft(text); }, delay + 1400);
+  }
+
+  function startChat() {
+    chatStarted = true;
+    document.getElementById('date-chip').textContent = '今日 ' + nowTime();
+    therapistSay('はじめまして、あいりです。ここは匿名なので、どうぞ気楽に。今日は、どんなことがありましたか？', 500);
+  }
+
+  function send() {
+    var text = input.value.trim();
+    if (!text) return;
+    addRight(text);
+    input.value = '';
+    var reply = replies[replyIndex % replies.length];
+    replyIndex++;
+    therapistSay(reply, 900);
+  }
+
+  document.getElementById('send-btn').addEventListener('click', send);
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.isComposing) send();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+  <style>
+    body { margin: 0; background: #F6F4EE; color: #26261F; font-family: 'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', sans-serif; }
+    a { color: #4C5B45; text-decoration: none; }
+    a:hover { color: #37432F; }
+  </style>
+</helmet>
+<div style="display: flex; flex-direction: column; width: 420px; height: 800px; background: #F6F4EE; box-sizing: border-box">
+
+  <!-- Chat header -->
+  <div style="display: flex; align-items: center; gap: 14px; padding: 18px 20px; border-bottom: 1px solid #E7E4D8; background: #F6F4EE">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 4 6.5 10l6 6" stroke="#57564B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    <div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 999px; background: #DDE2D2; font-family: 'Shippori Mincho B1', serif; font-size: 16px; color: #4C5B45">あ</div>
+    <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+      <div style="display: flex; align-items: center; gap: 8px">
+        <div style="font-family: 'Shippori Mincho B1', serif; font-size: 16px; font-weight: 600; letter-spacing: 0.08em; color: #26261F">あいり</div>
+        <div style="font-size: 10px; letter-spacing: 0.08em; color: #4C5B45; border: 1px solid #CBD0BF; border-radius: 999px; padding: 2px 8px">恋愛アドバイザー</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <div style="width: 6px; height: 6px; border-radius: 999px; background: #7A9068"></div>
+        <div style="font-size: 11px; letter-spacing: 0.06em; color: #8A887A">オンライン</div>
+      </div>
+    </div>
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="4.5" r="1.3" fill="#57564B"></circle><circle cx="10" cy="10" r="1.3" fill="#57564B"></circle><circle cx="10" cy="15.5" r="1.3" fill="#57564B"></circle></svg>
+  </div>
+
+  <!-- Messages -->
+  <div style="display: flex; flex-direction: column; gap: 18px; flex-grow: 1; padding: 24px 20px; box-sizing: border-box; overflow: hidden">
+    <div style="align-self: center; font-size: 11px; letter-spacing: 0.1em; color: #A3A192">今日 22:14</div>
+    <div style="align-self: center; font-size: 11px; letter-spacing: 0.06em; color: #8A887A; background: #EFECE0; border-radius: 999px; padding: 6px 16px">匿名で相談をはじめました</div>
+
+    <div style="display: flex; align-items: flex-end; gap: 8px; align-self: flex-start">
+      <div style="display: flex; flex-shrink: 0; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 999px; background: #DDE2D2; font-family: 'Shippori Mincho B1', serif; font-size: 11px; color: #4C5B45; margin-bottom: 22px">あ</div>
+      <div style="display: flex; flex-direction: column; gap: 6px; max-width: 290px">
+        <div style="background: #FFFFFF; border: 1px solid #E7E4D8; border-radius: 18px 18px 18px 4px; padding: 14px 18px; font-size: 13.5px; line-height: 1.9; letter-spacing: 0.03em; color: #26261F">はじめまして、あいりです。ここは匿名なので、どうぞ気楽に。今日は、どんなことがありましたか？</div>
+        <div style="font-size: 10px; letter-spacing: 0.06em; color: #A3A192; padding-left: 6px">22:15</div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 6px; align-self: flex-end; max-width: 300px; align-items: flex-end">
+      <div style="background: #DDE2D2; border-radius: 18px 18px 4px 18px; padding: 14px 18px; font-size: 13.5px; line-height: 1.9; letter-spacing: 0.03em; color: #26261F">3年付き合っている彼のことで…最近、会話が減っている気がして。</div>
+      <div style="font-size: 10px; letter-spacing: 0.06em; color: #A3A192; padding-right: 6px">22:18</div>
+    </div>
+
+    <div style="display: flex; align-items: flex-end; gap: 8px; align-self: flex-start">
+      <div style="display: flex; flex-shrink: 0; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 999px; background: #DDE2D2; font-family: 'Shippori Mincho B1', serif; font-size: 11px; color: #4C5B45; margin-bottom: 22px">あ</div>
+      <div style="display: flex; flex-direction: column; gap: 6px; max-width: 290px">
+        <div style="background: #FFFFFF; border: 1px solid #E7E4D8; border-radius: 18px 18px 18px 4px; padding: 14px 18px; font-size: 13.5px; line-height: 1.9; letter-spacing: 0.03em; color: #26261F">話してくれてありがとうございます。会話が減ったと感じはじめたのは、いつ頃からですか？</div>
+        <div style="font-size: 10px; letter-spacing: 0.06em; color: #A3A192; padding-left: 6px">22:19</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input bar -->
+  <div style="display: flex; flex-direction: column; gap: 10px; padding: 14px 20px 18px; border-top: 1px solid #E7E4D8; background: #F6F4EE; box-sizing: border-box">
+    <div style="display: flex; align-items: center; gap: 12px">
+      <div style="flex-grow: 1; background: #FFFFFF; border: 1px solid #E3E0D3; border-radius: 999px; padding: 14px 20px; font-size: 13.5px; letter-spacing: 0.03em; color: #A3A192">メッセージを書く…</div>
+      <div style="display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 999px; background: #4C5B45">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 9h11M10 4.5 14.5 9 10 13.5" stroke="#F6F4EE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </div>
+    </div>
+    <div style="align-self: center; font-size: 10.5px; letter-spacing: 0.08em; color: #A3A192">次の1通：100円(相談が完了するまで決済は確定しません)</div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":420,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

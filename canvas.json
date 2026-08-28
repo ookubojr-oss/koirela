@@ -1,0 +1,19 @@
+{
+  "pages": [
+    { "id": "app", "name": "アプリUI" },
+    { "id": "lp", "name": "LP" }
+  ],
+  "artboards": [
+    { "file": "Welcome.dc.html", "x": 0, "y": 0, "w": 390, "h": 844, "page": "app", "title": "起動画面" },
+    { "file": "Home.dc.html", "x": 470, "y": 0, "w": 390, "h": 844, "page": "app", "title": "ホーム" },
+    { "file": "Find.dc.html", "x": 940, "y": 0, "w": 390, "h": 844, "page": "app", "title": "聞き手をさがす" },
+    { "file": "AppChat.dc.html", "x": 1410, "y": 0, "w": 390, "h": 844, "page": "app", "title": "チャット" },
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1280, "h": 3600, "page": "lp", "title": "LP(トップページ)" },
+    { "file": "Chat.dc.html", "x": 1360, "y": 0, "w": 420, "h": 800, "page": "lp", "title": "チャット画面(LP版)" }
+  ],
+  "annotations": [
+    { "id": "app-note", "x": 0, "y": 900, "w": 360, "page": "app", "text": "アプリUI:参考画像のピンク×プラムのトーンを踏襲。\nフロー:起動 → ホーム(相談中) → 聞き手をさがす → チャット。\nチャット特化のため通話・ビデオのアイコンは意図的になし。" },
+    { "id": "direction-note", "x": 1360, "y": 860, "w": 320, "page": "lp", "text": "方向性:洗練・知的・信頼感・余白・タイポグラフィ重視。\n写真を使わず、明朝体(Shippori Mincho B1)とアイボリー×深緑で構成。\nチャット即スタートをヒーローの主役に。" }
+  ],
+  "launch": { "view": "canvas", "page": "app" }
+}
