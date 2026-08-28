@@ -8,6 +8,7 @@
     { "file": "Home.dc.html", "x": 470, "y": 0, "w": 390, "h": 844, "page": "app", "title": "ホーム" },
     { "file": "Find.dc.html", "x": 940, "y": 0, "w": 390, "h": 844, "page": "app", "title": "聞き手をさがす" },
     { "file": "AppChat.dc.html", "x": 1410, "y": 0, "w": 390, "h": 844, "page": "app", "title": "チャット" },
+    { "file": "MyPage.dc.html", "x": 1880, "y": 0, "w": 390, "h": 844, "page": "app", "title": "マイページ" },
     { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1280, "h": 3600, "page": "lp", "title": "LP(トップページ)" },
     { "file": "Chat.dc.html", "x": 1360, "y": 0, "w": 420, "h": 800, "page": "lp", "title": "チャット画面(LP版)" }
   ],

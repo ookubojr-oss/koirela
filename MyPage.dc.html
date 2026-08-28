@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', sans-serif; }
+    a { color: #F2837B; } a:hover { color: #E96F66; }
+  </style>
+</helmet>
+<div style="display: flex; flex-direction: column; width: 390px; height: 844px; background: #FBEAE8; box-sizing: border-box; overflow: hidden">
+
+  <!-- Header -->
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 14px; box-sizing: border-box">
+    <div style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; background: #FFFFFF">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18 9 12l6-6" stroke="#574E66" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </div>
+    <div style="font-size: 16px; font-weight: 700; letter-spacing: 0.08em; color: #3A3547">マイページ</div>
+    <div style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; background: #FFFFFF">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6h16M7 12h10M10 18h4" stroke="#574E66" stroke-width="1.8" stroke-linecap="round"></path></svg>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div style="display: flex; flex-direction: column; gap: 14px; flex-grow: 1; padding: 2px 20px 16px; box-sizing: border-box; overflow: hidden">
+
+    <!-- Profile -->
+    <div style="display: flex; align-items: center; gap: 14px; background: #FFFFFF; border-radius: 24px; padding: 18px; box-sizing: border-box; box-shadow: 0 10px 26px rgba(87, 78, 102, 0.07)">
+      <div style="display: flex; flex-shrink: 0; align-items: center; justify-content: center; width: 60px; height: 60px; border-radius: 999px; background: #F5D0DC; font-size: 22px; font-weight: 700; color: #574E66">も</div>
+      <div style="display: flex; flex-direction: column; gap: 5px; flex-grow: 1; min-width: 0">
+        <div style="font-size: 15px; font-weight: 700; color: #3A3547">ももか</div>
+        <div style="display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: #9A93A6">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="10" width="16" height="11" rx="3" stroke="#9A93A6" stroke-width="1.8"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="#9A93A6" stroke-width="1.8" stroke-linecap="round"></path></svg>
+          匿名で利用中・本名は未登録
+        </div>
+      </div>
+      <div style="display: flex; flex-shrink: 0; align-items: center; justify-content: center; height: 38px; padding: 0 16px; border: 1.5px solid #F2837B; border-radius: 999px; font-size: 12px; font-weight: 700; color: #F2837B">編集</div>
+    </div>
+
+    <!-- Stats -->
+    <div style="display: flex; background: #FFFFFF; border-radius: 24px; padding: 16px 8px; box-sizing: border-box; box-shadow: 0 10px 26px rgba(87, 78, 102, 0.07)">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex-grow: 1; flex-basis: 0">
+        <div style="font-size: 17px; font-weight: 700; color: #574E66">3</div>
+        <div style="font-size: 10.5px; color: #9A93A6">相談中</div>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex-grow: 1; flex-basis: 0; border-left: 1px solid #F1EFF4">
+        <div style="font-size: 17px; font-weight: 700; color: #574E66">12</div>
+        <div style="font-size: 10.5px; color: #9A93A6">相談回数</div>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex-grow: 1; flex-basis: 0; border-left: 1px solid #F1EFF4">
+        <div style="font-size: 17px; font-weight: 700; color: #574E66">2</div>
+        <div style="font-size: 10.5px; color: #9A93A6">お気に入り</div>
+      </div>
+    </div>
+
+    <!-- Plan -->
+    <div style="display: flex; align-items: center; gap: 14px; background: #574E66; border-radius: 24px; padding: 18px; box-sizing: border-box">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 21s-7.2-4.8-10.3-9C-0.3 8.3 1 3.9 4.8 2.9c2.2-.6 4.3.3 5.5 2.1h3.4c1.2-1.8 3.3-2.7 5.5-2.1 3.8 1 5.1 5.4 3.1 9.1C19.2 16.2 12 21 12 21Z" fill="#F2837B"></path></svg>
+      <div style="display: flex; flex-direction: column; gap: 5px; flex-grow: 1; min-width: 0">
+        <div style="font-size: 14px; font-weight: 700; color: #FFFFFF">お守りプラン</div>
+        <div style="font-size: 10.5px; line-height: 1.7; color: rgba(255, 255, 255, 0.6)">月額で毎月の無料チャット枠と<br>優先予約がつきます</div>
+      </div>
+      <div style="display: flex; flex-shrink: 0; align-items: center; justify-content: center; height: 38px; padding: 0 16px; background: #F2837B; border-radius: 999px; font-size: 12px; font-weight: 700; color: #FFFFFF">詳しく見る</div>
+    </div>
+
+    <!-- Menu -->
+    <div style="display: flex; flex-direction: column; background: #FFFFFF; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 26px rgba(87, 78, 102, 0.07)">
+      <div style="display: flex; align-items: center; gap: 12px; padding: 15px 18px; border-bottom: 1px solid #F1EFF4; font-size: 13px; color: #3A3547">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="5" width="20" height="14" rx="3" stroke="#574E66" stroke-width="1.7"></rect><path d="M2 10h20" stroke="#574E66" stroke-width="1.7"></path></svg>
+        <div style="flex-grow: 1">支払い方法</div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="m9 6 6 6-6 6" stroke="#B9B3C4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 15px 18px; border-bottom: 1px solid #F1EFF4; font-size: 13px; color: #3A3547">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9Z" stroke="#574E66" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path><path d="M13.7 21a2 2 0 0 1-3.4 0" stroke="#574E66" stroke-width="1.7" stroke-linecap="round"></path></svg>
+        <div style="flex-grow: 1">通知設定</div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="m9 6 6 6-6 6" stroke="#B9B3C4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 15px 18px; border-bottom: 1px solid #F1EFF4; font-size: 13px; color: #3A3547">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 21s-7.2-4.8-10.3-9C-0.3 8.3 1 3.9 4.8 2.9c2.2-.6 4.3.3 5.5 2.1h3.4c1.2-1.8 3.3-2.7 5.5-2.1 3.8 1 5.1 5.4 3.1 9.1C19.2 16.2 12 21 12 21Z" stroke="#574E66" stroke-width="1.7" stroke-linejoin="round"></path></svg>
+        <div style="flex-grow: 1">お気に入りの聞き手</div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="m9 6 6 6-6 6" stroke="#B9B3C4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 15px 18px; border-bottom: 1px solid #F1EFF4; font-size: 13px; color: #3A3547">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="#574E66" stroke-width="1.7"></circle><path d="M9.2 9a3 3 0 0 1 5.8 1c0 2-2.9 2.6-2.9 4" stroke="#574E66" stroke-width="1.7" stroke-linecap="round"></path><circle cx="12" cy="17.3" r="1" fill="#574E66"></circle></svg>
+        <div style="flex-grow: 1">ヘルプとサポート窓口</div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="m9 6 6 6-6 6" stroke="#B9B3C4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 15px 18px; border-bottom: 1px solid #F1EFF4; font-size: 13px; color: #3A3547">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z" stroke="#574E66" stroke-width="1.7" stroke-linejoin="round"></path><path d="M14 2v6h6" stroke="#574E66" stroke-width="1.7" stroke-linejoin="round"></path></svg>
+        <div style="flex-grow: 1">利用規約・ポリシー</div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="m9 6 6 6-6 6" stroke="#B9B3C4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 15px 18px; font-size: 13px; color: #F2837B">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="#F2837B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path><path d="m16 17 5-5-5-5M21 12H9" stroke="#F2837B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <div style="flex-grow: 1">ログアウト</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Tab bar -->
+  <div style="display: flex; align-items: center; justify-content: space-around; background: #FFFFFF; border-top: 1px solid #F1EFF4; padding: 12px 8px 20px; box-sizing: border-box">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 64px">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10.5 12 3l9 7.5V21h-6v-6h-6v6H3V10.5Z" stroke="#B9B3C4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <div style="font-size: 10px; color: #B9B3C4">ホーム</div>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 64px">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="7" stroke="#B9B3C4" stroke-width="1.8"></circle><path d="m21 21-4.35-4.35" stroke="#B9B3C4" stroke-width="1.8" stroke-linecap="round"></path></svg>
+      <div style="font-size: 10px; color: #B9B3C4">さがす</div>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 64px">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="4" stroke="#F2837B" stroke-width="1.8"></circle><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" stroke="#F2837B" stroke-width="1.8" stroke-linecap="round"></path></svg>
+      <div style="font-size: 10px; font-weight: 700; color: #F2837B">マイページ</div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
