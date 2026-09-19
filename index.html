@@ -596,6 +596,17 @@ input,textarea{caret-color:var(--coral)}
 .summary-card.hold{background:#765E68}.summary-card.hold #payout-note{color:#FFE7E3;opacity:1}
 .primary:disabled,.availability:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
 
+
+/* listener gender filter */
+.iconbtn{position:relative}.filter-dot{position:absolute;right:7px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--coral);box-shadow:0 0 0 2px #fff}
+.gender-filter-options{border:0;padding:0;margin:12px 0 15px;display:grid;gap:8px}
+.gender-filter-option{display:grid;grid-template-columns:20px 1fr 24px;align-items:center;gap:10px;padding:12px 13px;border:1px solid var(--line);border-radius:17px;background:#fff;cursor:pointer}
+.gender-filter-option.selected{border-color:var(--coral);background:#FFF8F7}
+.gender-filter-option input{accent-color:var(--coral);width:17px;height:17px}
+.gender-filter-option span{display:flex;flex-direction:column;gap:2px}.gender-filter-option b{font-size:12px}.gender-filter-option small{font-size:9.5px;color:var(--muted)}
+.gender-filter-option i{font-style:normal;color:var(--coral);font-weight:800;text-align:center}
+.gender-help{font-size:9.5px!important;color:var(--muted);line-height:1.65;margin:-4px 0 3px!important}
+
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}
 }
@@ -721,7 +732,7 @@ input,textarea{caret-color:var(--coral)}
 <section id="screen-find" class="screen">
   <div class="topbar">
     <div class="title">相談相手をさがす</div>
-    <button class="iconbtn" aria-label="絞り込み">☰</button>
+    <button id="listener-filter-button" class="iconbtn" type="button" onclick="openSheet('gender-filter-sheet')" aria-label="絞り込み">☰<span id="listener-filter-dot" class="filter-dot" hidden></span></button>
   </div>
   <div class="content">
     <div class="search-box reveal-item">
@@ -736,7 +747,7 @@ input,textarea{caret-color:var(--coral)}
       <button class="chip" data-track="pro">資格者</button>
     </div>
 
-    <div class="card listener reveal-item" data-track="exp" data-counselor-id="demo-airi">
+    <div class="card listener reveal-item" data-track="exp" data-gender="female" data-counselor-id="demo-airi">
       <div class="listener-top">
         <span class="avatar">あ<span class="dot"></span></span>
         <div class="listener-info">
@@ -751,7 +762,7 @@ input,textarea{caret-color:var(--coral)}
       </div>
     </div>
 
-    <div class="card listener reveal-item" data-track="pro">
+    <div class="card listener reveal-item" data-track="pro" data-gender="female">
       <div class="listener-top">
         <span class="avatar" style="background:#DCD6F0">ゆ<span class="dot"></span></span>
         <div class="listener-info">
@@ -766,7 +777,7 @@ input,textarea{caret-color:var(--coral)}
       </div>
     </div>
 
-    <div class="card listener reveal-item" data-track="exp">
+    <div class="card listener reveal-item" data-track="exp" data-gender="male">
       <div class="listener-top">
         <span class="avatar" style="background:#F6E3C5">け</span>
         <div class="listener-info">
@@ -1123,6 +1134,14 @@ input,textarea{caret-color:var(--coral)}
       </button>
       <div class="profile-policy-note">公開プロフィールにLINE・Instagram等のID、電話番号、メール、URL、QRコードは掲載できません。</div>
       <label class="field-label">表示名</label><input id="cr-display-name" class="field" value="あいり">
+      <label class="field-label" for="cr-gender">性別（任意）</label>
+      <select id="cr-gender" class="field">
+        <option value="">回答しない</option>
+        <option value="female" selected>女性</option>
+        <option value="male">男性</option>
+        <option value="other">その他</option>
+      </select>
+      <p class="gender-help">「さがす」の性別絞り込みに使用します。一覧には性別バッジを表示しません。</p>
       <label class="field-label">自己紹介</label><textarea id="cr-bio" class="field textarea tall">復縁や片思いの相談をよく受けています。まとまっていなくても、そのまま話してください。</textarea>
       <label class="field-label">資格証明（資格者のみ）</label><button class="upload-box" onclick="demoUpload(this)">＋ 資格証を選択</button>
       <button class="primary" onclick="nextCounselorStep()">次へ</button>
@@ -1130,7 +1149,7 @@ input,textarea{caret-color:var(--coral)}
     <div class="card form-card counselor-step" data-step="4">
       <div class="sheet-icon">✓</div>
       <h3 style="text-align:center">内容を確認して申請</h3>
-      <div class="review-box"><span>活動タイプ</span><b id="cr-type-review">経験者</b><span>料金</span><b>15分 100円</b><span>審査</span><b>運営確認後に開始</b></div>
+      <div class="review-box"><span>活動タイプ</span><b id="cr-type-review">経験者</b><span>性別</span><b id="cr-gender-review">女性</b><span>料金</span><b>15分 100円</b><span>審査</span><b>運営確認後に開始</b></div>
       <button class="primary" onclick="submitCounselor()">審査を申請する</button>
     </div>
     <div id="counselor-pending" class="card pending-card" hidden>
@@ -1150,6 +1169,14 @@ input,textarea{caret-color:var(--coral)}
       <div class="profile-policy-note">外部SNS・連絡先・URL・QRコードの掲載は禁止されています。2回目の違反で相談員アカウントが停止されます。</div>
       <label class="field-label">表示名</label><input id="counselor-display-name" class="field" value="あいり">
       <label class="field-label">肩書き</label><select class="field"><option>経験者</option><option>資格者</option></select>
+      <label class="field-label" for="counselor-gender">性別（任意）</label>
+      <select id="counselor-gender" class="field">
+        <option value="">回答しない</option>
+        <option value="female" selected>女性</option>
+        <option value="male">男性</option>
+        <option value="other">その他</option>
+      </select>
+      <p class="gender-help">検索の絞り込みに使用します。一覧には性別バッジを表示しません。</p>
       <label class="field-label">得意な相談</label><input id="counselor-specialty" class="field" value="復縁・片思い">
       <label class="field-label">自己紹介</label><textarea id="counselor-bio" class="field textarea tall">まとまっていなくても、そのまま話してください。</textarea>
       <button class="primary" onclick="saveCounselorProfile()">保存する</button>
@@ -1395,6 +1422,22 @@ input,textarea{caret-color:var(--coral)}
 
 
 
+
+<div id="gender-filter-sheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-labelledby="gender-filter-title">
+  <div class="sheet-handle"></div>
+  <h3 id="gender-filter-title">相談員の性別</h3>
+  <p>希望がある場合だけ選べます。</p>
+  <fieldset class="gender-filter-options">
+    <legend class="sr-only">相談員の性別で絞り込む</legend>
+    <label class="gender-filter-option selected"><input type="radio" name="listener-gender-filter" value="all" checked><span><b>指定なし</b><small>性別を指定せず探す</small></span><i>✓</i></label>
+    <label class="gender-filter-option"><input type="radio" name="listener-gender-filter" value="female"><span><b>女性</b><small>女性の相談員を表示</small></span><i></i></label>
+    <label class="gender-filter-option"><input type="radio" name="listener-gender-filter" value="male"><span><b>男性</b><small>男性の相談員を表示</small></span><i></i></label>
+    <label class="gender-filter-option"><input type="radio" name="listener-gender-filter" value="other"><span><b>その他</b><small>その他を選択した相談員を表示</small></span><i></i></label>
+  </fieldset>
+  <button class="primary" type="button" onclick="applyGenderFilterAndClose()">この条件で絞り込む</button>
+  <button class="sheet-cancel" type="button" onclick="clearGenderFilter()">指定なしに戻す</button>
+</div>
+
 <div id="counselor-warning-sheet" class="bottom-sheet moderation-sheet" role="dialog" aria-modal="true" aria-labelledby="counselor-warning-title">
   <div class="sheet-handle"></div>
   <div class="sheet-icon danger-icon">!</div>
@@ -1476,14 +1519,16 @@ function openProfile(key){
 }
 
 let activeListenerTrack='all';
+let activeListenerGender='all';
 function applyListenerFilters(){
   const q=(document.getElementById('listener-search')?.value||'').trim().toLowerCase();
   let visible=0;
   document.querySelectorAll('.listener').forEach(card=>{
     const trackOk=activeListenerTrack==='all'||card.dataset.track===activeListenerTrack;
     const textOk=!q||card.textContent.toLowerCase().includes(q);
+    const genderOk=activeListenerGender==='all'||card.dataset.gender===activeListenerGender;
     const moderationOk=!(card.dataset.counselorId==='demo-airi'&&getCounselorModerationState().suspended);
-    const showCard=trackOk&&textOk&&moderationOk;
+    const showCard=trackOk&&textOk&&genderOk&&moderationOk;
     card.style.display=showCard?'':'none';
     if(showCard)visible++;
   });
@@ -1500,17 +1545,47 @@ document.querySelectorAll('.chip').forEach(chip=>{
     applyListenerFilters();
   });
 });
+document.querySelectorAll('input[name="listener-gender-filter"]').forEach(radio=>{
+  radio.addEventListener('change',()=>{
+    document.querySelectorAll('.gender-filter-option').forEach(label=>{
+      const input=label.querySelector('input');
+      const selected=!!input?.checked;
+      label.classList.toggle('selected',selected);
+      const mark=label.querySelector('i');if(mark)mark.textContent=selected?'✓':'';
+    });
+  });
+});
+function syncGenderFilterUI(){
+  document.querySelectorAll('input[name="listener-gender-filter"]').forEach(radio=>radio.checked=radio.value===activeListenerGender);
+  document.querySelectorAll('.gender-filter-option').forEach(label=>{
+    const input=label.querySelector('input'),selected=!!input?.checked;
+    label.classList.toggle('selected',selected);
+    const mark=label.querySelector('i');if(mark)mark.textContent=selected?'✓':'';
+  });
+  const dot=document.getElementById('listener-filter-dot');if(dot)dot.hidden=activeListenerGender==='all';
+}
+function applyGenderFilterAndClose(){
+  const selected=document.querySelector('input[name="listener-gender-filter"]:checked');
+  activeListenerGender=selected?.value||'all';
+  syncGenderFilterUI();applyListenerFilters();closeSheet();
+}
+function clearGenderFilter(){
+  activeListenerGender='all';syncGenderFilterUI();applyListenerFilters();closeSheet();
+}
 const listenerSearch=document.getElementById('listener-search');
 if(listenerSearch)listenerSearch.addEventListener('input',applyListenerFilters);
 const clearListenerSearch=document.getElementById('clear-listener-search');
 if(clearListenerSearch)clearListenerSearch.addEventListener('click',()=>{listenerSearch.value='';listenerSearch.focus();applyListenerFilters()});
 function resetListenerSearch(){
   activeListenerTrack='all';
+  activeListenerGender='all';
   document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.track==='all'));
   if(listenerSearch)listenerSearch.value='';
+  syncGenderFilterUI();
   applyListenerFilters();
 }
 
+syncGenderFilterUI();
 const MODERATION_LOG_KEY='koirela_moderation_logs_v1';
 const COUNSELOR_STATE_KEY='koirela_counselor_state_v1';
 const COUNSELOR_IDENTITY_BLOCK_KEY='koirela_counselor_identity_block_v1';
@@ -1997,6 +2072,9 @@ function renderCounselorStep(){
   document.getElementById('cr-step-label').textContent='STEP '+counselorRegStep+' / 4';
   document.getElementById('cr-step-bar').style.width=(counselorRegStep*25)+'%';
   document.getElementById('cr-type-review').textContent=counselorType;
+  const gender=document.getElementById('cr-gender');
+  const review=document.getElementById('cr-gender-review');
+  if(gender&&review)review.textContent=gender.options[gender.selectedIndex]?.text||'回答しない';
 }
 function nextCounselorStep(){
   if(counselorRegStep===3&&!validateCounselorProfileText('register'))return;
@@ -2013,7 +2091,11 @@ function submitCounselor(){
 function saveCounselorProfile(){
   const status=document.getElementById('cp-status');
   if(!validateCounselorProfileText('profile')){status.textContent='外部連絡先を削除してください';status.style.color='#C85858';return}
+  const gender=document.getElementById('counselor-gender')?.value||'';
+  const card=document.querySelector('[data-counselor-id="demo-airi"]');
+  if(card)card.dataset.gender=gender;
   status.textContent='保存しました';status.style.color='var(--green)';
+  applyListenerFilters();
 }
 function savePayout(){
   document.getElementById('payout-status').textContent='振込先を保存しました';
