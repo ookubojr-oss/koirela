@@ -565,6 +565,22 @@ input,textarea{caret-color:var(--coral)}
 .photo-action b{font-size:12px}.photo-action small{font-size:9.5px;color:var(--muted)}
 .photo-chevron{color:#B9B3C4;font-size:20px}.photo-action.danger{color:#C85858}.photo-action.danger .photo-action-icon{background:#FFF0F0;color:#C85858}
 
+
+/* counselor-only external contact moderation */
+.policy-mini-card{
+  margin-top:12px;padding:13px 15px;background:rgba(255,255,255,.82);border:1px solid rgba(87,78,102,.06);
+  border-radius:18px 18px 18px 7px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  box-shadow:0 8px 20px rgba(87,78,102,.05)
+}
+.policy-mini-card>div{display:flex;flex-direction:column;gap:2px}.policy-mini-card small{font-size:9px;color:var(--muted)}
+.policy-mini-card b{font-size:12px}.policy-mini-card>span{font-size:9px;color:#C85858;text-align:right;max-width:145px;line-height:1.45}
+.policy-mini-card.suspended{background:#FFF2F2;border-color:#F3CACA}.policy-mini-card.suspended b,.policy-mini-card.suspended span{color:#C85858}
+.strike-meter{display:flex;gap:8px;justify-content:center;margin:16px 0 18px}
+.strike-meter span{width:54px;height:8px;border-radius:999px;background:#ECE8EF}
+.strike-meter span.on{background:#C85858}
+.suspension-note{padding:12px 14px;border-radius:16px;background:#FFF4F4;color:#9D4B4B;font-size:10.5px;line-height:1.7;margin:12px 0 14px}
+.composer.is-suspended{opacity:.55;pointer-events:none;filter:grayscale(.3)}
+
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}
 }
@@ -940,11 +956,15 @@ input,textarea{caret-color:var(--coral)}
       <div class="quick-card"><div class="quick-icon">💬</div><div class="quick-title">今日の相談</div><div class="big-num">3件</div></div>
       <div class="quick-card"><div class="quick-icon">¥</div><div class="quick-title">今月の報酬</div><div class="big-num">12,400円</div></div>
     </div>
+    <div id="counselor-policy-card" class="policy-mini-card reveal-item">
+      <div><small>外部連絡先への誘導</small><b id="counselor-strike-label">違反 0 / 2</b></div>
+      <span id="counselor-policy-state">2回目で相談員アカウント停止</span>
+    </div>
     <div class="section reveal-item" style="margin-top:16px">
       <div class="section-head"><div class="section-title">新しい相談リクエスト</div></div>
       <div class="card request-card">
         <div><b>匿名ユーザー</b><div class="muted request-copy">片思いについて相談したいです</div></div>
-        <button class="small-primary" onclick="show('chat')">受ける</button>
+        <button class="small-primary" onclick="startCounselorChat()">受ける</button>
       </div>
     </div>
     <div class="menu reveal-item">
@@ -1179,9 +1199,9 @@ input,textarea{caret-color:var(--coral)}
 
 <section id="screen-chat" class="screen chat">
   <div class="chat-head">
-    <button onclick="show('home')" aria-label="戻る" style="width:40px;height:40px;color:#fff;font-size:28px">‹</button>
-    <span class="avatar">あ<span class="dot" style="border-color:#574E66"></span></span>
-    <div class="chat-head-main"><div class="chat-head-name">あいり</div><div id="chat-connection" class="chat-head-sub">オンライン</div></div>
+    <button id="chat-back-button" onclick="show('home')" aria-label="戻る" style="width:40px;height:40px;color:#fff;font-size:28px">‹</button>
+    <span id="chat-peer-avatar" class="avatar">あ<span class="dot" style="border-color:#574E66"></span></span>
+    <div class="chat-head-main"><div id="chat-peer-name" class="chat-head-name">あいり</div><div id="chat-connection" class="chat-head-sub">オンライン</div></div>
     <div id="chat-timer" class="timer-pill" aria-label="残り時間">15:00</div>
     <button class="chat-more" onclick="openSheet('safety-sheet')" aria-label="その他">•••</button>
   </div>
@@ -1196,7 +1216,7 @@ input,textarea{caret-color:var(--coral)}
         <input id="chat-input" type="text" placeholder="メッセージを書く…" enterkeyhint="send" autocomplete="off">
         <button id="send-btn" class="send">→</button>
       </div>
-      <div class="fee">15分相談・100円</div>
+      <div id="chat-fee-label" class="fee">15分相談・100円</div>
     </div>
   </div>
 </section>
@@ -1336,6 +1356,28 @@ input,textarea{caret-color:var(--coral)}
 </div>
 
 
+
+<div id="counselor-warning-sheet" class="bottom-sheet moderation-sheet" role="dialog" aria-modal="true" aria-labelledby="counselor-warning-title">
+  <div class="sheet-handle"></div>
+  <div class="sheet-icon danger-icon">!</div>
+  <h3 id="counselor-warning-title">外部サービスへの誘導はできません</h3>
+  <p id="counselor-warning-message">このメッセージは送信されませんでした。次回違反時は相談員アカウントを停止します。</p>
+  <div class="strike-meter" aria-label="違反回数 1回目">
+    <span class="on"></span><span></span>
+  </div>
+  <button class="primary" type="button" onclick="closeSheet()">入力内容を修正する</button>
+</div>
+
+<div id="counselor-suspended-sheet" class="bottom-sheet moderation-sheet" role="dialog" aria-modal="true" aria-labelledby="counselor-suspended-title">
+  <div class="sheet-handle"></div>
+  <div class="sheet-icon danger-icon">×</div>
+  <h3 id="counselor-suspended-title">相談員アカウントを停止しました</h3>
+  <p>外部連絡先・外部SNSへの誘導が2回確認されたため、新しい相談の受付を停止しました。</p>
+  <div class="suspension-note">違反内容・日時・該当メッセージは運営ログに保存されています。</div>
+  <button class="primary" type="button" onclick="closeSheet();show('counselor')">相談員モードへ戻る</button>
+  <button class="sheet-cancel" type="button" onclick="show('support')">異議申し立て・お問い合わせ</button>
+</div>
+
 <div id="photo-sheet" class="bottom-sheet photo-sheet" role="dialog" aria-modal="true" aria-labelledby="photo-sheet-title">
   <div class="sheet-handle"></div>
   <div class="photo-sheet-preview-wrap">
@@ -1428,9 +1470,138 @@ function resetListenerSearch(){
   if(listenerSearch)listenerSearch.value='';
   applyListenerFilters();
 }
+
+const MODERATION_LOG_KEY='koirela_moderation_logs_v1';
+const COUNSELOR_STATE_KEY='koirela_counselor_state_v1';
+let chatActor='user';
+
+function getCounselorModerationState(){
+  try{
+    const parsed=JSON.parse(localStorage.getItem(COUNSELOR_STATE_KEY)||'null');
+    return parsed&&typeof parsed==='object'?{violations:Number(parsed.violations)||0,suspended:!!parsed.suspended}:{violations:0,suspended:false};
+  }catch(_){return {violations:0,suspended:false}}
+}
+function saveCounselorModerationState(state){
+  try{localStorage.setItem(COUNSELOR_STATE_KEY,JSON.stringify(state))}catch(_){}
+  updateCounselorModerationUI();
+}
+function getModerationLogs(){
+  try{const parsed=JSON.parse(localStorage.getItem(MODERATION_LOG_KEY)||'[]');return Array.isArray(parsed)?parsed:[]}catch(_){return []}
+}
+function saveModerationLogs(logs){
+  try{localStorage.setItem(MODERATION_LOG_KEY,JSON.stringify(logs))}catch(_){}
+}
+function classifyExternalContact(text){
+  const normalized=text.normalize('NFKC').toLowerCase();
+  const checks=[
+    {type:'URL',re:/(https?:\/\/|www\.|\b(?:line\.me|instagram\.com|discord\.gg|discord\.com|t\.me|telegram\.me|x\.com|twitter\.com|threads\.net)\b)/i},
+    {type:'メールアドレス',re:/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i},
+    {type:'電話番号',re:/(?:\+?81[-\s]?)?0?\d{1,4}[-ー−\s]?\d{1,4}[-ー−\s]?\d{3,4}|\b0\d{9,10}\b/},
+    {type:'LINE',re:/(line|ライン|らいん).{0,18}(id|交換|追加|連絡|友だち|友達|教え|送る|dm)|(?:id|交換|追加|連絡).{0,18}(line|ライン|らいん)/i},
+    {type:'Instagram',re:/(instagram|インスタ|いんすた).{0,18}(id|交換|dm|フォロー|連絡|教え)|(?:id|交換|dm|フォロー|連絡).{0,18}(instagram|インスタ|いんすた)/i},
+    {type:'Discord',re:/(discord|ディスコード).{0,18}(id|交換|追加|連絡|教え)|(?:id|交換|追加|連絡).{0,18}(discord|ディスコード)/i},
+    {type:'Telegram',re:/(telegram|テレグラム).{0,18}(id|交換|追加|連絡|教え)|(?:id|交換|追加|連絡).{0,18}(telegram|テレグラム)/i},
+    {type:'X / Twitter',re:/(twitter|ツイッター|\bx\b).{0,18}(id|交換|dm|フォロー|連絡|教え)|(?:id|交換|dm|フォロー|連絡).{0,18}(twitter|ツイッター|\bx\b)/i},
+    {type:'外部連絡先',re:/(電話|メール|sns|外部).{0,16}(しよ|しよう|交換|移動|連絡|教え|送る|話そ|話そう)/i}
+  ];
+  return checks.find(check=>check.re.test(normalized))||null;
+}
+function recentChatContext(){
+  return [...document.querySelectorAll('#msgs .msg-l,#msgs .msg-r')]
+    .slice(-3)
+    .map(el=>el.childNodes[0]?.textContent?.trim()||el.textContent.trim())
+    .filter(Boolean);
+}
+function registerCounselorViolation(text,match){
+  const state=getCounselorModerationState();
+  const nextCount=Math.min(2,state.violations+1);
+  const suspended=nextCount>=2;
+  const log={
+    id:'mod_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+    counselorId:'demo-airi',
+    counselorName:'あいり',
+    occurredAt:new Date().toISOString(),
+    type:match?.type||'外部連絡先',
+    attemptedMessage:text,
+    context:recentChatContext(),
+    strike:nextCount,
+    action:suspended?'相談員アカウント自動停止':'送信ブロック＋警告',
+    reviewed:false,
+    overturned:false
+  };
+  const logs=getModerationLogs();logs.unshift(log);saveModerationLogs(logs.slice(0,100));
+  saveCounselorModerationState({violations:nextCount,suspended});
+  if(suspended){
+    const composer=document.querySelector('#screen-chat .composer');if(composer)composer.classList.add('is-suspended');
+    openSheet('counselor-suspended-sheet');
+  }else{
+    document.getElementById('counselor-warning-message').textContent='「'+match.type+'」にあたる外部誘導を検知しました。このメッセージは送信されませんでした。次回違反時は相談員アカウントを停止します。';
+    openSheet('counselor-warning-sheet');
+  }
+}
+function updateCounselorModerationUI(){
+  const state=getCounselorModerationState();
+  const label=document.getElementById('counselor-strike-label');
+  const card=document.getElementById('counselor-policy-card');
+  const policy=document.getElementById('counselor-policy-state');
+  if(label)label.textContent='違反 '+state.violations+' / 2';
+  if(card)card.classList.toggle('suspended',state.suspended);
+  if(policy)policy.textContent=state.suspended?'相談員アカウント停止中':'2回目で相談員アカウント停止';
+  const toggle=document.getElementById('counselor-toggle');
+  const status=document.getElementById('counselor-status');
+  if(state.suspended){
+    if(toggle){toggle.classList.remove('on');toggle.textContent='停止';toggle.disabled=true}
+    if(status)status.textContent='アカウント停止中';
+  }else if(toggle){
+    toggle.disabled=false;
+  }
+}
+function configureChatRole(role){
+  chatActor=role;
+  const back=document.getElementById('chat-back-button');
+  const avatar=document.getElementById('chat-peer-avatar');
+  const name=document.getElementById('chat-peer-name');
+  const connection=document.getElementById('chat-connection');
+  const fee=document.getElementById('chat-fee-label');
+  const composer=document.querySelector('#screen-chat .composer');
+  if(composer)composer.classList.remove('is-suspended');
+  if(role==='counselor'){
+    if(back)back.onclick=()=>show('counselor');
+    if(avatar)avatar.innerHTML='匿<span class="dot" style="border-color:#574E66"></span>';
+    if(name)name.textContent='匿名ユーザー';
+    if(connection)connection.textContent='相談中';
+    if(fee)fee.textContent='相談員モード・外部連絡先への誘導は禁止';
+    const msgs=document.getElementById('msgs');
+    if(msgs&&!document.getElementById('counselor-policy-message')){
+      const notice=document.createElement('div');notice.id='counselor-policy-message';notice.className='sys';
+      notice.textContent='相談員から外部SNS・連絡先への誘導は禁止されています';
+      msgs.insertBefore(notice,msgs.firstChild);
+    }
+  }else{
+    if(back)back.onclick=()=>show('home');
+    if(avatar)avatar.innerHTML='あ<span class="dot" style="border-color:#574E66"></span>';
+    if(name)name.textContent='あいり';
+    if(connection)connection.textContent=navigator.onLine?'オンライン':'再接続中…';
+    if(fee)fee.textContent='15分相談・100円';
+  }
+}
+function startCounselorChat(){
+  const state=getCounselorModerationState();
+  if(state.suspended){openSheet('counselor-suspended-sheet');return}
+  configureChatRole('counselor');
+  show('chat');
+}
+updateCounselorModerationUI();
+
 function send(){
   const input=document.getElementById('chat-input');
   const text=input.value.trim();if(!text)return;
+  if(chatActor==='counselor'){
+    const state=getCounselorModerationState();
+    if(state.suspended){openSheet('counselor-suspended-sheet');return}
+    const externalMatch=classifyExternalContact(text);
+    if(externalMatch){registerCounselorViolation(text,externalMatch);return}
+  }
   const msg=document.createElement('div');msg.className='msg-r';msg.textContent=text;
   const status=document.createElement('span');status.className='msg-status';
   msg.appendChild(status);
@@ -1617,6 +1788,8 @@ function submitSupport(){
   s.textContent='お問い合わせを受け付けました（デモ）';s.style.color='var(--green)';t.value='';
 }
 function toggleCounselor(){
+  const moderation=getCounselorModerationState();
+  if(moderation.suspended){openSheet('counselor-suspended-sheet');return}
   const b=document.getElementById('counselor-toggle');
   const s=document.getElementById('counselor-status');
   const on=b.classList.toggle('on');
@@ -1641,6 +1814,7 @@ function completeRegistration(){
 }
 function startPaidConsult(){
   closeSheet();
+  configureChatRole('user');
   if(chatInterval)clearInterval(chatInterval);
   chatStarted=false; chatRemaining=15*60;
   renderCheckoutSteps(2);
@@ -1649,6 +1823,7 @@ function startPaidConsult(){
   waitingTimer=setTimeout(()=>{show('chat');setTimeout(()=>showToast('15分相談を開始しました・100円'),350)},1800);
 }
 function retryWaiting(){
+  configureChatRole('user');
   renderCheckoutSteps(2);
   closeSheet();
   clearTimeout(waitingTimer);
@@ -1976,6 +2151,7 @@ show=function(name){
   const scroller=active&&active.querySelector('.content');
   if(scroller)scroller.scrollTop=0;
   if(name==='chat') startChatTimer();
+  if(name==='counselor'){updateCounselorModerationUI();if(getCounselorModerationState().suspended)setTimeout(()=>openSheet('counselor-suspended-sheet'),180)}
   requestAnimationFrame(()=>{
     animateActiveScreen();
     const activeNow=document.getElementById('screen-'+name);
