@@ -99,10 +99,144 @@ button,input{font:inherit}button{border:0;background:none;padding:0;color:inheri
 .msg-l,.msg-r{max-width:82%;font-size:12.5px;line-height:1.8;padding:11px 14px}.msg-l{align-self:flex-start;background:#fff;border-radius:17px 17px 17px 4px}.msg-r{align-self:flex-end;background:var(--coral);color:#fff;border-radius:17px 17px 4px 17px}
 .composer{padding:10px 0 calc(12px + env(safe-area-inset-bottom,0px))}.composer-row{display:flex;gap:9px}.composer input{flex:1;min-width:0;border:0;outline:0;background:#fff;border-radius:999px;padding:13px 16px;color:var(--ink)}
 .send{width:46px;height:46px;border-radius:999px;background:var(--coral);color:#fff;font-weight:700}.fee{text-align:center;font-size:9.5px;color:var(--muted);margin-top:6px}
+
+/* motion system */
+.phone{--scroll-shift:0px}
+.screen{z-index:2;overflow:hidden}
+.screen.active{animation:screenIn .48s cubic-bezier(.2,.9,.2,1)}
+@keyframes screenIn{
+  0%{opacity:0;transform:translateY(16px) scale(.985)}
+  60%{opacity:1;transform:translateY(-2px) scale(1.003)}
+  100%{opacity:1;transform:none}
+}
+.ambient{
+  position:absolute;z-index:1;pointer-events:none;user-select:none;
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(242,131,123,.16);font-weight:700;
+  will-change:transform;
+}
+.ambient-a{width:120px;height:120px;left:-48px;top:12%;font-size:66px;animation:ambientFloatA 8s ease-in-out infinite}
+.ambient-b{width:150px;height:150px;right:-72px;top:42%;font-size:110px;color:rgba(87,78,102,.07);animation:ambientFloatB 10s ease-in-out infinite}
+.ambient-c{width:90px;height:90px;left:58%;bottom:12%;font-size:36px;color:rgba(242,131,123,.12);animation:ambientSpin 12s linear infinite}
+@keyframes ambientFloatA{0%,100%{transform:translate3d(0,var(--scroll-shift),0) rotate(-8deg)}50%{transform:translate3d(18px,calc(var(--scroll-shift) - 20px),0) rotate(8deg)}}
+@keyframes ambientFloatB{0%,100%{transform:translate3d(0,calc(var(--scroll-shift)*-.6),0) scale(1)}50%{transform:translate3d(-18px,calc(var(--scroll-shift)*-.6 + 18px),0) scale(1.08)}}
+@keyframes ambientSpin{to{transform:rotate(360deg)}}
+
+.welcome-logo{animation:logoFloat 3.8s ease-in-out infinite}
+@keyframes logoFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-7px) rotate(1deg)}}
+.bubble1{animation:bubbleFloat1 3.4s ease-in-out infinite}
+.bubble2{animation:bubbleFloat2 3.1s ease-in-out infinite .2s}
+.heart{animation:heartBeat 1.45s ease-in-out infinite}
+.dots{animation:dotsBob 1.8s ease-in-out infinite}
+@keyframes bubbleFloat1{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+@keyframes bubbleFloat2{0%,100%{transform:translateY(0) rotate(2deg)}50%{transform:translateY(10px) rotate(-2deg)}}
+@keyframes heartBeat{0%,100%{transform:scale(1) rotate(-4deg)}35%{transform:scale(1.18) rotate(4deg)}55%{transform:scale(.96) rotate(-2deg)}}
+@keyframes dotsBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+.logo{animation:logoWiggle 5s ease-in-out infinite}
+@keyframes logoWiggle{0%,92%,100%{transform:rotate(0)}94%{transform:rotate(-4deg)}97%{transform:rotate(4deg)}}
+
+.card,.quick-card,.menu,.hero,.profile{
+  transform-style:preserve-3d;
+  transition:transform .3s cubic-bezier(.2,.9,.2,1),box-shadow .3s ease,filter .3s ease;
+  will-change:transform;
+}
+@media(hover:hover) and (pointer:fine){
+  .card:hover,.quick-card:hover,.menu:hover{
+    box-shadow:0 18px 36px rgba(87,78,102,.13);
+  }
+}
+.tap-pop{animation:tapPop .42s cubic-bezier(.2,1.3,.3,1)}
+@keyframes tapPop{0%{transform:scale(1)}45%{transform:scale(.955) rotate(-.6deg)}75%{transform:scale(1.025) rotate(.4deg)}100%{transform:scale(1)}}
+
+.primary,.small-primary,.outline,.chip,.iconbtn,.tab,.send,.menu-row,.consult-row{
+  transition:transform .22s cubic-bezier(.2,1.2,.3,1),background .22s ease,box-shadow .22s ease;
+}
+.primary,.small-primary{position:relative;overflow:hidden}
+.primary::after,.small-primary::after{
+  content:"";position:absolute;inset:-50% auto -50% -40%;
+  width:34%;transform:rotate(18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);
+  animation:buttonShine 4.2s ease-in-out infinite;
+}
+@keyframes buttonShine{0%,72%{left:-45%}88%,100%{left:120%}}
+.primary:active,.small-primary:active,.outline:active,.iconbtn:active,.send:active{transform:scale(.91) rotate(-1deg)}
+.chip.on{animation:chipBounce .4s cubic-bezier(.2,1.4,.3,1)}
+@keyframes chipBounce{0%{transform:scale(.85)}65%{transform:scale(1.08)}100%{transform:scale(1)}}
+.tab.on svg{animation:tabBounce .7s cubic-bezier(.2,1.4,.3,1)}
+@keyframes tabBounce{0%{transform:translateY(4px) scale(.75)}45%{transform:translateY(-5px) scale(1.16)}75%{transform:translateY(1px) scale(.96)}100%{transform:none}}
+
+.avatar{animation:avatarBob 3.6s ease-in-out infinite}
+.listener:nth-of-type(2) .avatar{animation-delay:.35s}
+.listener:nth-of-type(3) .avatar{animation-delay:.7s}
+@keyframes avatarBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.dot{animation:onlinePulse 1.8s ease-out infinite}
+@keyframes onlinePulse{0%,100%{box-shadow:0 0 0 0 rgba(123,196,147,.45)}50%{box-shadow:0 0 0 6px rgba(123,196,147,0)}}
+
+.hero{position:relative;overflow:hidden}
+.hero::before{
+  content:"";position:absolute;width:140px;height:140px;border-radius:42% 58% 63% 37% / 46% 38% 62% 54%;
+  right:-55px;top:-58px;background:rgba(255,255,255,.07);animation:morphBlob 7s ease-in-out infinite;
+}
+.hero::after{
+  content:"♥";position:absolute;right:22px;bottom:12px;font-size:42px;color:rgba(255,255,255,.055);
+  animation:heroHeart 4.5s ease-in-out infinite;
+}
+@keyframes morphBlob{0%,100%{transform:rotate(0) scale(1);border-radius:42% 58% 63% 37% / 46% 38% 62% 54%}50%{transform:rotate(22deg) scale(1.12);border-radius:63% 37% 42% 58% / 38% 62% 46% 54%}}
+@keyframes heroHeart{0%,100%{transform:translateY(0) rotate(-10deg)}50%{transform:translateY(-12px) rotate(10deg)}}
+
+.quick-icon{display:inline-block;animation:iconWobble 3s ease-in-out infinite}
+.quick-card:nth-child(2) .quick-icon{animation-delay:.5s}
+@keyframes iconWobble{0%,80%,100%{transform:rotate(0) scale(1)}86%{transform:rotate(-12deg) scale(1.12)}92%{transform:rotate(10deg) scale(1.08)}}
+
+.menu-row:active{transform:translateX(7px)}
+.listener{position:relative;overflow:hidden}
+.listener::after{
+  content:"";position:absolute;width:70px;height:70px;border-radius:999px;right:-28px;top:-30px;
+  background:rgba(242,131,123,.07);transition:transform .45s cubic-bezier(.2,1,.3,1);
+}
+.listener:hover::after{transform:scale(1.8)}
+
+.profile .avatar{animation:profileFloat 2.8s ease-in-out infinite}
+@keyframes profileFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+
+.msg-l,.msg-r{animation:messagePop .38s cubic-bezier(.2,1.25,.3,1)}
+@keyframes messagePop{0%{opacity:0;transform:translateY(12px) scale(.92)}100%{opacity:1;transform:none}}
+.send{animation:sendPulse 2.4s ease-in-out infinite}
+@keyframes sendPulse{0%,100%{box-shadow:0 0 0 0 rgba(242,131,123,.28)}50%{box-shadow:0 0 0 8px rgba(242,131,123,0)}}
+
+.timer-pill{
+  min-width:60px;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.14);
+  color:#fff;font-size:12px;font-weight:700;text-align:center;letter-spacing:.04em;
+  animation:timerBreathe 2s ease-in-out infinite;
+}
+@keyframes timerBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+.timer-pill.warning{background:#F2837B;animation:timerWarning .8s ease-in-out infinite}
+@keyframes timerWarning{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+
+.reveal-item{opacity:0;transform:translateY(18px) scale(.985)}
+.screen.active .reveal-item{animation:revealUp .55s cubic-bezier(.2,.9,.2,1) forwards}
+@keyframes revealUp{to{opacity:1;transform:none}}
+
+.spark{
+  position:absolute;z-index:20;width:8px;height:8px;border-radius:999px;pointer-events:none;
+  background:var(--coral);animation:sparkFly .58s ease-out forwards;
+}
+@keyframes sparkFly{
+  0%{opacity:1;transform:translate(-50%,-50%) scale(.4)}
+  100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.3)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}
+}
+
 </style>
 </head>
 <body>
 <div class="phone">
+<div class="ambient ambient-a" aria-hidden="true">♥</div>
+<div class="ambient ambient-b" aria-hidden="true">●</div>
+<div class="ambient ambient-c" aria-hidden="true">✦</div>
 
 <section id="screen-welcome" class="screen welcome active">
   <div class="welcome-logo">KoiRela</div>
@@ -122,14 +256,14 @@ button,input{font:inherit}button{border:0;background:none;padding:0;color:inheri
     <button class="iconbtn" onclick="show('mypage')" aria-label="マイページ">👤</button>
   </div>
   <div class="content">
-    <div class="hero">
+    <div class="hero reveal-item">
       <small>新しい相談</small>
       <h2>いまの気持ちを、<br>話せる相手を見つけよう。</h2>
       <p>恋愛経験のある人、資格を持つ人から選べます。</p>
       <button class="primary" onclick="show('find')">相談相手を探す</button>
     </div>
 
-    <div class="section">
+    <div class="section reveal-item">
       <div class="section-head">
         <div class="section-title">相談中</div>
         <button class="link" onclick="show('history')">履歴を見る</button>
@@ -147,7 +281,7 @@ button,input{font:inherit}button{border:0;background:none;padding:0;color:inheri
       </div>
     </div>
 
-    <div class="section">
+    <div class="section reveal-item">
       <div class="section-head"><div class="section-title">すぐできること</div></div>
       <div class="quick-grid">
         <button class="quick-card" onclick="show('find')">
@@ -178,7 +312,7 @@ button,input{font:inherit}button{border:0;background:none;padding:0;color:inheri
       <button class="chip" data-track="pro">資格者</button>
     </div>
 
-    <div class="card listener" data-track="exp">
+    <div class="card listener reveal-item" data-track="exp">
       <div class="listener-top">
         <span class="avatar">あ<span class="dot"></span></span>
         <div class="listener-info">
@@ -188,12 +322,12 @@ button,input{font:inherit}button{border:0;background:none;padding:0;color:inheri
       </div>
       <div class="listener-bio">復縁や片思いの相談をよく受けています。まとまっていなくても、そのまま話してください。</div>
       <div class="listener-foot">
-        <div class="price">チャット1通 <b>100円〜</b></div>
+        <div class="price">15分相談 <b>100円</b></div>
         <button class="small-primary" onclick="openProfile('airi')">プロフィール</button>
       </div>
     </div>
 
-    <div class="card listener" data-track="pro">
+    <div class="card listener reveal-item" data-track="pro">
       <div class="listener-top">
         <span class="avatar" style="background:#DCD6F0">ゆ<span class="dot"></span></span>
         <div class="listener-info">
@@ -203,12 +337,12 @@ button,input{font:inherit}button{border:0;background:none;padding:0;color:inheri
       </div>
       <div class="listener-bio">心理系資格を持つ相談員です。恋愛と自己肯定感、繰り返す恋のパターンの相談が得意です。</div>
       <div class="listener-foot">
-        <div class="price">チャット1通 <b>300円〜</b></div>
+        <div class="price">15分相談 <b>100円</b></div>
         <button class="small-primary" onclick="openProfile('yui')">プロフィール</button>
       </div>
     </div>
 
-    <div class="card listener" data-track="exp">
+    <div class="card listener reveal-item" data-track="exp">
       <div class="listener-top">
         <span class="avatar" style="background:#F6E3C5">け</span>
         <div class="listener-info">
@@ -218,7 +352,7 @@ button,input{font:inherit}button{border:0;background:none;padding:0;color:inheri
       </div>
       <div class="listener-bio">男性目線の意見がほしいときに。否定せず、状況を一緒に整理します。</div>
       <div class="listener-foot">
-        <div class="price">チャット1通 <b>100円〜</b></div>
+        <div class="price">15分相談 <b>100円</b></div>
         <button class="small-primary" onclick="openProfile('kenta')">プロフィール</button>
       </div>
     </div>
@@ -237,13 +371,13 @@ button,input{font:inherit}button{border:0;background:none;padding:0;color:inheri
     <div style="width:42px"></div>
   </div>
   <div class="content">
-    <div class="card profile">
+    <div class="card profile reveal-item">
       <span id="profile-avatar" class="avatar">あ<span class="dot"></span></span>
       <div id="profile-name" class="profile-name">あいり</div>
       <div id="profile-role" class="profile-role"><span class="badge exp">経験者</span></div>
       <div id="profile-copy" class="profile-copy">復縁や片思いの相談をよく受けています。まとまっていなくても、そのまま話してください。</div>
       <div class="tags"><span class="tag">返信が早い</span><span class="tag">匿名OK</span><span class="tag">チャット相談</span></div>
-      <button class="primary" onclick="show('chat')">この人に相談する</button>
+      <button class="primary" onclick="show('chat')">15分100円で相談する</button>
     </div>
   </div>
 </section>
@@ -254,15 +388,15 @@ button,input{font:inherit}button{border:0;background:none;padding:0;color:inheri
     <div style="width:42px"></div>
   </div>
   <div class="content">
-    <div class="section">
-      <div class="card user-card">
+    <div class="section reveal-item">
+      <div class="card user-card reveal-item">
         <span class="avatar" style="background:#F5D0DC">も</span>
         <div class="user-info"><div class="user-name">ももか</div><div class="user-sub">匿名で利用中</div></div>
         <button class="outline">編集</button>
       </div>
     </div>
-    <div class="section">
-      <div class="menu">
+    <div class="section reveal-item">
+      <div class="menu reveal-item">
         <button class="menu-row" onclick="show('history')"><span class="menu-icon">🕘</span><span class="grow">相談履歴</span><span>›</span></button>
         <button class="menu-row"><span class="menu-icon">💳</span><span class="grow">支払い方法</span><span>›</span></button>
         <button class="menu-row"><span class="menu-icon">💬</span><span class="grow">お問い合わせ</span><span>›</span></button>
@@ -302,6 +436,7 @@ button,input{font:inherit}button{border:0;background:none;padding:0;color:inheri
     <button onclick="show('home')" aria-label="戻る" style="width:40px;height:40px;color:#fff;font-size:28px">‹</button>
     <span class="avatar">あ<span class="dot" style="border-color:#574E66"></span></span>
     <div class="chat-head-main"><div class="chat-head-name">あいり</div><div class="chat-head-sub">オンライン</div></div>
+    <div id="chat-timer" class="timer-pill" aria-label="残り時間">15:00</div>
   </div>
   <div class="chat-sheet">
     <div id="msgs" class="msgs">
@@ -313,7 +448,7 @@ button,input{font:inherit}button{border:0;background:none;padding:0;color:inheri
         <input id="chat-input" type="text" placeholder="メッセージを書く…" enterkeyhint="send" autocomplete="off">
         <button id="send-btn" class="send">→</button>
       </div>
-      <div class="fee">次の1通：100円</div>
+      <div class="fee">15分相談・100円</div>
     </div>
   </div>
 </section>
@@ -365,7 +500,98 @@ function send(){
 }
 document.getElementById('send-btn').addEventListener('click',send);
 document.getElementById('chat-input').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing)send()});
+
+// Motion interactions
+let chatStarted=false;
+let chatRemaining=15*60;
+let chatInterval=null;
+
+function startChatTimer(){
+  if(chatStarted) return;
+  chatStarted=true;
+  const timer=document.getElementById('chat-timer');
+  const render=()=>{
+    const m=Math.floor(chatRemaining/60);
+    const s=String(chatRemaining%60).padStart(2,'0');
+    timer.textContent=m+':'+s;
+    timer.classList.toggle('warning',chatRemaining<=60);
+    if(chatRemaining<=0){
+      clearInterval(chatInterval);
+      timer.textContent='終了';
+      const end=document.createElement('div');
+      end.className='sys';
+      end.textContent='15分の相談時間が終了しました';
+      document.getElementById('msgs').appendChild(end);
+      return;
+    }
+    chatRemaining--;
+  };
+  render();
+  chatInterval=setInterval(render,1000);
+}
+
+function animateActiveScreen(){
+  const active=document.querySelector('.screen.active');
+  if(!active) return;
+  active.querySelectorAll('.reveal-item').forEach((el,i)=>{
+    el.style.animationDelay=(i*70)+'ms';
+  });
+}
+
+document.querySelectorAll('.content').forEach(scroller=>{
+  scroller.addEventListener('scroll',()=>{
+    const shift=Math.max(-24,Math.min(24,scroller.scrollTop*.035));
+    document.querySelector('.phone').style.setProperty('--scroll-shift',shift+'px');
+  },{passive:true});
+});
+
+document.querySelectorAll('.card,.quick-card,.menu').forEach(el=>{
+  el.addEventListener('pointerdown',()=>{
+    el.classList.remove('tap-pop');
+    void el.offsetWidth;
+    el.classList.add('tap-pop');
+  });
+  el.addEventListener('animationend',e=>{
+    if(e.animationName==='tapPop') el.classList.remove('tap-pop');
+  });
+  if(matchMedia('(hover:hover) and (pointer:fine)').matches){
+    el.addEventListener('pointermove',e=>{
+      const r=el.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width-.5;
+      const y=(e.clientY-r.top)/r.height-.5;
+      el.style.transform='perspective(700px) rotateX('+(-y*5)+'deg) rotateY('+(x*6)+'deg) translateY(-3px)';
+    });
+    el.addEventListener('pointerleave',()=>{el.style.transform='';});
+  }
+});
+
+document.querySelectorAll('button').forEach(btn=>{
+  btn.addEventListener('pointerdown',e=>{
+    const phone=document.querySelector('.phone');
+    const pr=phone.getBoundingClientRect();
+    for(let i=0;i<5;i++){
+      const s=document.createElement('span');
+      s.className='spark';
+      s.style.left=(e.clientX-pr.left)+'px';
+      s.style.top=(e.clientY-pr.top)+'px';
+      const a=(Math.PI*2/5)*i;
+      const d=24+Math.random()*18;
+      s.style.setProperty('--dx',(Math.cos(a)*d)+'px');
+      s.style.setProperty('--dy',(Math.sin(a)*d)+'px');
+      phone.appendChild(s);
+      setTimeout(()=>s.remove(),650);
+    }
+  });
+});
+
+const originalShow=show;
+show=function(name){
+  originalShow(name);
+  if(name==='chat') startChatTimer();
+  requestAnimationFrame(animateActiveScreen);
+};
 const initial=location.hash.slice(1);if(initial&&document.getElementById('screen-'+initial))show(initial);
+requestAnimationFrame(animateActiveScreen);
 </script>
 </body>
 </html>
