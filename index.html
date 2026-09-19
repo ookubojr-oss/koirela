@@ -581,6 +581,21 @@ input,textarea{caret-color:var(--coral)}
 .suspension-note{padding:12px 14px;border-radius:16px;background:#FFF4F4;color:#9D4B4B;font-size:10.5px;line-height:1.7;margin:12px 0 14px}
 .composer.is-suspended{opacity:.55;pointer-events:none;filter:grayscale(.3)}
 
+
+/* moderation / suspension polish */
+.profile-policy-note,.identity-note{
+  font-size:10px;line-height:1.7;color:#7A7181;background:#FFF8F7;border:1px solid #F5DEDB;
+  border-radius:15px;padding:10px 12px
+}
+.identity-note{margin:0;color:var(--muted);background:#FAF8FB;border-color:var(--line)}
+.suspension-screen-content{padding-top:12px}
+.suspension-hero{background:#6B5360;color:#fff;border-radius:30px 30px 30px 12px;padding:24px;margin-bottom:14px;box-shadow:0 18px 38px rgba(87,78,102,.16)}
+.suspension-hero small{opacity:.65;font-size:10px}.suspension-hero h2{font-size:22px;margin:5px 0 9px}.suspension-hero p{font-size:11px;line-height:1.8;opacity:.78;margin:0}
+.suspension-mark{width:52px;height:52px;border-radius:21px 21px 21px 8px;background:#FFF0F0;color:#C85858;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;margin-bottom:14px}
+.suspension-row{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);font-size:11px}.suspension-row:last-child{border-bottom:0}.suspension-row span{color:var(--muted)}.suspension-row b{text-align:right}
+.summary-card.hold{background:#765E68}.summary-card.hold #payout-note{color:#FFE7E3;opacity:1}
+.primary:disabled,.availability:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}
 }
@@ -721,7 +736,7 @@ input,textarea{caret-color:var(--coral)}
       <button class="chip" data-track="pro">資格者</button>
     </div>
 
-    <div class="card listener reveal-item" data-track="exp">
+    <div class="card listener reveal-item" data-track="exp" data-counselor-id="demo-airi">
       <div class="listener-top">
         <span class="avatar">あ<span class="dot"></span></span>
         <div class="listener-info">
@@ -918,7 +933,7 @@ input,textarea{caret-color:var(--coral)}
       <article class="card legal-card legal-article reveal-item">
         <section id="terms-service" class="spy-section"><h3>サービスについて</h3><p>KoiRelaは、恋愛に関する悩みを相談員と1対1で話せる相談サービスです。正式公開時には提供内容と利用条件を確定した規約へ差し替えます。</p></section>
         <section id="terms-payment" class="spy-section"><h3>料金と支払い</h3><p>現在の想定料金は15分100円です。相談開始の成立時点、延長、キャンセル、返金の条件を正式規約に明記します。</p></section>
-        <section id="terms-safety" class="spy-section"><h3>禁止事項と安全</h3><p>嫌がらせ、外部サービスへの不適切な誘導、個人情報の要求、なりすまし等を禁止する想定です。違反は通報・ブロックできます。</p></section>
+        <section id="terms-safety" class="spy-section"><h3>禁止事項と安全</h3><p>嫌がらせ、個人情報の要求、なりすまし等を禁止します。相談員によるLINE・Instagram・X・Discord・Telegram等への誘導、電話番号・メールアドレス・URL・QRコードを使った外部連絡先交換は禁止し、1回目は送信等をブロックして警告、2回目は相談員アカウントを停止する設計です。誤検知時は運営確認・異議申立てを行えるようにします。</p></section>
         <section id="terms-account" class="spy-section"><h3>退会とアカウント削除</h3><p>ユーザーは設定からアカウント削除を申請できます。削除対象・保存が必要な情報・保存期間は正式公開前に確定します。</p></section>
       </article>
     </div>
@@ -938,7 +953,7 @@ input,textarea{caret-color:var(--coral)}
       <article class="card legal-card legal-article reveal-item">
         <section id="privacy-data" class="spy-section"><h3>取得する情報</h3><p>アカウント情報、相談内容、決済に関する情報、利用ログ等を取り扱う想定です。</p></section>
         <section id="privacy-purpose" class="spy-section"><h3>利用目的</h3><p>相談サービスの提供、安全対策、問い合わせ対応、決済、品質改善など必要な目的に限定して利用する設計にします。</p></section>
-        <section id="privacy-storage" class="spy-section"><h3>保存と保護</h3><p>データの保存期間、アクセス権限、暗号化、委託先・第三者提供の条件を正式ポリシーで明示します。</p></section>
+        <section id="privacy-storage" class="spy-section"><h3>保存と保護</h3><p>違反検知・通報時は、確認に必要な該当メッセージと直前の会話のみを運営ログへ保存する設計です。デモでは保存期間を90日とし、本番では法務・運用方針を確認したうえで正式な保存期間、アクセス権限、暗号化、削除条件を明示します。</p></section>
         <section id="privacy-delete" class="spy-section"><h3>削除について</h3><p>ユーザーは設定からアカウント削除を申請できます。法令上保存が必要な情報を除き、削除方針に従って処理します。</p></section>
       </article>
     </div>
@@ -976,6 +991,25 @@ input,textarea{caret-color:var(--coral)}
   </div>
 </section>
 
+
+
+<section id="screen-counselor-suspended" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('mypage')" aria-label="戻る">‹</button><div class="title">相談員アカウント</div><div style="width:42px"></div></div>
+  <div class="content suspension-screen-content">
+    <div class="suspension-hero reveal-item"><div class="suspension-mark">×</div><small>相談員ステータス</small><h2>アカウント停止中</h2><p>外部連絡先・外部SNSへの誘導が2回確認されたため、新しい相談の受付を停止しています。</p></div>
+    <div class="card reveal-item">
+      <div class="suspension-row"><span>違反回数</span><b id="suspension-strikes">2 / 2</b></div>
+      <div class="suspension-row"><span>検索表示</span><b>非表示</b></div>
+      <div class="suspension-row"><span>報酬</span><b>運営確認まで一時保留</b></div>
+      <div class="suspension-row"><span>再登録</span><b>本人確認情報で照合</b></div>
+    </div>
+    <div class="card reveal-item">
+      <h3>異議申し立て</h3>
+      <p class="muted" style="font-size:11px;line-height:1.8">誤検知だと思われる場合は運営へお問い合わせください。運営は該当メッセージと必要な前後ログを確認します。</p>
+      <button class="primary" onclick="show('support')">運営へ問い合わせる</button>
+    </div>
+  </div>
+</section>
 
 <section id="screen-waiting" class="screen">
   <div class="topbar"><button class="iconbtn" onclick="cancelWaiting()" aria-label="戻る">‹</button><div class="title">相談の準備中</div><div style="width:42px"></div></div>
@@ -1019,7 +1053,7 @@ input,textarea{caret-color:var(--coral)}
   <div class="content"><div class="card legal-card reveal-item">
     <h3>安心して相談するために</h3>
     <p>住所、電話番号、勤務先、SNSアカウント、決済情報など、個人を特定できる情報は相手に送らないでください。</p>
-    <p>不快な発言や勧誘、外部サービスへの誘導があった場合は、チャット右上のメニューから通報・ブロックできます。</p>
+    <p>不快な発言や勧誘、外部サービスへの誘導があった場合は、チャット右上のメニューから通報・ブロックできます。相談員による外部連絡先への誘導は1回目で警告、2回目で相談員アカウント停止となる設計です。</p>
     <p>生命や身体に関わる緊急事態、医療・法律など専門的な判断が必要な内容については、適切な専門機関を利用してください。</p>
   </div></div>
 </section>
@@ -1076,6 +1110,7 @@ input,textarea{caret-color:var(--coral)}
         </div>
       </div>
       <label class="field-label">本人確認書類</label><button class="upload-box" onclick="demoUpload(this)">＋ 本人確認書類を選択</button>
+      <p class="identity-note">本人確認情報は、停止済み相談員による別アカウントでの再登録防止にも利用する想定です。</p>
       <button class="primary" onclick="nextCounselorStep()">次へ</button>
     </div>
     <div class="card form-card counselor-step" data-step="3">
@@ -1086,8 +1121,9 @@ input,textarea{caret-color:var(--coral)}
         <span class="photo-register-copy"><b>画像を登録</b><small>相談相手に表示される画像です</small></span>
         <span aria-hidden="true">›</span>
       </button>
-      <label class="field-label">表示名</label><input class="field" value="あいり">
-      <label class="field-label">自己紹介</label><textarea class="field textarea tall">復縁や片思いの相談をよく受けています。まとまっていなくても、そのまま話してください。</textarea>
+      <div class="profile-policy-note">公開プロフィールにLINE・Instagram等のID、電話番号、メール、URL、QRコードは掲載できません。</div>
+      <label class="field-label">表示名</label><input id="cr-display-name" class="field" value="あいり">
+      <label class="field-label">自己紹介</label><textarea id="cr-bio" class="field textarea tall">復縁や片思いの相談をよく受けています。まとまっていなくても、そのまま話してください。</textarea>
       <label class="field-label">資格証明（資格者のみ）</label><button class="upload-box" onclick="demoUpload(this)">＋ 資格証を選択</button>
       <button class="primary" onclick="nextCounselorStep()">次へ</button>
     </div>
@@ -1111,10 +1147,11 @@ input,textarea{caret-color:var(--coral)}
         <span class="avatar-initial">あ</span><span class="dot"></span>
         <span class="avatar-camera" aria-hidden="true">⌁</span>
       </button>
-      <label class="field-label">表示名</label><input class="field" value="あいり">
+      <div class="profile-policy-note">外部SNS・連絡先・URL・QRコードの掲載は禁止されています。2回目の違反で相談員アカウントが停止されます。</div>
+      <label class="field-label">表示名</label><input id="counselor-display-name" class="field" value="あいり">
       <label class="field-label">肩書き</label><select class="field"><option>経験者</option><option>資格者</option></select>
-      <label class="field-label">得意な相談</label><input class="field" value="復縁・片思い">
-      <label class="field-label">自己紹介</label><textarea class="field textarea tall">まとまっていなくても、そのまま話してください。</textarea>
+      <label class="field-label">得意な相談</label><input id="counselor-specialty" class="field" value="復縁・片思い">
+      <label class="field-label">自己紹介</label><textarea id="counselor-bio" class="field textarea tall">まとまっていなくても、そのまま話してください。</textarea>
       <button class="primary" onclick="saveCounselorProfile()">保存する</button>
       <div id="cp-status" class="form-status" aria-live="polite"></div>
     </div>
@@ -1124,13 +1161,13 @@ input,textarea{caret-color:var(--coral)}
 <section id="screen-payout" class="screen">
   <div class="topbar"><button class="iconbtn" onclick="show('counselor')" aria-label="戻る">‹</button><div class="title">報酬・振込先</div><div style="width:42px"></div></div>
   <div class="content">
-    <div class="summary-card reveal-item"><small>振込予定額</small><strong>12,400円</strong><span>次回振込予定：10月末</span></div>
+    <div id="payout-summary" class="summary-card reveal-item"><small id="payout-label">振込予定額</small><strong>12,400円</strong><span id="payout-note">次回振込予定：10月末</span></div>
     <div class="card form-card reveal-item">
       <label class="field-label">銀行名</label><input class="field" value="○○銀行">
       <label class="field-label">支店名</label><input class="field" value="五反田支店">
       <label class="field-label">口座番号</label><input class="field" value="••••1234">
       <label class="field-label">口座名義</label><input class="field" value="イケダ コウシロウ">
-      <button class="primary" onclick="savePayout()">振込先を保存</button>
+      <button id="payout-save-button" class="primary" onclick="savePayout()">振込先を保存</button>
       <div id="payout-status" class="form-status" aria-live="polite"></div>
     </div>
   </div>
@@ -1276,6 +1313,7 @@ input,textarea{caret-color:var(--coral)}
     <button onclick="rate(1)">★</button><button onclick="rate(2)">★</button><button onclick="rate(3)">★</button><button onclick="rate(4)">★</button><button onclick="rate(5)">★</button>
   </div>
   <button class="primary" onclick="extendConsult()">もう15分延長する・100円</button>
+  <button class="sheet-cancel danger" onclick="reportExternalFromEnd()">外部サービスに誘導された</button>
   <button class="sheet-cancel" onclick="finishConsult()">終了してホームへ</button>
 </div>
 
@@ -1427,6 +1465,7 @@ function show(name){
   history.replaceState(null,'','#'+name);
 }
 function openProfile(key){
+  if(key==='airi'&&getCounselorModerationState().suspended){show('find');showToast('この相談員は現在受付を停止しています');return}
   const p=profiles[key];
   const av=document.getElementById('profile-avatar');
   av.style.background=p.bg;av.innerHTML=p.initial+'<span class="dot"></span>';
@@ -1443,7 +1482,8 @@ function applyListenerFilters(){
   document.querySelectorAll('.listener').forEach(card=>{
     const trackOk=activeListenerTrack==='all'||card.dataset.track===activeListenerTrack;
     const textOk=!q||card.textContent.toLowerCase().includes(q);
-    const showCard=trackOk&&textOk;
+    const moderationOk=!(card.dataset.counselorId==='demo-airi'&&getCounselorModerationState().suspended);
+    const showCard=trackOk&&textOk&&moderationOk;
     card.style.display=showCard?'':'none';
     if(showCard)visible++;
   });
@@ -1473,6 +1513,8 @@ function resetListenerSearch(){
 
 const MODERATION_LOG_KEY='koirela_moderation_logs_v1';
 const COUNSELOR_STATE_KEY='koirela_counselor_state_v1';
+const COUNSELOR_IDENTITY_BLOCK_KEY='koirela_counselor_identity_block_v1';
+const MODERATION_RETENTION_DAYS=90;
 let chatActor='user';
 
 function getCounselorModerationState(){
@@ -1485,26 +1527,53 @@ function saveCounselorModerationState(state){
   try{localStorage.setItem(COUNSELOR_STATE_KEY,JSON.stringify(state))}catch(_){}
   updateCounselorModerationUI();
 }
+function pruneModerationLogs(logs){
+  const cutoff=Date.now()-MODERATION_RETENTION_DAYS*86400000;
+  return logs.filter(log=>!log.occurredAt||Number.isNaN(Date.parse(log.occurredAt))||Date.parse(log.occurredAt)>=cutoff).slice(0,100);
+}
 function getModerationLogs(){
-  try{const parsed=JSON.parse(localStorage.getItem(MODERATION_LOG_KEY)||'[]');return Array.isArray(parsed)?parsed:[]}catch(_){return []}
+  try{
+    const parsed=JSON.parse(localStorage.getItem(MODERATION_LOG_KEY)||'[]');
+    const raw=Array.isArray(parsed)?parsed:[];
+    const pruned=pruneModerationLogs(raw);
+    if(pruned.length!==raw.length)localStorage.setItem(MODERATION_LOG_KEY,JSON.stringify(pruned));
+    return pruned;
+  }catch(_){return []}
 }
 function saveModerationLogs(logs){
-  try{localStorage.setItem(MODERATION_LOG_KEY,JSON.stringify(logs))}catch(_){}
+  try{localStorage.setItem(MODERATION_LOG_KEY,JSON.stringify(pruneModerationLogs(logs)))}catch(_){}
+}
+function getIdentityBlocklist(){
+  try{const x=JSON.parse(localStorage.getItem(COUNSELOR_IDENTITY_BLOCK_KEY)||'[]');return Array.isArray(x)?x:[]}catch(_){return []}
+}
+function setIdentityBlocked(blocked){
+  const id='demo-identity-airi';
+  let list=getIdentityBlocklist().filter(x=>x!==id);
+  if(blocked)list.push(id);
+  try{localStorage.setItem(COUNSELOR_IDENTITY_BLOCK_KEY,JSON.stringify(list))}catch(_){}
 }
 function classifyExternalContact(text){
-  const normalized=text.normalize('NFKC').toLowerCase();
+  const normalized=text.normalize('NFKC').toLowerCase().replace(/[\u200B-\u200D\uFEFF]/g,'');
+  const compact=normalized.replace(/[\s._\-ー−・*☆★♡♥]/g,'');
+  const safeDiscussion=/(line|ライン|らいん|instagram|インスタ|discord|ディスコード|telegram|テレグラム|twitter|ツイッター|sns)(について|とは|という会社|の会社|の使い方|が怖い|で悩)/i.test(compact);
   const checks=[
-    {type:'URL',re:/(https?:\/\/|www\.|\b(?:line\.me|instagram\.com|discord\.gg|discord\.com|t\.me|telegram\.me|x\.com|twitter\.com|threads\.net)\b)/i},
-    {type:'メールアドレス',re:/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i},
-    {type:'電話番号',re:/(?:\+?81[-\s]?)?0?\d{1,4}[-ー−\s]?\d{1,4}[-ー−\s]?\d{3,4}|\b0\d{9,10}\b/},
-    {type:'LINE',re:/(line|ライン|らいん).{0,18}(id|交換|追加|連絡|友だち|友達|教え|送る|dm)|(?:id|交換|追加|連絡).{0,18}(line|ライン|らいん)/i},
-    {type:'Instagram',re:/(instagram|インスタ|いんすた).{0,18}(id|交換|dm|フォロー|連絡|教え)|(?:id|交換|dm|フォロー|連絡).{0,18}(instagram|インスタ|いんすた)/i},
-    {type:'Discord',re:/(discord|ディスコード).{0,18}(id|交換|追加|連絡|教え)|(?:id|交換|追加|連絡).{0,18}(discord|ディスコード)/i},
-    {type:'Telegram',re:/(telegram|テレグラム).{0,18}(id|交換|追加|連絡|教え)|(?:id|交換|追加|連絡).{0,18}(telegram|テレグラム)/i},
-    {type:'X / Twitter',re:/(twitter|ツイッター|\bx\b).{0,18}(id|交換|dm|フォロー|連絡|教え)|(?:id|交換|dm|フォロー|連絡).{0,18}(twitter|ツイッター|\bx\b)/i},
-    {type:'外部連絡先',re:/(電話|メール|sns|外部).{0,16}(しよ|しよう|交換|移動|連絡|教え|送る|話そ|話そう)/i}
+    {type:'URL',re:/(https?:\/\/|www\.|(?:line\.me|instagram\.com|discord\.gg|discord\.com|t\.me|telegram\.me|x\.com|twitter\.com|threads\.net))/i,target:normalized},
+    {type:'メールアドレス',re:/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i,target:normalized},
+    {type:'電話番号',re:/(?:\+?81[-\s]?)?0?\d{1,4}[-ー−\s]?\d{1,4}[-ー−\s]?\d{3,4}|\b0\d{9,10}\b/,target:normalized},
+    {type:'LINE',re:/(line|l1ne|ライン|らいん).{0,14}(id|交換|追加|連絡|友だち|友達|教え|送る|dm)|(?:id|交換|追加|連絡|dm).{0,14}(line|l1ne|ライン|らいん)/i,target:compact},
+    {type:'Instagram',re:/(instagram|insta|インスタ|いんすた).{0,14}(id|交換|dm|フォロー|連絡|教え)|(?:id|交換|dm|フォロー|連絡).{0,14}(instagram|insta|インスタ|いんすた)/i,target:compact},
+    {type:'Discord',re:/(discord|ディスコード).{0,14}(id|交換|追加|連絡|教え)|(?:id|交換|追加|連絡).{0,14}(discord|ディスコード)/i,target:compact},
+    {type:'Telegram',re:/(telegram|テレグラム).{0,14}(id|交換|追加|連絡|教え)|(?:id|交換|追加|連絡).{0,14}(telegram|テレグラム)/i,target:compact},
+    {type:'X / Twitter',re:/(twitter|ツイッター|x).{0,10}(id|交換|dm|フォロー|連絡|教え)|(?:id|交換|dm|フォロー|連絡).{0,10}(twitter|ツイッター|x)/i,target:compact},
+    {type:'外部連絡先',re:/(電話|メール|sns|外部).{0,12}(しよ|しよう|交換|移動|連絡|教え|送る|話そ|話そう)/i,target:compact}
   ];
-  return checks.find(check=>check.re.test(normalized))||null;
+  for(const check of checks){
+    if(check.re.test(check.target)){
+      if(safeDiscussion&&!/(交換|追加|id|dm|フォロー|連絡|教え|送る|https?:\/\/|www\.|@)/i.test(normalized))return null;
+      return {type:check.type};
+    }
+  }
+  return null;
 }
 function recentChatContext(){
   return [...document.querySelectorAll('#msgs .msg-l,#msgs .msg-r')]
@@ -1512,7 +1581,7 @@ function recentChatContext(){
     .map(el=>el.childNodes[0]?.textContent?.trim()||el.textContent.trim())
     .filter(Boolean);
 }
-function registerCounselorViolation(text,match){
+function registerCounselorViolation(text,match,source='chat',context=null){
   const state=getCounselorModerationState();
   const nextCount=Math.min(2,state.violations+1);
   const suspended=nextCount>=2;
@@ -1523,7 +1592,8 @@ function registerCounselorViolation(text,match){
     occurredAt:new Date().toISOString(),
     type:match?.type||'外部連絡先',
     attemptedMessage:text,
-    context:recentChatContext(),
+    context:Array.isArray(context)?context:recentChatContext(),
+    source,
     strike:nextCount,
     action:suspended?'相談員アカウント自動停止':'送信ブロック＋警告',
     reviewed:false,
@@ -1531,6 +1601,7 @@ function registerCounselorViolation(text,match){
   };
   const logs=getModerationLogs();logs.unshift(log);saveModerationLogs(logs.slice(0,100));
   saveCounselorModerationState({violations:nextCount,suspended});
+  if(suspended)setIdentityBlocked(true);
   if(suspended){
     const composer=document.querySelector('#screen-chat .composer');if(composer)composer.classList.add('is-suspended');
     openSheet('counselor-suspended-sheet');
@@ -1555,6 +1626,16 @@ function updateCounselorModerationUI(){
   }else if(toggle){
     toggle.disabled=false;
   }
+  const payout=document.getElementById('payout-summary');
+  const payoutLabel=document.getElementById('payout-label');
+  const payoutNote=document.getElementById('payout-note');
+  const payoutButton=document.getElementById('payout-save-button');
+  if(payout)payout.classList.toggle('hold',state.suspended);
+  if(payoutLabel)payoutLabel.textContent=state.suspended?'確認中の報酬':'振込予定額';
+  if(payoutNote)payoutNote.textContent=state.suspended?'アカウント停止中のため運営確認まで一時保留':'次回振込予定：10月末';
+  if(payoutButton)payoutButton.disabled=state.suspended;
+  const strikes=document.getElementById('suspension-strikes');if(strikes)strikes.textContent=state.violations+' / 2';
+  if(typeof applyListenerFilters==='function')applyListenerFilters();
 }
 function configureChatRole(role){
   chatActor=role;
@@ -1587,7 +1668,7 @@ function configureChatRole(role){
 }
 function startCounselorChat(){
   const state=getCounselorModerationState();
-  if(state.suspended){openSheet('counselor-suspended-sheet');return}
+  if(state.suspended){show('counselor-suspended');return}
   configureChatRole('counselor');
   show('chat');
 }
@@ -1842,7 +1923,27 @@ function selectReportReason(el){
 }
 function submitReport(){
   if(!reportReason)return;
+  const logs=getModerationLogs();
+  logs.unshift({
+    id:'report_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+    counselorId:'demo-airi',
+    counselorName:'あいり',
+    occurredAt:new Date().toISOString(),
+    type:'ユーザー通報: '+reportReason,
+    attemptedMessage:'',
+    context:recentChatContext(),
+    source:'user-report',
+    strike:0,
+    action:'運営確認待ち',
+    reviewed:false,
+    overturned:false
+  });
+  saveModerationLogs(logs);
   openSheet('report-done-sheet');
+}
+function reportExternalFromEnd(){
+  reportReason='外部サービスへの勧誘';
+  submitReport();
 }
 function blockFromReport(){
   markBlocked();
@@ -1862,21 +1963,57 @@ function chooseCounselorType(el,type){
   el.parentElement.querySelectorAll('.choice-card').forEach(x=>x.classList.remove('selected'));
   el.classList.add('selected');
 }
+
+function validateCounselorProfileText(source){
+  const fields=source==='register'
+    ?[document.getElementById('cr-display-name'),document.getElementById('cr-bio')]
+    :[document.getElementById('counselor-display-name'),document.getElementById('counselor-specialty'),document.getElementById('counselor-bio')];
+  for(const field of fields){
+    if(!field)continue;
+    const match=classifyExternalContact(field.value||'');
+    if(match){
+      registerCounselorViolation(field.value,match,'profile',[]);
+      field.focus({preventScroll:true});
+      return false;
+    }
+  }
+  return true;
+}
+async function detectQRCodeInImage(file){
+  if(typeof BarcodeDetector==='undefined'||!file)return false;
+  try{
+    const formats=await BarcodeDetector.getSupportedFormats();
+    if(!formats.includes('qr_code'))return false;
+    const detector=new BarcodeDetector({formats:['qr_code']});
+    const bitmap=await createImageBitmap(file);
+    const codes=await detector.detect(bitmap);
+    if(bitmap.close)bitmap.close();
+    return codes.length>0;
+  }catch(_){return false}
+}
+
 function renderCounselorStep(){
   document.querySelectorAll('.counselor-step').forEach(el=>el.classList.toggle('on',Number(el.dataset.step)===counselorRegStep));
   document.getElementById('cr-step-label').textContent='STEP '+counselorRegStep+' / 4';
   document.getElementById('cr-step-bar').style.width=(counselorRegStep*25)+'%';
   document.getElementById('cr-type-review').textContent=counselorType;
 }
-function nextCounselorStep(){counselorRegStep=Math.min(4,counselorRegStep+1);renderCounselorStep()}
+function nextCounselorStep(){
+  if(counselorRegStep===3&&!validateCounselorProfileText('register'))return;
+  counselorRegStep=Math.min(4,counselorRegStep+1);renderCounselorStep()
+}
 function demoUpload(btn){btn.textContent='✓ 選択済み';btn.classList.add('done')}
 function submitCounselor(){
+  if(getIdentityBlocklist().includes('demo-identity-airi')){show('counselor-suspended');return}
+  if(!validateCounselorProfileText('register'))return;
   document.querySelectorAll('.counselor-step').forEach(el=>el.classList.remove('on'));
   document.querySelector('.step-head').style.display='none';
   document.getElementById('counselor-pending').hidden=false;
 }
 function saveCounselorProfile(){
-  document.getElementById('cp-status').textContent='保存しました';
+  const status=document.getElementById('cp-status');
+  if(!validateCounselorProfileText('profile')){status.textContent='外部連絡先を削除してください';status.style.color='#C85858';return}
+  status.textContent='保存しました';status.style.color='var(--green)';
 }
 function savePayout(){
   document.getElementById('payout-status').textContent='振込先を保存しました';
@@ -1965,8 +2102,15 @@ function choosePhotoFromLibrary(){
 function takeProfilePhoto(){
   document.getElementById('profile-photo-camera-input').click();
 }
-function applyProfilePhoto(file){
+async function applyProfilePhoto(file){
   if(!file||!file.type.startsWith('image/')){showToast('画像ファイルを選んでください');return}
+  if(profilePhotoTarget==='counselor'||profilePhotoTarget==='counselor-register'){
+    const hasQr=await detectQRCodeInImage(file);
+    if(hasQr){
+      registerCounselorViolation('[プロフィール画像内のQRコード]',{type:'QRコード'},'profile-image',[]);
+      return;
+    }
+  }
   const old=profilePhotoState[profilePhotoTarget].url;
   if(old&&old.startsWith('blob:'))URL.revokeObjectURL(old);
   const url=URL.createObjectURL(file);
@@ -2151,7 +2295,8 @@ show=function(name){
   const scroller=active&&active.querySelector('.content');
   if(scroller)scroller.scrollTop=0;
   if(name==='chat') startChatTimer();
-  if(name==='counselor'){updateCounselorModerationUI();if(getCounselorModerationState().suspended)setTimeout(()=>openSheet('counselor-suspended-sheet'),180)}
+  if(name==='payout')updateCounselorModerationUI();
+  if(name==='counselor'){updateCounselorModerationUI();if(getCounselorModerationState().suspended){setTimeout(()=>show('counselor-suspended'),80);return}}
   requestAnimationFrame(()=>{
     animateActiveScreen();
     const activeNow=document.getElementById('screen-'+name);
