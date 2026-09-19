@@ -532,6 +532,76 @@ input,textarea{caret-color:var(--coral)}
 .screen:not(.welcome):not(.chat)::before{animation-duration:8s}
 .screen:not(.welcome):not(.chat)::after{animation-duration:9.5s}
 
+
+/* TEST: premium-simple visual pass */
+:root{
+  --radius-card:22px;
+  --radius-soft:16px;
+  --shadow-soft:0 1px 0 rgba(87,78,102,.04),0 8px 24px rgba(87,78,102,.045);
+  --shadow-lift:0 14px 32px rgba(87,78,102,.10);
+}
+.topbar{padding:20px 22px 14px}
+.content{padding-left:22px;padding-right:22px}
+.logo{font-size:27px;letter-spacing:-.02em}
+.title{font-size:16px;letter-spacing:.02em}
+.ui-icon{stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;display:block}
+.iconbtn{box-shadow:none;border:1px solid rgba(87,78,102,.06);background:rgba(255,255,255,.9)}
+.card,.quick-card,.menu{
+  background:rgba(255,255,255,.94);
+  border:1px solid rgba(87,78,102,.045);
+  box-shadow:var(--shadow-soft);
+}
+.card::before,.quick-card::before,.menu::before{display:none}
+.section{margin-bottom:22px}
+.section-title{font-size:13px;letter-spacing:.015em}
+.hero{
+  border-radius:28px;
+  padding:22px;
+  box-shadow:0 10px 28px rgba(87,78,102,.13);
+  animation:none;
+}
+.hero h2{font-size:20px;letter-spacing:.005em;line-height:1.55;margin-top:8px}
+.hero p{font-size:11px;opacity:.72}
+.hero::before{opacity:.55;animation-duration:10s}
+.hero::after{opacity:.65;animation-duration:7s}
+.hero-motif-heart,.hero-motif-chat,.hero-motif-dot{opacity:.55}
+.primary,.small-primary{border-radius:999px}
+.primary::before,.small-primary::before{opacity:.35}
+.quick-grid{gap:10px}
+.quick-card{padding:17px}
+.quick-card .quick-icon{
+  width:38px;height:38px;border-radius:14px;
+  background:#F8F2F3;color:var(--plum);
+  animation:none;
+}
+.quick-card:nth-child(2) .quick-icon{background:#F5F2F8}
+.quick-title{font-size:12.5px}
+.quick-sub{font-size:10px}
+.badge{font-size:8.5px;padding:3px 7px}
+.avatar{animation:none}
+.dot{animation:onlinePulse 2.2s ease-out infinite}
+.menu{border-radius:22px}
+.menu-row{padding:17px 18px}
+.menu-icon{display:flex;align-items:center;justify-content:center;color:var(--plum)}
+.tabbar{padding-top:9px;border-top-color:rgba(87,78,102,.06)}
+.tabbar::before{display:none}
+.tab::before{background:rgba(242,131,123,.08)}
+.screen:not(.welcome):not(.chat)::before{background:rgba(242,131,123,.045);animation-duration:15s}
+.screen:not(.welcome):not(.chat)::after{border-color:rgba(87,78,102,.025);animation-duration:17s}
+.logo{animation:none}
+.reveal-item.motion-reveal{
+  transform:translateY(24px) scale(.985)!important;
+  transition:opacity .48s ease,transform .58s cubic-bezier(.2,1,.3,1)!important;
+}
+.bottom-sheet.on{animation-duration:.44s}
+@media(hover:hover) and (pointer:fine){
+  .card:hover,.quick-card:hover,.menu:hover{
+    transform:translateY(-4px) scale(1.006);
+    box-shadow:var(--shadow-lift);
+  }
+  .quick-card:hover .quick-icon{transform:translateY(-2px) scale(1.06)}
+}
+
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}
 }
@@ -602,7 +672,7 @@ input,textarea{caret-color:var(--coral)}
 <section id="screen-home" class="screen">
   <div class="topbar">
     <div class="logo">KoiRela</div>
-    <button class="iconbtn" onclick="show('mypage')" aria-label="マイページ">👤</button>
+    <button class="iconbtn" onclick="show('mypage')" aria-label="マイページ"><svg class="ui-icon" width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.7-3.7 3.2-5.7 7-5.7s6.3 2 7 5.7"/></svg></button>
   </div>
   <div class="content">
     <div class="hero reveal-item">
@@ -639,10 +709,10 @@ input,textarea{caret-color:var(--coral)}
       <div class="section-head"><div class="section-title">すぐできること</div></div>
       <div class="quick-grid">
         <button class="quick-card" onclick="show('find')">
-          <div class="quick-icon">🔎</div><div class="quick-title">相手を探す</div><div class="quick-sub">経験者・資格者から選ぶ</div>
+          <div class="quick-icon"><svg class="ui-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.2"/><path d="m15.3 15.3 4.5 4.5"/></svg></div><div class="quick-title">相手を探す</div><div class="quick-sub">経験者・資格者から選ぶ</div>
         </button>
         <button class="quick-card" onclick="show('history')">
-          <div class="quick-icon">🕘</div><div class="quick-title">相談履歴</div><div class="quick-sub">過去の相談を確認する</div>
+          <div class="quick-icon"><svg class="ui-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg></div><div class="quick-title">相談履歴</div><div class="quick-sub">過去の相談を確認する</div>
         </button>
       </div>
     </div>
@@ -657,7 +727,7 @@ input,textarea{caret-color:var(--coral)}
 <section id="screen-find" class="screen">
   <div class="topbar">
     <div class="title">相談相手をさがす</div>
-    <button class="iconbtn" aria-label="絞り込み">☰</button>
+    <button class="iconbtn" aria-label="絞り込み"><svg class="ui-icon" width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button>
   </div>
   <div class="content">
     <div class="search-box reveal-item">
@@ -764,11 +834,11 @@ input,textarea{caret-color:var(--coral)}
     </div>
     <div class="section reveal-item">
       <div class="menu reveal-item">
-        <button class="menu-row" onclick="show('history')"><span class="menu-icon">🕘</span><span class="grow">相談履歴</span><span>›</span></button>
-        <button class="menu-row" onclick="openSheet('payment-sheet')"><span class="menu-icon">💳</span><span class="grow">支払い方法</span><span>›</span></button>
-        <button class="menu-row" onclick="show('support')"><span class="menu-icon">💬</span><span class="grow">お問い合わせ</span><span>›</span></button>
-        <button class="menu-row" onclick="show('settings')"><span class="menu-icon">⚙️</span><span class="grow">設定</span><span>›</span></button>
-        <button class="menu-row" onclick="show('counselor')"><span class="menu-icon">♡</span><span class="grow">相談員モード</span><span>›</span></button>
+        <button class="menu-row" onclick="show('history')"><span class="menu-icon"><svg class="ui-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg></span><span class="grow">相談履歴</span><span>›</span></button>
+        <button class="menu-row" onclick="openSheet('payment-sheet')"><span class="menu-icon"><svg class="ui-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="3"/><path d="M3.5 9.5h17M7 15h4"/></svg></span><span class="grow">支払い方法</span><span>›</span></button>
+        <button class="menu-row" onclick="show('support')"><span class="menu-icon"><svg class="ui-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5.5h14v10H9l-4 3v-13Z"/></svg></span><span class="grow">お問い合わせ</span><span>›</span></button>
+        <button class="menu-row" onclick="show('settings')"><span class="menu-icon"><svg class="ui-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19 12a7.2 7.2 0 0 0-.1-1l2-1.5-2-3.4-2.4 1A8.4 8.4 0 0 0 14.7 6L14.4 3h-4.8L9.3 6a8.4 8.4 0 0 0-1.8 1.1l-2.4-1-2 3.4 2 1.5A7.2 7.2 0 0 0 5 12c0 .3 0 .7.1 1l-2 1.5 2 3.4 2.4-1A8.4 8.4 0 0 0 9.3 18l.3 3h4.8l.3-3a8.4 8.4 0 0 0 1.8-1.1l2.4 1 2-3.4-2-1.5c.1-.3.1-.7.1-1Z"/></svg></span><span class="grow">設定</span><span>›</span></button>
+        <button class="menu-row" onclick="show('counselor')"><span class="menu-icon"><svg class="ui-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.6 5.8c-2-2-5.2-2-7.2 0L12 7.2l-1.4-1.4c-2-2-5.2-2-7.2 0s-2 5.2 0 7.2L12 21l8.6-8c2-2 2-5.2 0-7.2Z"/></svg></span><span class="grow">相談員モード</span><span>›</span></button>
       </div>
     </div>
   </div>
