@@ -532,6 +532,39 @@ input,textarea{caret-color:var(--coral)}
 .screen:not(.welcome):not(.chat)::before{animation-duration:8s}
 .screen:not(.welcome):not(.chat)::after{animation-duration:9.5s}
 
+
+/* profile image registration */
+.avatar-photo-button{border:0;cursor:pointer;overflow:visible;position:relative;box-shadow:0 10px 24px rgba(87,78,102,.10)}
+.avatar-photo-button:hover{transform:translateY(-4px) scale(1.025)}
+.avatar-camera{
+  position:absolute;right:-3px;bottom:-3px;width:28px;height:28px;border-radius:50%;
+  background:var(--coral);color:#fff;border:3px solid #fff;display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;box-shadow:0 6px 14px rgba(242,131,123,.26)
+}
+.avatar.has-photo,.photo-sheet-preview.has-photo{background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;color:transparent}
+.avatar.has-photo>.avatar-initial,.photo-sheet-preview.has-photo>.avatar-initial{opacity:0}
+.photo-register-row{
+  width:100%;display:flex;align-items:center;gap:12px;padding:12px 13px;border:1px solid var(--line);
+  background:#FBF8FA;border-radius:18px;text-align:left
+}
+.photo-register-row>.avatar{width:48px;height:48px;font-size:16px}
+.photo-register-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+.photo-register-copy b{font-size:12px}.photo-register-copy small{font-size:9.5px;color:var(--muted)}
+.photo-sheet-preview-wrap{display:flex;justify-content:center;margin-bottom:6px}
+.photo-sheet-preview{width:82px;height:82px;font-size:28px;box-shadow:0 12px 26px rgba(87,78,102,.10)}
+.photo-action{
+  width:100%;display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:10px;
+  text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);transition:transform .2s var(--spring),background .2s ease
+}
+.photo-action:active{transform:scale(.98);background:#FFF8F7}
+.photo-action-icon{
+  width:38px;height:38px;border-radius:15px 15px 15px 6px;background:var(--pink);color:var(--plum);
+  display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700
+}
+.photo-action>span:nth-child(2){display:flex;flex-direction:column;gap:2px}
+.photo-action b{font-size:12px}.photo-action small{font-size:9.5px;color:var(--muted)}
+.photo-chevron{color:#B9B3C4;font-size:20px}.photo-action.danger{color:#C85858}.photo-action.danger .photo-action-icon{background:#FFF0F0;color:#C85858}
+
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}
 }
@@ -757,7 +790,7 @@ input,textarea{caret-color:var(--coral)}
   <div class="content">
     <div class="section reveal-item">
       <div class="card user-card reveal-item">
-        <span class="avatar" style="background:#F5D0DC">も</span>
+        <span id="mypage-avatar" class="avatar" style="background:#F5D0DC"><span class="avatar-initial">も</span></span>
         <div class="user-info"><div class="user-name">ももか</div><div class="user-sub">匿名で利用中</div></div>
         <button class="outline" onclick="show('edit-profile')">編集</button>
       </div>
@@ -804,7 +837,10 @@ input,textarea{caret-color:var(--coral)}
   <div class="topbar"><button class="iconbtn" onclick="show('mypage')" aria-label="戻る">‹</button><div class="title">プロフィール編集</div><div style="width:42px"></div></div>
   <div class="content">
     <div class="card form-card reveal-item">
-      <div class="avatar profile-edit-avatar">も</div>
+      <button id="user-profile-photo-button" class="avatar profile-edit-avatar avatar-photo-button" type="button" onclick="openPhotoSheet('user')" aria-label="プロフィール画像を変更">
+        <span class="avatar-initial">も</span>
+        <span class="avatar-camera" aria-hidden="true">⌁</span>
+      </button>
       <label class="field-label">ニックネーム</label>
       <input class="field" value="ももか" maxlength="20">
       <label class="field-label">年代</label>
@@ -1024,6 +1060,12 @@ input,textarea{caret-color:var(--coral)}
     </div>
     <div class="card form-card counselor-step" data-step="3">
       <h3>公開プロフィール</h3>
+      <label class="field-label">プロフィール画像</label>
+      <button id="counselor-register-photo" class="photo-register-row" type="button" onclick="openPhotoSheet('counselor-register')">
+        <span class="avatar"><span class="avatar-initial">あ</span></span>
+        <span class="photo-register-copy"><b>画像を登録</b><small>相談相手に表示される画像です</small></span>
+        <span aria-hidden="true">›</span>
+      </button>
       <label class="field-label">表示名</label><input class="field" value="あいり">
       <label class="field-label">自己紹介</label><textarea class="field textarea tall">復縁や片思いの相談をよく受けています。まとまっていなくても、そのまま話してください。</textarea>
       <label class="field-label">資格証明（資格者のみ）</label><button class="upload-box" onclick="demoUpload(this)">＋ 資格証を選択</button>
@@ -1045,7 +1087,10 @@ input,textarea{caret-color:var(--coral)}
   <div class="topbar"><button class="iconbtn" onclick="show('counselor')" aria-label="戻る">‹</button><div class="title">相談員プロフィール</div><div style="width:42px"></div></div>
   <div class="content">
     <div class="card form-card reveal-item">
-      <div class="avatar profile-edit-avatar">あ<span class="dot"></span></div>
+      <button id="counselor-profile-photo-button" class="avatar profile-edit-avatar avatar-photo-button" type="button" onclick="openPhotoSheet('counselor')" aria-label="相談員プロフィール画像を変更">
+        <span class="avatar-initial">あ</span><span class="dot"></span>
+        <span class="avatar-camera" aria-hidden="true">⌁</span>
+      </button>
       <label class="field-label">表示名</label><input class="field" value="あいり">
       <label class="field-label">肩書き</label><select class="field"><option>経験者</option><option>資格者</option></select>
       <label class="field-label">得意な相談</label><input class="field" value="復縁・片思い">
@@ -1289,6 +1334,33 @@ input,textarea{caret-color:var(--coral)}
   <p id="status-message">処理が完了しました。</p>
   <button class="primary" type="button" onclick="closeSheet()">OK</button>
 </div>
+
+
+<div id="photo-sheet" class="bottom-sheet photo-sheet" role="dialog" aria-modal="true" aria-labelledby="photo-sheet-title">
+  <div class="sheet-handle"></div>
+  <div class="photo-sheet-preview-wrap">
+    <div id="photo-sheet-preview" class="avatar photo-sheet-preview"><span class="avatar-initial">も</span></div>
+  </div>
+  <h3 id="photo-sheet-title">画像を変更</h3>
+  <button class="photo-action" type="button" onclick="choosePhotoFromLibrary()">
+    <span class="photo-action-icon" aria-hidden="true">▧</span>
+    <span><b>写真を選ぶ</b><small>写真ライブラリから選択</small></span>
+    <span class="photo-chevron" aria-hidden="true">›</span>
+  </button>
+  <button class="photo-action" type="button" onclick="takeProfilePhoto()">
+    <span class="photo-action-icon" aria-hidden="true">◎</span>
+    <span><b>写真を撮る</b><small>カメラで新しく撮影</small></span>
+    <span class="photo-chevron" aria-hidden="true">›</span>
+  </button>
+  <button id="photo-delete-action" class="photo-action danger" type="button" onclick="deleteProfilePhoto()">
+    <span class="photo-action-icon" aria-hidden="true">×</span>
+    <span><b>現在の画像を削除</b><small>初期アイコンに戻します</small></span>
+  </button>
+  <button class="sheet-cancel" type="button" onclick="closeSheet()">キャンセル</button>
+</div>
+
+<input id="profile-photo-library-input" class="sr-only" type="file" accept="image/*" aria-label="プロフィール写真を選ぶ">
+<input id="profile-photo-camera-input" class="sr-only" type="file" accept="image/*" capture="user" aria-label="プロフィール写真を撮る">
 
 <div id="delete-sheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-label="アカウント削除">
   <div class="sheet-handle"></div>
@@ -1682,6 +1754,79 @@ function connectProvider(btn,name){
   btn.outerHTML='<span class="connected-badge">連携済み</span>';
   showToast(name+'を連携しました（デモ）');
 }
+
+
+let profilePhotoTarget='user';
+const profilePhotoState={
+  user:{url:'',initial:'も'},
+  counselor:{url:'',initial:'あ'},
+  'counselor-register':{url:'',initial:'あ'}
+};
+
+function getPhotoTargetElement(target){
+  if(target==='user')return document.getElementById('user-profile-photo-button');
+  if(target==='counselor')return document.getElementById('counselor-profile-photo-button');
+  if(target==='counselor-register')return document.querySelector('#counselor-register-photo .avatar');
+  return null;
+}
+function syncPhotoPreview(){
+  const state=profilePhotoState[profilePhotoTarget];
+  const preview=document.getElementById('photo-sheet-preview');
+  if(!state||!preview)return;
+  preview.innerHTML='<span class="avatar-initial">'+state.initial+'</span>';
+  preview.style.backgroundImage=state.url?'url("'+state.url+'")':'';
+  preview.classList.toggle('has-photo',!!state.url);
+  document.getElementById('photo-delete-action').disabled=!state.url;
+  document.getElementById('photo-delete-action').style.opacity=state.url?'1':'.42';
+}
+function openPhotoSheet(target){
+  profilePhotoTarget=target;
+  syncPhotoPreview();
+  openSheet('photo-sheet');
+}
+function choosePhotoFromLibrary(){
+  document.getElementById('profile-photo-library-input').click();
+}
+function takeProfilePhoto(){
+  document.getElementById('profile-photo-camera-input').click();
+}
+function applyProfilePhoto(file){
+  if(!file||!file.type.startsWith('image/')){showToast('画像ファイルを選んでください');return}
+  const old=profilePhotoState[profilePhotoTarget].url;
+  if(old&&old.startsWith('blob:'))URL.revokeObjectURL(old);
+  const url=URL.createObjectURL(file);
+  profilePhotoState[profilePhotoTarget].url=url;
+
+  const target=getPhotoTargetElement(profilePhotoTarget);
+  if(target){
+    target.style.backgroundImage='url("'+url+'")';
+    target.classList.add('has-photo');
+  }
+  if(profilePhotoTarget==='user'){
+    const my=document.getElementById('mypage-avatar');
+    if(my){my.style.backgroundImage='url("'+url+'")';my.classList.add('has-photo')}
+  }
+  syncPhotoPreview();
+  closeSheet();
+  showToast('プロフィール画像を変更しました');
+}
+function deleteProfilePhoto(){
+  const state=profilePhotoState[profilePhotoTarget];
+  if(state.url&&state.url.startsWith('blob:'))URL.revokeObjectURL(state.url);
+  state.url='';
+  const target=getPhotoTargetElement(profilePhotoTarget);
+  if(target){target.style.backgroundImage='';target.classList.remove('has-photo')}
+  if(profilePhotoTarget==='user'){
+    const my=document.getElementById('mypage-avatar');
+    if(my){my.style.backgroundImage='';my.classList.remove('has-photo')}
+  }
+  closeSheet();
+  showToast('プロフィール画像を削除しました');
+}
+const photoLibraryInput=document.getElementById('profile-photo-library-input');
+const photoCameraInput=document.getElementById('profile-photo-camera-input');
+if(photoLibraryInput)photoLibraryInput.addEventListener('change',e=>{applyProfilePhoto(e.target.files&&e.target.files[0]);e.target.value=''});
+if(photoCameraInput)photoCameraInput.addEventListener('change',e=>{applyProfilePhoto(e.target.files&&e.target.files[0]);e.target.value=''});
 
 let checkoutStep=0;
 function renderCheckoutSteps(activeStep){
