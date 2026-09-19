@@ -114,3 +114,30 @@
 - 相談員側の登録・審査・受付・プロフィール・報酬・履歴をカバー
 - 認証は Apple / Google / LINE の3方式を想定
 - 実際のOAuth、本人確認、決済、バックエンド、法務文書は未接続
+
+
+## UX / アクセシビリティ改善監査（2026-09-20）
+適用済み:
+- ネイティブ form のメール/パスワードログイン
+- email autocomplete="username"
+- password autocomplete="current-password"
+- Enterでログイン送信
+- パスワード表示/非表示ボタン
+- Google / Apple / LINE のソーシャルログイン
+- ログイン方法の or 区切り
+- 相談開始フローの3段階Steps（確認 / Payment / 開始）
+- checkout stepは単一のzero-based indexから completed/current/upcoming を描画
+- current stepに aria-current="step"
+- 支払い方法と相談員種別にネイティブ radio
+- 通知にネイティブ checkbox role="switch"
+- 独立設定にネイティブ checkbox
+- 生年月日にcivil date文字列を使うカレンダーポップオーバー
+- カレンダーの矢印キー / PageUp / PageDown / Escape操作
+- input / textarea の caret-color
+- 利用規約 / プライバシーポリシーにScrollspy
+- Scrollspyに aria-current="location" とIntersectionObserver/rootMargin
+- 画面遷移先・シート参照先・duplicate id・JavaScript構文を監査
+
+見送り:
+- Masonry: 相談員一覧は比較しやすい縦並びの方が適切で、Pinterest型は順序と読みやすさを悪化させるため不採用
+- macOS NSAlert: KoiRelaはiOS/Web向けのため直接適用しない。確認UIは既存のアクセシブルなdialog/bottom sheet方式を継続
