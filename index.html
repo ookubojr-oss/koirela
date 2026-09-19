@@ -456,6 +456,82 @@ input,textarea{caret-color:var(--coral)}
   .primary,.small-primary,.outline,.quick-card,.listener,.menu-row,.tab,.iconbtn{will-change:transform}
 }
 
+
+/* stronger motion, same simple UI */
+.screen.active{animation:screenInStrong .56s cubic-bezier(.18,1,.25,1)}
+@keyframes screenInStrong{
+  0%{opacity:0;transform:translateY(28px) scale(.965)}
+  62%{opacity:1;transform:translateY(-4px) scale(1.008)}
+  100%{opacity:1;transform:none}
+}
+.hero{animation:heroBreath 5.2s ease-in-out infinite}
+@keyframes heroBreath{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-4px) scale(1.012)}
+}
+.hero::before{animation-duration:5.2s}
+.hero::after{animation-duration:3.6s}
+
+.primary,.small-primary,.outline,.iconbtn,.tab{
+  transition:transform .28s cubic-bezier(.16,1.35,.3,1),box-shadow .28s ease,background .22s ease
+}
+.primary:active,.small-primary:active,.outline:active,.iconbtn:active,.send:active{
+  transform:scale(.87) rotate(-1.5deg)
+}
+.primary:hover,.small-primary:hover{
+  transform:translateY(-3px) scale(1.025);
+  box-shadow:0 16px 30px rgba(242,131,123,.3)
+}
+.iconbtn:hover{transform:translateY(-5px) rotate(7deg) scale(1.04)}
+
+.card,.quick-card,.menu{
+  transition:transform .34s cubic-bezier(.16,1.25,.3,1),box-shadow .34s ease
+}
+@media(hover:hover) and (pointer:fine){
+  .card:hover,.quick-card:hover,.menu:hover{
+    transform:translateY(-8px) scale(1.015) rotate(.25deg);
+    box-shadow:0 24px 48px rgba(87,78,102,.16)
+  }
+}
+.tap-pop{animation:tapPopStrong .46s cubic-bezier(.15,1.4,.3,1)}
+@keyframes tapPopStrong{
+  0%{transform:scale(1)}
+  35%{transform:scale(.91) rotate(-1.2deg)}
+  68%{transform:scale(1.045) rotate(.7deg)}
+  100%{transform:scale(1)}
+}
+.tab.on svg{animation:tabBounceStrong .78s cubic-bezier(.15,1.45,.3,1)}
+@keyframes tabBounceStrong{
+  0%{transform:translateY(6px) scale(.68) rotate(-8deg)}
+  45%{transform:translateY(-8px) scale(1.22) rotate(6deg)}
+  72%{transform:translateY(2px) scale(.94) rotate(-2deg)}
+  100%{transform:none}
+}
+.quick-icon{animation-duration:2.2s}
+.avatar{animation-duration:2.8s}
+.logo{animation-duration:4s}
+
+.reveal-item.motion-reveal{
+  opacity:0!important;
+  transform:translateY(34px) scale(.95)!important;
+  transition:opacity .56s ease,transform .7s cubic-bezier(.16,1.18,.3,1)!important
+}
+.reveal-item.motion-reveal.is-visible{
+  opacity:1!important;transform:none!important
+}
+.bottom-sheet.on{animation:koirelaSheetInStrong .52s cubic-bezier(.16,1.25,.3,1)}
+@keyframes koirelaSheetInStrong{
+  0%{transform:translateY(112%) scale(.96);opacity:.45}
+  66%{transform:translateY(-10px) scale(1.012);opacity:1}
+  100%{transform:translateY(0) scale(1)}
+}
+
+.hero-motif-heart{animation-duration:3.8s}
+.hero-motif-chat{animation-duration:4.6s}
+.hero-motif-dot{animation-duration:4.8s}
+.screen:not(.welcome):not(.chat)::before{animation-duration:8s}
+.screen:not(.welcome):not(.chat)::after{animation-duration:9.5s}
+
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}
 }
@@ -1379,7 +1455,7 @@ let scrollEndTimer=null;
 
 document.querySelectorAll('.content').forEach(scroller=>{
   scroller.addEventListener('scroll',()=>{
-    const shift=Math.max(-24,Math.min(24,scroller.scrollTop*.035));
+    const shift=Math.max(-36,Math.min(36,scroller.scrollTop*.05));
     const phone=document.querySelector('.phone');
     phone.style.setProperty('--scroll-shift',shift+'px');
     phone.classList.add('is-scrolling');
@@ -1415,31 +1491,11 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches){
       const r=el.getBoundingClientRect();
       const x=(e.clientX-(r.left+r.width/2))/r.width;
       const y=(e.clientY-(r.top+r.height/2))/r.height;
-      el.style.transform='translate('+(x*5)+'px,'+(y*4)+'px) scale(1.015)';
+      el.style.transform='translate('+(x*8)+'px,'+(y*6)+'px) scale(1.025)';
     });
     el.addEventListener('pointerleave',()=>{el.style.transform=''});
   });
 }
-
-document.querySelectorAll('button').forEach(btn=>{
-  btn.addEventListener('pointerdown',e=>{
-    const phone=document.querySelector('.phone');
-    const pr=phone.getBoundingClientRect();
-    for(let i=0;i<5;i++){
-      const s=document.createElement('span');
-      s.className='spark';
-      s.style.left=(e.clientX-pr.left)+'px';
-      s.style.top=(e.clientY-pr.top)+'px';
-      const a=(Math.PI*2/5)*i;
-      const d=24+Math.random()*18;
-      s.style.setProperty('--dx',(Math.cos(a)*d)+'px');
-      s.style.setProperty('--dy',(Math.sin(a)*d)+'px');
-      phone.appendChild(s);
-      setTimeout(()=>s.remove(),650);
-    }
-  });
-});
-
 
 let activeSheet=null;
 function openSheet(id){
