@@ -64,13 +64,17 @@ Deno.serve(async req=>{
     if(!fresh.length)return Response.json({error:"All eligible payments are already allocated"},{status:409,headers:corsHeaders});
 
     const gross=fresh.reduce((sum:number,x:any)=>sum+Number(x.amount_jpy||0),0);
-    const feeRaw=Deno.env.get("PLATFORM_FEE_PERCENT");
-    if(feeRaw==null||feeRaw.trim()===""){
+    const {data:policy,error:policyError}=await supabase
+      .from("app_settings")
+      .select("value")
+      .eq("key","payout_policy")
+      .maybeSingle();
+    if(policyError)throw policyError;
+
+    const policyValue=(policy?.value??{}) as Record<string,unknown>;
+    const feePercent=Number(policyValue.platform_fee_percent);
+    if(policyValue.enabled!==true||!Number.isFinite(feePercent)||feePercent<0||feePercent>100){
       return Response.json({error:"Payout policy is not configured"},{status:503,headers:corsHeaders});
-    }
-    const feePercent=Number(feeRaw);
-    if(!Number.isFinite(feePercent)||feePercent<0||feePercent>100){
-      return Response.json({error:"Payout policy is invalid"},{status:503,headers:corsHeaders});
     }
     const platformFee=Math.floor(gross*feePercent/100);
     const net=Math.max(0,gross-platformFee);
