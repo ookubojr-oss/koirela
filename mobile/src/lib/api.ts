@@ -224,7 +224,7 @@ export async function listConsultationHistory() {
   if (!auth.user) throw new Error("ログインが必要です");
   const { data, error } = await supabase
     .from("consultations")
-    .select("id,status,price_jpy,duration_seconds,started_at,ends_at,ended_at,created_at,counselor_id,counselor:counselor_profiles!consultations_counselor_id_fkey(display_name,avatar_path,counselor_type,gender,specialty,bio,qualification_label,is_suspended,verification_status)")
+    .select("id,status,price_jpy,duration_seconds,started_at,ends_at,ended_at,created_at,counselor_id,counselor:counselor_profiles!consultations_counselor_id_fkey(display_name,avatar_path,counselor_type,gender,specialty,bio,qualification_label,is_suspended,verification_status,counselor_availability(is_accepting))")
     .eq("user_id", auth.user.id)
     .order("created_at", { ascending: false });
   if (error) throw error;
@@ -270,7 +270,7 @@ export async function listFavoriteCounselors() {
   if (!auth.user) throw new Error("ログインが必要です");
   const { data, error } = await supabase
     .from("favorites")
-    .select("counselor_id,created_at,counselor:counselor_profiles!favorites_counselor_id_fkey(user_id,display_name,counselor_type,gender,specialty,bio,avatar_path,qualification_label,is_suspended,verification_status)")
+    .select("counselor_id,created_at,counselor:counselor_profiles!favorites_counselor_id_fkey(user_id,display_name,counselor_type,gender,specialty,bio,avatar_path,qualification_label,is_suspended,verification_status,counselor_availability(is_accepting))")
     .eq("user_id", auth.user.id)
     .order("created_at", { ascending: false });
   if (error) throw error;
