@@ -232,11 +232,26 @@ function renderOperations() {
     if (!current || Date.parse(p.created_at) > Date.parse(current.created_at)) paymentByConsultation.set(p.consultation_id,p);
   });
 
+  const counselorRows = document.getElementById("counselor-rows");
+  const counselors = [...state.counselors.values()].sort((a,b) => String(a.display_name).localeCompare(String(b.display_name),"ja"));
+  counselorRows.innerHTML = counselors.length ? counselors.map(c => {
+    const stateLabel = c.is_suspended ? "停止中" : "利用可能";
+    const action = c.is_suspended
+      ? '<button data-restore="'+esc(c.user_id)+'">停止解除</button>'
+      : '<button class="danger-button" data-force-suspend="'+esc(c.user_id)+'">強制停止</button>';
+    return '<tr><td>'+esc(c.display_name)+'</td><td>'+esc(c.user_id.slice(0,8))+'…</td><td>'+esc(c.verification_status)+'</td><td>'+esc(stateLabel)+'</td><td>'+action+'</td></tr>';
+  }).join("") : '<tr><td colspan="5">相談員がいません。</td></tr>';
+
   const consultationRows = document.getElementById("consultation-rows");
   consultationRows.innerHTML = state.consultations.length ? state.consultations.map(c => {
     const p = paymentByConsultation.get(c.id);
-    return '<tr><td>'+esc(fmt(c.created_at))+'</td><td>'+esc(c.id.slice(0,8))+'…</td><td>'+esc(c.status)+'</td><td>'+Number(c.price_jpy||0).toLocaleString()+'円</td><td>'+esc(p?.status||"—")+'</td></tr>';
-  }).join("") : '<tr><td colspan="5">相談履歴はまだありません。</td></tr>';
+    const canEnd = ["awaiting_payment","waiting","active"].includes(c.status);
+    const canRefund = p?.status === "succeeded" && c.status !== "refunded";
+    const actions =
+      (canEnd ? '<button data-force-end="'+esc(c.id)+'">強制終了</button> ' : '') +
+      (canRefund ? '<button class="danger-button" data-refund="'+esc(c.id)+'">返金</button>' : '');
+    return '<tr><td>'+esc(fmt(c.created_at))+'</td><td>'+esc(c.id.slice(0,8))+'…</td><td>'+esc(c.status)+'</td><td>'+Number(c.price_jpy||0).toLocaleString()+'円</td><td>'+esc(p?.status||"—")+'</td><td>'+actions+'</td></tr>';
+  }).join("") : '<tr><td colspan="6">相談履歴はまだありません。</td></tr>';
 
   const support = document.getElementById("support-list");
   support.innerHTML = state.support.length ? state.support.map(t =>
@@ -299,7 +314,37 @@ async function openVerificationDocument(path) {
   window.open(data.signedUrl, "_blank", "noopener,noreferrer");
 }
 
+async function runAdminOperation(body) {
+  const { data, error } = await supabase.functions.invoke("admin-operations", { body });
+  if (error) throw error;
+  return data;
+}
+
 function bindActions() {
+  document.querySelectorAll("[data-force-suspend]").forEach(btn => btn.addEventListener("click", async () => {
+    const counselorId=btn.dataset.forceSuspend;
+    const reason=prompt("停止理由を入力してください","運営判断による停止");
+    if(reason===null)return;
+    if(!confirm("この相談員を強制停止しますか？"))return;
+    btn.disabled=true;
+    try{await runAdminOperation({action:"suspend_counselor",counselorId,reason});}catch(e){alert(e.message||"停止できませんでした");}
+    await loadAll();
+  }));
+
+  document.querySelectorAll("[data-force-end]").forEach(btn => btn.addEventListener("click", async () => {
+    if(!confirm("この相談を運営側から終了しますか？"))return;
+    btn.disabled=true;
+    try{await runAdminOperation({action:"force_end_consultation",consultationId:btn.dataset.forceEnd});}catch(e){alert(e.message||"終了できませんでした");}
+    await loadAll();
+  }));
+
+  document.querySelectorAll("[data-refund]").forEach(btn => btn.addEventListener("click", async () => {
+    if(!confirm("この相談の決済をStripeで返金しますか？ この操作は実際の返金処理を行います。"))return;
+    btn.disabled=true;
+    try{await runAdminOperation({action:"refund_consultation",consultationId:btn.dataset.refund});}catch(e){alert(e.message||"返金できませんでした");}
+    await loadAll();
+  }));
+
   document.querySelectorAll("[data-support-answer]").forEach(btn => btn.addEventListener("click", async () => {
     const id=btn.dataset.supportAnswer;
     const reply=document.getElementById("reply-"+id)?.value?.trim()||"";
