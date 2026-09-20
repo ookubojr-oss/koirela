@@ -24,6 +24,83 @@ Deno.serve(async req => {
     const payload = await req.json();
     const action = String(payload.action || "");
 
+    if (action === "search_accounts") {
+      const query=String(payload.query||"").trim().toLowerCase();
+      const authUsers:any[]=[];
+
+      for(let page=1;page<=5;page++){
+        const {data,error}=await supabase.auth.admin.listUsers({page,perPage:100});
+        if(error)throw error;
+        authUsers.push(...(data.users||[]));
+        if((data.users||[]).length<100)break;
+      }
+
+      const {data:profiles,error:profileError}=await supabase
+        .from("profiles")
+        .select("id,nickname,role,is_suspended,suspended_at,suspension_reason,created_at")
+        .limit(500);
+      if(profileError)throw profileError;
+
+      const profileMap=new Map((profiles||[]).map((p:any)=>[p.id,p]));
+      const matched=authUsers.filter((u:any)=>{
+        const p=profileMap.get(u.id) as any;
+        if(!query)return true;
+        return [
+          u.id,
+          u.email||"",
+          p?.nickname||"",
+          p?.role||""
+        ].join(" ").toLowerCase().includes(query);
+      }).slice(0,50).map((u:any)=>{
+        const p=profileMap.get(u.id) as any;
+        return {
+          id:u.id,
+          email:u.email||null,
+          nickname:p?.nickname||"ユーザー",
+          role:p?.role||"user",
+          isSuspended:Boolean(p?.is_suspended),
+          suspendedAt:p?.suspended_at||null,
+          suspensionReason:p?.suspension_reason||null,
+          createdAt:u.created_at||p?.created_at||null
+        };
+      });
+
+      return Response.json({accounts:matched},{headers:corsHeaders});
+    }
+
+    if (action === "suspend_user" || action === "restore_user") {
+      const targetUserId=String(payload.userId||"");
+      if(!targetUserId)throw new Error("userId is required");
+      if(targetUserId===user.id)throw new Error("Cannot suspend your own admin account");
+
+      const suspend=action==="suspend_user";
+      const reason=String(payload.reason||"運営判断による利用停止").slice(0,500);
+
+      const {error}=await supabase.from("profiles").update({
+        is_suspended:suspend,
+        suspended_at:suspend?new Date().toISOString():null,
+        suspension_reason:suspend?reason:null,
+        updated_at:new Date().toISOString()
+      }).eq("id",targetUserId);
+      if(error)throw error;
+
+      if(suspend){
+        await supabase.from("counselor_availability")
+          .update({is_accepting:false,updated_at:new Date().toISOString()})
+          .eq("counselor_id",targetUserId);
+      }
+
+      await supabase.from("admin_audit_logs").insert({
+        admin_id:user.id,
+        action:suspend?"suspend_user":"restore_user",
+        target_type:"user",
+        target_id:targetUserId,
+        metadata:suspend?{reason}:{}
+      });
+
+      return Response.json({ok:true,suspended:suspend},{headers:corsHeaders});
+    }
+
     if (action === "suspend_counselor") {
       const counselorId = String(payload.counselorId || "");
       const reason = String(payload.reason || "運営判断による停止").slice(0, 500);
