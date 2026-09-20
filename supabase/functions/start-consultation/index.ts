@@ -1,5 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { authenticatedUser, serviceClient } from "../_shared/clients.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { pushToUser } from "../_shared/push.ts";
 
 Deno.serve(async (req) => {
@@ -10,6 +11,7 @@ Deno.serve(async (req) => {
     const payload = await req.json();
     const consultationId = payload.consultationId;
     const supabase = serviceClient();
+    await enforceRateLimit(supabase,"consultation-start",user.id,20,300);
 
     const { data: consultation, error } = await supabase
       .from("consultations")
@@ -92,7 +94,7 @@ Deno.serve(async (req) => {
   } catch (error) {
     return Response.json(
       { error: error instanceof Error ? error.message : "Unknown error" },
-      { status: 400, headers: corsHeaders }
+      { status: error instanceof Error && error.message === "RATE_LIMITED" ? 429 : 400, headers: corsHeaders }
     );
   }
 });
