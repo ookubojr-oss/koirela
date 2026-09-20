@@ -37,14 +37,23 @@ for select using (
   or public.is_admin()
 );
 
+create policy counselor_insert_self on public.counselor_profiles
+for insert with check (user_id=auth.uid());
+
 create policy counselor_update_self on public.counselor_profiles
 for update using (user_id=auth.uid()) with check (user_id=auth.uid());
+
+create policy counselor_admin_all on public.counselor_profiles
+for all using (public.is_admin()) with check (public.is_admin());
 
 create policy verification_self_read on public.counselor_verifications
 for select using (counselor_id=auth.uid() or public.is_admin());
 
 create policy verification_self_insert on public.counselor_verifications
 for insert with check (counselor_id=auth.uid());
+
+create policy verification_admin_all on public.counselor_verifications
+for all using (public.is_admin()) with check (public.is_admin());
 
 create policy consultations_participant_read on public.consultations
 for select using (user_id=auth.uid() or counselor_id=auth.uid() or public.is_admin());
@@ -91,6 +100,9 @@ for insert with check (reporter_id=auth.uid());
 create policy reports_reporter_read on public.reports
 for select using (reporter_id=auth.uid() or public.is_admin());
 
+create policy reports_admin_update on public.reports
+for update using (public.is_admin()) with check (public.is_admin());
+
 create policy moderation_admin_only on public.moderation_events
 for all using (public.is_admin()) with check (public.is_admin());
 
@@ -104,3 +116,4 @@ create policy push_tokens_self_all on public.push_tokens
 for all using (user_id=auth.uid()) with check (user_id=auth.uid());
 
 grant select on public.counselor_directory to anon, authenticated;
+grant usage on schema public to anon, authenticated;
