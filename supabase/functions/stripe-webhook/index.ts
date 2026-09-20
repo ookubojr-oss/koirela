@@ -92,10 +92,24 @@ Deno.serve(async (req) => {
 
   if (event.type === "payment_intent.payment_failed" || event.type === "payment_intent.canceled") {
     const intent = event.data.object as Stripe.PaymentIntent;
+    const consultationId=intent.metadata.consultation_id;
+    const purpose=intent.metadata.purpose;
+
     await supabase
       .from("payments")
       .update({ status: intent.status, updated_at: new Date().toISOString() })
       .eq("provider_payment_intent_id", intent.id);
+
+    if(
+      consultationId
+      && purpose === "koirela_15min_consultation"
+    ){
+      await supabase
+        .from("consultations")
+        .update({status:"canceled",ended_at:new Date().toISOString()})
+        .eq("id",consultationId)
+        .eq("status","awaiting_payment");
+    }
 
     if(event.type === "payment_intent.payment_failed"){
       await logError(supabase,{
@@ -105,7 +119,7 @@ Deno.serve(async (req) => {
         message:intent.last_payment_error?.message||"PaymentIntent failed",
         context:{
           paymentIntentId:intent.id,
-          consultationId:intent.metadata.consultation_id||null,
+          consultationId:consultationId||null,
           code:intent.last_payment_error?.code||null
         }
       });
