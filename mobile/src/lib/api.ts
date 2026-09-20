@@ -391,7 +391,7 @@ export async function getCounselorPayoutAccount() {
   if (!auth.user) throw new Error("ログインが必要です");
   const { data, error } = await supabase
     .from("counselor_payout_accounts")
-    .select("provider,bank_label,account_holder_masked,status,updated_at")
+    .select("provider,bank_label,account_holder_masked,status,details_submitted,payouts_enabled,charges_enabled,last_synced_at,updated_at")
     .eq("counselor_id", auth.user.id)
     .maybeSingle();
   if (error) throw error;
