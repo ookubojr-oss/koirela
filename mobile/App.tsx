@@ -14,10 +14,11 @@ import {
   View
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import * as Linking from "expo-linking";
 import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "./src/lib/supabase";
-import { signInWithEmail, signInWithOAuth, signOut } from "./src/lib/auth";
+import { consumeAuthUrl, requestPasswordReset, signInWithEmail, signInWithOAuth, signOut, signUpWithEmail, updatePassword } from "./src/lib/auth";
 import {
   acceptConsultation,
   cancelConsultation,
@@ -70,16 +71,41 @@ type ConsultationState = {
 };
 
 function AuthScreen() {
+  const [mode, setMode] = useState<"login" | "signup" | "forgot">("login");
+  const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
-  async function login() {
+  async function submit() {
     try {
       setBusy(true);
+
+      if (mode === "forgot") {
+        if (!email.trim()) return Alert.alert("メールアドレスを入力してください");
+        await requestPasswordReset(email.trim());
+        Alert.alert("再設定メールを送りました", "メール内のリンクから新しいパスワードを設定してください。");
+        setMode("login");
+        return;
+      }
+
+      if (mode === "signup") {
+        if (!nickname.trim()) return Alert.alert("ニックネームを入力してください");
+        if (password.length < 8) return Alert.alert("パスワードは8文字以上にしてください");
+        const result = await signUpWithEmail(email.trim(), password, nickname.trim());
+        if (!result.session) {
+          Alert.alert("確認メールを送りました", "メール内のリンクを開くと登録が完了します。");
+          setMode("login");
+        }
+        return;
+      }
+
       await signInWithEmail(email.trim(), password);
     } catch (error: any) {
-      Alert.alert("ログインできませんでした", error?.message ?? "入力内容を確認してください");
+      Alert.alert(
+        mode === "signup" ? "登録できませんでした" : mode === "forgot" ? "送信できませんでした" : "ログインできませんでした",
+        error?.message ?? "入力内容を確認してください"
+      );
     } finally {
       setBusy(false);
     }
@@ -99,37 +125,111 @@ function AuthScreen() {
   return (
     <SafeAreaView style={styles.authRoot}>
       <StatusBar style="dark" />
+      <ScrollView contentContainerStyle={styles.authScroll} keyboardShouldPersistTaps="handled">
+        <View style={styles.authCard}>
+          <View style={styles.logoBubble}><Text style={styles.logoHeart}>♥</Text></View>
+          <Text style={styles.authTitle}>KoiRela</Text>
+          <Text style={styles.authLead}>
+            {mode === "signup" ? "はじめてのKoiRela" : mode === "forgot" ? "パスワードを再設定" : "恋の悩みを、15分だけ誰かに話す。"}
+          </Text>
+
+          {mode !== "forgot" ? <>
+            <Pressable style={[styles.socialButton, styles.appleButton]} onPress={() => oauth("apple")} disabled={busy}>
+              <Text style={styles.appleText}>Appleで続ける</Text>
+            </Pressable>
+            <Pressable style={styles.socialButton} onPress={() => oauth("google")} disabled={busy}>
+              <Text style={styles.socialText}>Googleで続ける</Text>
+            </Pressable>
+            <View style={styles.orRow}><View style={styles.orLine}/><Text style={styles.orText}>or</Text><View style={styles.orLine}/></View>
+          </> : null}
+
+          {mode === "signup" ? (
+            <TextInput
+              value={nickname}
+              onChangeText={setNickname}
+              style={styles.field}
+              placeholder="ニックネーム"
+              maxLength={40}
+            />
+          ) : null}
+
+          <TextInput
+            value={email}
+            onChangeText={setEmail}
+            style={styles.field}
+            placeholder="メールアドレス"
+            autoCapitalize="none"
+            keyboardType="email-address"
+          />
+
+          {mode !== "forgot" ? (
+            <TextInput
+              value={password}
+              onChangeText={setPassword}
+              style={styles.field}
+              placeholder={mode === "signup" ? "パスワード（8文字以上）" : "パスワード"}
+              secureTextEntry
+            />
+          ) : null}
+
+          <Pressable style={styles.primaryButton} onPress={submit} disabled={busy}>
+            {busy ? <ActivityIndicator color="#fff" /> : (
+              <Text style={styles.primaryButtonText}>
+                {mode === "signup" ? "新規登録" : mode === "forgot" ? "再設定メールを送る" : "ログイン"}
+              </Text>
+            )}
+          </Pressable>
+
+          {mode === "login" ? (
+            <>
+              <Pressable style={styles.authLinkButton} onPress={() => setMode("forgot")}>
+                <Text style={styles.authLink}>パスワードを忘れた方</Text>
+              </Pressable>
+              <Pressable style={styles.authLinkButton} onPress={() => setMode("signup")}>
+                <Text style={styles.authLink}>アカウントを作成</Text>
+              </Pressable>
+            </>
+          ) : (
+            <Pressable style={styles.authLinkButton} onPress={() => setMode("login")}>
+              <Text style={styles.authLink}>ログインに戻る</Text>
+            </Pressable>
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+function PasswordResetScreen({ onDone }: { onDone: () => void }) {
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function save() {
+    if (password.length < 8) return Alert.alert("パスワードは8文字以上にしてください");
+    if (password !== confirm) return Alert.alert("確認用パスワードが一致しません");
+
+    try {
+      setBusy(true);
+      await updatePassword(password);
+      Alert.alert("パスワードを変更しました", "新しいパスワードでログインできます。", [{ text: "OK", onPress: onDone }]);
+    } catch (error: any) {
+      Alert.alert("変更できませんでした", error?.message ?? "もう一度お試しください");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <SafeAreaView style={styles.authRoot}>
       <View style={styles.authCard}>
         <View style={styles.logoBubble}><Text style={styles.logoHeart}>♥</Text></View>
-        <Text style={styles.authTitle}>KoiRela</Text>
-        <Text style={styles.authLead}>恋の悩みを、15分だけ誰かに話す。</Text>
-
-        <Pressable style={[styles.socialButton, styles.appleButton]} onPress={() => oauth("apple")} disabled={busy}>
-          <Text style={styles.appleText}>Appleで続ける</Text>
-        </Pressable>
-        <Pressable style={styles.socialButton} onPress={() => oauth("google")} disabled={busy}>
-          <Text style={styles.socialText}>Googleで続ける</Text>
-        </Pressable>
-
-        <View style={styles.orRow}><View style={styles.orLine}/><Text style={styles.orText}>or</Text><View style={styles.orLine}/></View>
-
-        <TextInput
-          value={email}
-          onChangeText={setEmail}
-          style={styles.field}
-          placeholder="メールアドレス"
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
-        <TextInput
-          value={password}
-          onChangeText={setPassword}
-          style={styles.field}
-          placeholder="パスワード"
-          secureTextEntry
-        />
-        <Pressable style={styles.primaryButton} onPress={login} disabled={busy}>
-          {busy ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryButtonText}>ログイン</Text>}
+        <Text style={styles.authTitle}>新しいパスワード</Text>
+        <Text style={styles.authLead}>8文字以上で設定してください。</Text>
+        <TextInput style={styles.field} value={password} onChangeText={setPassword} placeholder="新しいパスワード" secureTextEntry />
+        <TextInput style={styles.field} value={confirm} onChangeText={setConfirm} placeholder="もう一度入力" secureTextEntry />
+        <Pressable style={styles.primaryButton} onPress={save} disabled={busy}>
+          {busy ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryButtonText}>パスワードを変更</Text>}
         </Pressable>
       </View>
     </SafeAreaView>
@@ -713,20 +813,41 @@ function MainApp({ session }: { session: Session }) {
 function Root() {
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(false);
+  const [passwordRecovery, setPasswordRecovery] = useState(false);
   const [maintenance, setMaintenance] = useState<{enabled?:boolean;title?:string;message?:string}>({enabled:false});
 
   useEffect(() => {
+    async function handleUrl(url: string | null) {
+      if (!url) return;
+      try {
+        await consumeAuthUrl(url);
+        if (url.includes("/auth/reset")) setPasswordRecovery(true);
+      } catch (error: any) {
+        Alert.alert("認証リンクを開けませんでした", error?.message ?? "リンクをもう一度お試しください");
+      }
+    }
+
     void Promise.all([
       supabase.auth.getSession(),
-      loadMaintenanceSetting().catch(() => ({enabled:false}))
-    ]).then(([authResult,maintenanceValue]) => {
+      loadMaintenanceSetting().catch(() => ({enabled:false})),
+      Linking.getInitialURL()
+    ]).then(([authResult,maintenanceValue,initialUrl]) => {
       setSession(authResult.data.session);
       setMaintenance(maintenanceValue);
       setReady(true);
+      void handleUrl(initialUrl);
     });
 
-    const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => setSession(nextSession));
-    return () => data.subscription.unsubscribe();
+    const linkSub = Linking.addEventListener("url", event => { void handleUrl(event.url); });
+    const { data } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      setSession(nextSession);
+      if (event === "PASSWORD_RECOVERY") setPasswordRecovery(true);
+    });
+
+    return () => {
+      linkSub.remove();
+      data.subscription.unsubscribe();
+    };
   }, []);
 
   if (!ready) {
@@ -735,6 +856,10 @@ function Root() {
 
   if (maintenance.enabled) {
     return <MaintenanceScreen title={maintenance.title} message={maintenance.message} />;
+  }
+
+  if (passwordRecovery) {
+    return <PasswordResetScreen onDone={() => setPasswordRecovery(false)} />;
   }
 
   return session ? <MainApp session={session} /> : <AuthScreen />;
@@ -792,7 +917,8 @@ const styles = StyleSheet.create({
   tabDotOn:{backgroundColor:COLORS.coral},
   tabText:{fontSize:10,fontWeight:"700",color:"#ABA4AF"},
   tabTextOn:{color:COLORS.plum},
-  authRoot:{flex:1,backgroundColor:COLORS.bg,justifyContent:"center",padding:22},
+  authRoot:{flex:1,backgroundColor:COLORS.bg},
+  authScroll:{flexGrow:1,justifyContent:"center",padding:22},
   authCard:{backgroundColor:"#fff",borderRadius:30,padding:24,gap:11},
   logoBubble:{width:58,height:58,borderRadius:22,backgroundColor:COLORS.plum,alignItems:"center",justifyContent:"center",alignSelf:"center"},
   logoHeart:{color:COLORS.coral,fontSize:28},
@@ -808,6 +934,8 @@ const styles = StyleSheet.create({
   field:{height:52,borderRadius:17,borderWidth:1,borderColor:COLORS.line,paddingHorizontal:14,backgroundColor:"#fff"},
   primaryButton:{height:52,borderRadius:999,backgroundColor:COLORS.coral,alignItems:"center",justifyContent:"center",marginTop:5},
   primaryButtonText:{color:"#fff",fontWeight:"800"},
+  authLinkButton:{alignItems:"center",justifyContent:"center",paddingVertical:5},
+  authLink:{fontSize:10,fontWeight:"700",color:COLORS.plum},
   fullState:{flex:1,backgroundColor:COLORS.bg,alignItems:"center",justifyContent:"center",padding:30},
   waitingOrb:{width:120,height:120,borderRadius:60,borderWidth:1,borderStyle:"dashed",borderColor:COLORS.coral,alignItems:"center",justifyContent:"center"},
   waitingHeart:{width:66,height:66,borderRadius:24,backgroundColor:COLORS.plum,color:COLORS.coral,textAlign:"center",textAlignVertical:"center",fontSize:28,paddingTop:14,overflow:"hidden"},
