@@ -1,5 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { authenticatedUser, serviceClient } from "../_shared/clients.ts";
+import { expireStaleConsultations } from "../_shared/consultations.ts";
 import { logError } from "../_shared/monitoring.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { pushToUser } from "../_shared/push.ts";
@@ -12,6 +13,7 @@ Deno.serve(async (req) => {
     const payload = await req.json();
     const consultationId = payload.consultationId;
     const supabase = serviceClient();
+    await expireStaleConsultations(supabase,user.id);
     await enforceRateLimit(supabase,"consultation-start",user.id,20,300);
 
     const { data: consultation, error } = await supabase
