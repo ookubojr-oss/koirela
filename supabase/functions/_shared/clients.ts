@@ -10,9 +10,20 @@ export function serviceClient() {
 export async function authenticatedUser(req: Request) {
   const authHeader = req.headers.get("Authorization");
   if (!authHeader) throw new Error("Missing authorization");
+
   const supabase = serviceClient();
   const token = authHeader.replace(/^Bearer\s+/i, "");
   const { data, error } = await supabase.auth.getUser(token);
   if (error || !data.user) throw new Error("Invalid authorization");
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("is_suspended")
+    .eq("id", data.user.id)
+    .maybeSingle();
+
+  if (profileError) throw profileError;
+  if (profile?.is_suspended) throw new Error("ACCOUNT_SUSPENDED");
+
   return data.user;
 }
