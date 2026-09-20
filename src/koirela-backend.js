@@ -89,6 +89,15 @@ export async function createConsultation(counselorId) {
   return data;
 }
 
+export async function createPaymentIntent(consultationId) {
+  const client = requireBackend();
+  const { data, error } = await client.functions.invoke('create-payment-intent', {
+    body: { consultationId }
+  });
+  if (error) throw error;
+  return data;
+}
+
 export async function getConsultation(consultationId) {
   const client = requireBackend();
   const { data, error } = await client
@@ -158,7 +167,7 @@ export async function createReport({ consultationId, counselorId, reason, detail
 if (typeof window !== 'undefined') {
   window.KoiRelaBackend = {
     configured, signInWithPassword, signUpWithPassword, signInWithOAuth, signOut, getSession,
-    listCounselors, createConsultation, getConsultation, sendMessage, subscribeToMessages,
+    listCounselors, createConsultation, createPaymentIntent, getConsultation, sendMessage, subscribeToMessages,
     setCounselorPresence, createReport
   };
 }
