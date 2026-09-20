@@ -1,0 +1,92 @@
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
+import { listBlockedCounselors, loadNotificationPreferences, requestAccountDeletion, saveNotificationPreferences, unblockCounselor } from "../lib/api";
+import { signOut } from "../lib/auth";
+import { supabase } from "../lib/supabase";
+
+const C={plum:"#574E66",coral:"#F2837B",pink:"#FBEAE8",bg:"#FCF9FA",text:"#37313F",muted:"#8A8292",line:"#EEE8EF",danger:"#C85858"};
+
+export default function SettingsScreen({onBack}:{onBack:()=>void}) {
+  const [prefs,setPrefs]=useState({enabled:false,one_minute_warning:true,counselor_online:false});
+  const [blocked,setBlocked]=useState<any[]>([]);
+  const [names,setNames]=useState<Record<string,string>>({});
+  const [loading,setLoading]=useState(true);
+
+  useEffect(()=>{void load()},[]);
+  async function load(){
+    try{
+      const [p,b]=await Promise.all([loadNotificationPreferences(),listBlockedCounselors()]);
+      setPrefs(p);setBlocked(b);
+      const ids=b.map((x:any)=>x.blocked_id);
+      if(ids.length){
+        const {data}=await supabase.from("counselor_profiles").select("user_id,display_name").in("user_id",ids);
+        setNames(Object.fromEntries((data||[]).map((x:any)=>[x.user_id,x.display_name])));
+      }
+    }catch(e:any){Alert.alert("設定を取得できませんでした",e?.message||"もう一度お試しください")}
+    finally{setLoading(false)}
+  }
+
+  async function change(next:any){
+    setPrefs(next);
+    try{await saveNotificationPreferences(next)}
+    catch(e:any){Alert.alert("保存できませんでした",e?.message||"もう一度お試しください")}
+  }
+
+  async function removeBlock(id:string){
+    try{await unblockCounselor(id);setBlocked(v=>v.filter(x=>x.blocked_id!==id))}
+    catch(e:any){Alert.alert("解除できませんでした",e?.message||"もう一度お試しください")}
+  }
+
+  function deletion(){
+    Alert.alert("アカウントを削除しますか？","アカウントと、法令上保持する必要がない関連データの削除を開始します。処理に時間がかかる場合は完了後に案内します。",[
+      {text:"キャンセル",style:"cancel"},
+      {text:"削除を開始",style:"destructive",onPress:async()=>{
+        try{
+          await requestAccountDeletion();
+          await signOut();
+          Alert.alert("削除リクエストを受け付けました");
+        }catch(e:any){Alert.alert("削除を開始できませんでした",e?.message||"もう一度お試しください")}
+      }}
+    ]);
+  }
+
+  if(loading)return <SafeAreaView style={styles.center}><ActivityIndicator color={C.coral}/></SafeAreaView>;
+
+  return <SafeAreaView style={styles.root}><ScrollView contentContainerStyle={styles.content}>
+    <Pressable onPress={onBack}><Text style={styles.back}>‹ マイページ</Text></Pressable>
+    <Text style={styles.title}>設定</Text>
+
+    <View style={styles.card}>
+      <Text style={styles.sectionTitle}>通知</Text>
+      <Row label="通知を受け取る"><Switch value={prefs.enabled} onValueChange={v=>void change({...prefs,enabled:v})} trackColor={{true:C.coral}}/></Row>
+      <Row label="相談終了1分前"><Switch value={prefs.one_minute_warning} onValueChange={v=>void change({...prefs,one_minute_warning:v})} trackColor={{true:C.coral}}/></Row>
+      <Row label="相談員の受付開始"><Switch value={prefs.counselor_online} onValueChange={v=>void change({...prefs,counselor_online:v})} trackColor={{true:C.coral}}/></Row>
+    </View>
+
+    <View style={styles.card}>
+      <Text style={styles.sectionTitle}>ブロック中</Text>
+      {!blocked.length?<Text style={styles.muted}>ブロック中の相談員はいません。</Text>:blocked.map((x:any)=><View key={x.blocked_id} style={styles.blockRow}>
+        <Text style={styles.blockName}>{names[x.blocked_id]||"相談員"}</Text>
+        <Pressable onPress={()=>void removeBlock(x.blocked_id)}><Text style={styles.unblock}>解除</Text></Pressable>
+      </View>)}
+    </View>
+
+    <View style={styles.card}>
+      <Text style={styles.sectionTitle}>利用規約・プライバシー</Text>
+      <Text style={styles.legal}>KoiRelaは15分100円の1対1リアルタイムチャット相談を提供します。相談員による外部SNS・電話番号・メール・URLへの誘導は禁止し、違反時は警告・停止などの措置を行います。</Text>
+      <Text style={styles.legal}>個人情報・本人確認情報・決済情報・違反ログの保存期間や削除条件は、公開前に正式な利用規約・プライバシーポリシーへ反映し、法務確認を行います。</Text>
+    </View>
+
+    <Pressable style={styles.logout} onPress={()=>void signOut()}><Text style={styles.logoutText}>ログアウト</Text></Pressable>
+    <Pressable style={styles.delete} onPress={deletion}><Text style={styles.deleteText}>アカウントを削除</Text></Pressable>
+  </ScrollView></SafeAreaView>
+}
+
+function Row({label,children}:{label:string;children:React.ReactNode}){return <View style={styles.row}><Text style={styles.rowLabel}>{label}</Text>{children}</View>}
+const styles=StyleSheet.create({
+ root:{flex:1,backgroundColor:C.bg},center:{flex:1,alignItems:"center",justifyContent:"center",backgroundColor:C.bg},content:{padding:20,paddingBottom:50,gap:12},back:{fontSize:12,fontWeight:"700",color:C.plum},title:{fontSize:23,fontWeight:"800",color:C.plum,marginBottom:4},
+ card:{backgroundColor:"#fff",borderRadius:22,padding:17},sectionTitle:{fontSize:13,fontWeight:"800",color:C.plum,marginBottom:8},row:{minHeight:50,flexDirection:"row",alignItems:"center",justifyContent:"space-between",borderBottomWidth:1,borderBottomColor:C.line},rowLabel:{fontSize:11,fontWeight:"700",color:C.text},
+ muted:{fontSize:10,color:C.muted},blockRow:{flexDirection:"row",justifyContent:"space-between",paddingVertical:12,borderBottomWidth:1,borderBottomColor:C.line},blockName:{fontSize:11,fontWeight:"700"},unblock:{fontSize:10,color:C.coral,fontWeight:"800"},
+ legal:{fontSize:10.5,lineHeight:18,color:C.muted,marginBottom:9},logout:{height:50,borderRadius:999,backgroundColor:"#fff",alignItems:"center",justifyContent:"center"},logoutText:{fontSize:11,fontWeight:"800",color:C.plum},
+ delete:{height:50,alignItems:"center",justifyContent:"center"},deleteText:{fontSize:10,fontWeight:"800",color:C.danger}
+});
