@@ -9,6 +9,7 @@ const state = {
   moderation: [],
   reports: [],
   counselors: new Map(),
+  verifications: new Map(),
   audit: [],
   filter: "all",
   query: ""
@@ -66,14 +67,15 @@ async function loadAll() {
     return;
   }
 
-  const [moderationRes, reportsRes, counselorsRes, auditRes] = await Promise.all([
+  const [moderationRes, reportsRes, counselorsRes, verificationRes, auditRes] = await Promise.all([
     supabase.from("moderation_events").select("*").order("created_at",{ascending:false}).limit(200),
     supabase.from("reports").select("*").order("created_at",{ascending:false}).limit(200),
-    supabase.from("counselor_profiles").select("user_id,display_name,is_suspended,verification_status").limit(500),
+    supabase.from("counselor_profiles").select("user_id,display_name,counselor_type,gender,specialty,bio,qualification_label,is_suspended,verification_status,created_at").limit(500),
+    supabase.from("identity_verifications").select("counselor_id,document_path,qualification_document_path,status,created_at,reviewed_at").limit(500),
     supabase.from("admin_audit_logs").select("*").order("created_at",{ascending:false}).limit(100)
   ]);
 
-  const firstError = moderationRes.error || reportsRes.error || counselorsRes.error || auditRes.error;
+  const firstError = moderationRes.error || reportsRes.error || counselorsRes.error || verificationRes.error || auditRes.error;
   if (firstError) {
     setStatus(firstError.message, true);
     return;
@@ -82,6 +84,7 @@ async function loadAll() {
   state.moderation = moderationRes.data || [];
   state.reports = reportsRes.data || [];
   state.counselors = new Map((counselorsRes.data || []).map(row => [row.user_id,row]));
+  state.verifications = new Map((verificationRes.data || []).map(row => [row.counselor_id,row]));
   state.audit = auditRes.data || [];
   renderDashboard();
 }
@@ -187,6 +190,8 @@ function renderDashboard() {
     }).join("");
   }
 
+  renderApplications();
+
   const audit = document.getElementById("audit-list");
   audit.innerHTML = state.audit.length
     ? state.audit.map(row =>
@@ -197,7 +202,68 @@ function renderDashboard() {
   bindActions();
 }
 
+
+function genderLabel(value) {
+  return value === "female" ? "女性" : value === "male" ? "男性" : value === "other" ? "その他" : "回答しない";
+}
+
+function renderApplications() {
+  const box = document.getElementById("application-list");
+  const pending = [...state.counselors.values()].filter(row => row.verification_status === "pending");
+
+  if (!pending.length) {
+    box.innerHTML = '<div class="empty">審査待ちの申請はありません。</div>';
+    return;
+  }
+
+  box.innerHTML = pending.map(row => {
+    const verification = state.verifications.get(row.user_id);
+    return '<article class="application-card">'+
+      '<div class="application-head"><div><b>'+esc(row.display_name)+'</b><small>'+esc(row.user_id)+'</small></div><span class="pill">審査待ち</span></div>'+
+      '<div class="application-meta">'+
+        '<div><span>活動タイプ</span><strong>'+esc(row.counselor_type === "qualified" ? "資格者" : "経験者")+'</strong></div>'+
+        '<div><span>性別</span><strong>'+esc(genderLabel(row.gender))+'</strong></div>'+
+        '<div><span>得意な相談</span><strong>'+esc(row.specialty || "未入力")+'</strong></div>'+
+      '</div>'+
+      '<div class="message" style="margin-top:10px">'+esc(row.bio || "自己紹介なし")+'</div>'+
+      '<div class="application-docs">'+
+        (verification?.document_path ? '<button data-open-doc="'+esc(verification.document_path)+'">本人確認書類</button>' : '<span class="pill danger">本人確認書類なし</span>')+
+        (verification?.qualification_document_path ? '<button data-open-doc="'+esc(verification.qualification_document_path)+'">資格証明</button>' : '')+
+      '</div>'+
+      '<div class="application-actions">'+
+        '<button class="approve" data-review-counselor="'+esc(row.user_id)+'" data-review-status="approved">承認する</button>'+
+        '<button class="reject" data-review-counselor="'+esc(row.user_id)+'" data-review-status="rejected">却下する</button>'+
+      '</div>'+
+    '</article>';
+  }).join("");
+}
+
+async function openVerificationDocument(path) {
+  const { data, error } = await supabase.storage.from("counselor-verification").createSignedUrl(path, 60);
+  if (error) return alert(error.message);
+  window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+}
+
 function bindActions() {
+  document.querySelectorAll("[data-open-doc]").forEach(btn => btn.addEventListener("click", () => {
+    void openVerificationDocument(btn.dataset.openDoc);
+  }));
+
+  document.querySelectorAll("[data-review-counselor]").forEach(btn => btn.addEventListener("click", async () => {
+    const counselorId = btn.dataset.reviewCounselor;
+    const reviewStatus = btn.dataset.reviewStatus;
+    const counselor = state.counselors.get(counselorId);
+    if (!confirm((reviewStatus === "approved" ? "承認" : "却下") + "しますか？")) return;
+    btn.disabled = true;
+    const { error } = await supabase.rpc("admin_review_counselor", {
+      p_counselor_id: counselorId,
+      p_status: reviewStatus,
+      p_qualification_label: counselor?.qualification_label || null
+    });
+    if (error) alert(error.message);
+    await loadAll();
+  }));
+
   document.querySelectorAll("[data-toggle]").forEach(btn => btn.addEventListener("click", () => {
     const body = document.getElementById("body-"+btn.dataset.toggle);
     if (body) body.hidden = !body.hidden;
