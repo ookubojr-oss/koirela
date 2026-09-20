@@ -22,13 +22,20 @@ Deno.serve(async (req) => {
   if (event.type === "payment_intent.succeeded") {
     const intent = event.data.object as Stripe.PaymentIntent;
     const consultationId = intent.metadata.consultation_id;
+    const purpose = intent.metadata.purpose;
 
     await supabase
       .from("payments")
       .update({ status: intent.status, updated_at: new Date().toISOString() })
       .eq("provider_payment_intent_id", intent.id);
 
-    if (consultationId) {
+    if (consultationId && purpose === "koirela_15min_extension") {
+      const { error } = await supabase.rpc("apply_paid_extension", {
+        p_consultation_id: consultationId,
+        p_payment_intent_id: intent.id
+      });
+      if (error) return new Response("Extension apply failed", { status: 500 });
+    } else if (consultationId) {
       await supabase
         .from("consultations")
         .update({ status: "waiting" })
