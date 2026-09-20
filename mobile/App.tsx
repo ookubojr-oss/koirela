@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -37,6 +38,7 @@ import {
   type Counselor
 } from "./src/lib/api";
 import { clearConsultationNotifications, registerPushToken, scheduleOneMinuteWarning, subscribeNotificationResponses } from "./src/lib/notifications";
+import { publicAvatarUrl } from "./src/lib/uploads";
 import CounselorApplicationScreen from "./src/screens/CounselorApplicationScreen";
 import ProfileEditScreen from "./src/screens/ProfileEditScreen";
 import HistoryScreen from "./src/screens/HistoryScreen";
@@ -345,7 +347,9 @@ function FindScreen({ onChoose }: { onChoose: (c: Counselor) => void }) {
         {items.map(item => (
           <View key={item.user_id} style={styles.listenerCard}>
             <View style={styles.listenerTop}>
-              <View style={styles.avatar}><Text style={styles.avatarText}>{item.display_name.slice(0,1)}</Text></View>
+              {item.avatar_path
+                ? <Image source={{uri: publicAvatarUrl(item.avatar_path) ?? undefined}} style={styles.avatarImage}/>
+                : <View style={styles.avatar}><Text style={styles.avatarText}>{item.display_name.slice(0,1)}</Text></View>}
               <View style={{ flex: 1 }}>
                 <Text style={styles.listenerName}>{item.display_name}</Text>
                 <Text style={styles.roleText}>{item.counselor_type === "qualified" ? "資格者" : "経験者"}{item.rating_count ? " ・ ★ "+item.average_rating+" ("+item.rating_count+")" : ""}</Text>
@@ -553,14 +557,32 @@ function MyPageScreen({
   onSettings: () => void;
   onSupport: () => void;
 }) {
+  const [profile,setProfile]=useState<{nickname:string;avatar_path:string|null}>({nickname:"ユーザー",avatar_path:null});
+
+  useEffect(()=>{
+    void supabase.auth.getUser().then(async ({data:auth})=>{
+      if(!auth.user)return;
+      const {data}=await supabase
+        .from("profiles")
+        .select("nickname,avatar_path")
+        .eq("id",auth.user.id)
+        .single();
+      if(data)setProfile({nickname:data.nickname||"ユーザー",avatar_path:data.avatar_path||null});
+    });
+  },[]);
+
+  const avatarUrl=publicAvatarUrl(profile.avatar_path);
+
   return (
     <ScrollView contentContainerStyle={styles.content}>
       <Text style={styles.pageTitle}>マイページ</Text>
       <Pressable style={styles.card} onPress={onProfile}>
         <View style={styles.profileRow}>
-          <View style={styles.avatar}><Text style={styles.avatarText}>も</Text></View>
+          {avatarUrl
+            ? <Image source={{uri:avatarUrl}} style={styles.avatarImage}/>
+            : <View style={styles.avatar}><Text style={styles.avatarText}>{profile.nickname.slice(0,1)}</Text></View>}
           <View style={{flex:1}}>
-            <Text style={styles.listenerName}>プロフィール</Text>
+            <Text style={styles.listenerName}>{profile.nickname}</Text>
             <Text style={styles.muted}>{role === "counselor" ? "相談員アカウント" : "相談ユーザー"}</Text>
           </View>
           <Text>›</Text>
@@ -1015,6 +1037,7 @@ const styles = StyleSheet.create({
   listenerCard:{backgroundColor:"#fff",borderRadius:24,padding:17,gap:12},
   listenerTop:{flexDirection:"row",alignItems:"center",gap:12},
   avatar:{width:50,height:50,borderRadius:25,backgroundColor:COLORS.pink,alignItems:"center",justifyContent:"center"},
+  avatarImage:{width:50,height:50,borderRadius:25,backgroundColor:COLORS.pink},
   avatarSmall:{width:42,height:42,borderRadius:21,backgroundColor:COLORS.pink,alignItems:"center",justifyContent:"center"},
   avatarText:{fontWeight:"800",color:COLORS.plum,fontSize:16},
   listenerName:{fontSize:15,fontWeight:"800",color:COLORS.text},
