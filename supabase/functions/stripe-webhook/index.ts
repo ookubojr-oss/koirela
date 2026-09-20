@@ -1,6 +1,7 @@
 import Stripe from "npm:stripe@17.7.0";
 import { serviceClient } from "../_shared/clients.ts";
 import { pushToUser } from "../_shared/push.ts";
+import { logError } from "../_shared/monitoring.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "");
 const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET") ?? "";
@@ -35,7 +36,39 @@ Deno.serve(async (req) => {
         p_consultation_id: consultationId,
         p_payment_intent_id: intent.id
       });
-      if (error) return new Response("Extension apply failed", { status: 500 });
+      if (error) {
+        await logError(supabase,{
+          source:"payment",
+          message:"Extension apply failed",
+          context:{consultationId,paymentIntentId:intent.id,error:error.message}
+        });
+        return new Response("Extension apply failed", { status: 500 });
+      }
+
+      const {data:extended}=await supabase
+        .from("consultations")
+        .select("user_id,counselor_id,ends_at")
+        .eq("id",consultationId)
+        .maybeSingle();
+
+      if(extended?.user_id){
+        void pushToUser(
+          supabase,
+          extended.user_id,
+          "相談を15分延長しました",
+          "新しい終了時刻までそのまま相談を続けられます。",
+          {type:"consultation_extended",consultationId,endsAt:extended.ends_at}
+        );
+      }
+      if(extended?.counselor_id){
+        void pushToUser(
+          supabase,
+          extended.counselor_id,
+          "相談が15分延長されました",
+          "相談者が15分の延長を購入しました。",
+          {type:"consultation_extended",consultationId,endsAt:extended.ends_at}
+        );
+      }
     } else if (consultationId) {
       const { data: waitingConsultation } = await supabase
         .from("consultations")
