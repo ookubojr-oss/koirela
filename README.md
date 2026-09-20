@@ -1,24 +1,62 @@
-# KoiRela — 恋愛セラピスト チャット相談
+# KoiRela
 
-恋の悩みを抱える人と恋愛セラピスト(聞き手)をつなぐ、匿名1対1チャット相談サービスのデザインプロトタイプ。
+恋愛の悩みを、匿名で相談員に1対1チャット相談できるサービスです。
 
-## ページ構成
+## 現在のプロダクト仕様
+
+- 15分 100円
+- 1対1リアルタイムチャット
+- 相談員は「経験者 / 資格者」
+- 名前・相談内容・相談員の性別で検索
+- 15分経過で自動終了、必要なら15分延長
+- 通報・ブロック
+- 相談員による外部SNS/連絡先誘導は1回目警告、2回目で相談員アカウント停止
+- 違反ログ・通報・停止解除を扱う運営管理画面
+
+## ファイル
 
 | ファイル | 内容 |
 |---|---|
-| [index.html](index.html) | モバイルアプリのプロトタイプ(起動 → ホーム → 聞き手をさがす → チャット)。画面遷移・トラック絞り込み・チャットのデモ返信が動作します |
-| [lp.html](lp.html) | ランディングページ(デスクトップデザイン) |
+| index.html | モバイルアプリUI / デモ |
+| admin.html | 運営管理UI / デモ |
+| lp.html | ランディングページ |
+| src/koirela-backend.js | Supabase本番クライアント |
+| src/admin-backend.js | 運営管理用バックエンドアダプター |
+| supabase/migrations | DB / RLS / Storage / モデレーション |
+| supabase/functions | 相談開始、決済、延長、終了処理など |
+| PRODUCTION_IMPLEMENTATION.md | 本番化ロードマップ |
 
-## コンセプト
+## 本番化
 
-- **チャット特化** — 通話・ビデオ機能は持たず、1通単位の課金でチャット相談のみを提供
-- **2トラック制** — 「恋愛アドバイザー(経験者)」と「認定セラピスト(有資格)」をラベルで明確に区別
-- **安心設計** — 匿名相談、エスクロー決済(相談完了まで決済未確定)、通報導線
+静的UIはそのまま残しつつ、Supabase + Stripe + Capacitorを使った本番基盤を追加しています。
 
-## デザインソース
+セットアップ前は既存のデモUIが動きます。本番接続にはSupabaseプロジェクト、OAuth設定、Stripe、Apple Developer設定が必要です。
 
-`*.dc.html` と `canvas.json` はデザインカンバス(Claude Design)の作業ファイルです。
+## 開発
 
-## 技術
+```bash
+npm install
+npm run dev
+```
 
-依存なしの静的HTML/CSS/JS。GitHub Pages でホストしています。
+本番ビルド:
+
+```bash
+npm run build
+```
+
+iOSシェル:
+
+```bash
+npx cap add ios
+npm run native:sync
+npm run native:ios
+```
+
+## Secret
+
+`.env.example` を参照してください。Supabase service role、Stripe secret、Webhook secret、APNs秘密鍵はブラウザへ置かないでください。
+
+## ブランチ運用
+
+大きな変更は実装単位でコミットし、mainへ直接大きな変更を入れない方針です。
