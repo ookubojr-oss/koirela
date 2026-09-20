@@ -18,13 +18,14 @@ import * as Linking from "expo-linking";
 import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "./src/lib/supabase";
-import { consumeAuthUrl, requestPasswordReset, signInWithEmail, signInWithOAuth, signOut, signUpWithEmail, updatePassword } from "./src/lib/auth";
+import { consumeAuthUrl, requestPasswordReset, signInWithEmail, signInWithLine, signInWithOAuth, signOut, signUpWithEmail, updatePassword } from "./src/lib/auth";
 import {
   acceptConsultation,
   cancelConsultation,
   createExtensionPaymentIntent,
   createPaymentIntent,
   endConsultation,
+  getResumableConsultation,
   listCounselors,
   listFavoriteIds,
   loadMaintenanceSetting,
@@ -35,7 +36,7 @@ import {
   subscribeToMessages,
   type Counselor
 } from "./src/lib/api";
-import { clearConsultationNotifications, registerPushToken, scheduleOneMinuteWarning } from "./src/lib/notifications";
+import { clearConsultationNotifications, registerPushToken, scheduleOneMinuteWarning, subscribeNotificationResponses } from "./src/lib/notifications";
 import CounselorApplicationScreen from "./src/screens/CounselorApplicationScreen";
 import ProfileEditScreen from "./src/screens/ProfileEditScreen";
 import HistoryScreen from "./src/screens/HistoryScreen";
@@ -46,6 +47,9 @@ import CounselorEarningsScreen from "./src/screens/CounselorEarningsScreen";
 import SupportScreen from "./src/screens/SupportScreen";
 import MaintenanceScreen from "./src/screens/MaintenanceScreen";
 import CounselorProfileEditScreen from "./src/screens/CounselorProfileEditScreen";
+import PaymentHistoryScreen from "./src/screens/PaymentHistoryScreen";
+import SuspendedAccountScreen from "./src/screens/SuspendedAccountScreen";
+import AppErrorBoundary from "./src/components/AppErrorBoundary";
 
 const COLORS = {
   plum: "#574E66",
@@ -122,6 +126,17 @@ function AuthScreen() {
     }
   }
 
+  async function lineLogin() {
+    try {
+      setBusy(true);
+      await signInWithLine();
+    } catch (error: any) {
+      Alert.alert("LINEでログインできませんでした", error?.message ?? "LINEログイン設定を確認してください");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <SafeAreaView style={styles.authRoot}>
       <StatusBar style="dark" />
@@ -139,6 +154,9 @@ function AuthScreen() {
             </Pressable>
             <Pressable style={styles.socialButton} onPress={() => oauth("google")} disabled={busy}>
               <Text style={styles.socialText}>Googleで続ける</Text>
+            </Pressable>
+            <Pressable style={styles.socialButton} onPress={() => void lineLogin()} disabled={busy}>
+              <Text style={styles.socialText}>LINEで続ける</Text>
             </Pressable>
             <View style={styles.orRow}><View style={styles.orLine}/><Text style={styles.orText}>or</Text><View style={styles.orLine}/></View>
           </> : null}
@@ -496,6 +514,7 @@ function MyPageScreen({
   onApply,
   onHistory,
   onFavorites,
+  onPayments,
   onSettings,
   onSupport
 }: {
@@ -505,6 +524,7 @@ function MyPageScreen({
   onApply: () => void;
   onHistory: () => void;
   onFavorites: () => void;
+  onPayments: () => void;
   onSettings: () => void;
   onSupport: () => void;
 }) {
@@ -527,6 +547,9 @@ function MyPageScreen({
       </Pressable>
       <Pressable style={styles.menuButton} onPress={onHistory}>
         <Text style={styles.menuText}>相談履歴・もう一度相談</Text><Text>›</Text>
+      </Pressable>
+      <Pressable style={styles.menuButton} onPress={onPayments}>
+        <Text style={styles.menuText}>決済履歴・領収情報</Text><Text>›</Text>
       </Pressable>
 
       {role === "counselor" ? (
@@ -665,16 +688,67 @@ function CounselorMode({ onBack, onAccept, onEarnings, onProfile }: { onBack: ()
 function MainApp({ session }: { session: Session }) {
   const [tab, setTab] = useState<Tab>("home");
   const [role, setRole] = useState("user");
+  const [accountSuspended, setAccountSuspended] = useState(false);
+  const [suspensionReason, setSuspensionReason] = useState<string | null>(null);
   const [selected, setSelected] = useState<Counselor | null>(null);
   const [consultation, setConsultation] = useState<ConsultationState | null>(null);
-  const [mode, setMode] = useState<"main" | "waiting" | "chat" | "post" | "counselor" | "profile" | "counselor-profile" | "counselor-application" | "history" | "favorites" | "earnings" | "support" | "settings">("main");
+  const [mode, setMode] = useState<"main" | "waiting" | "chat" | "post" | "counselor" | "profile" | "counselor-profile" | "counselor-application" | "history" | "favorites" | "payments" | "earnings" | "support" | "settings">("main");
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
   useEffect(() => {
-    void supabase.from("profiles").select("role").eq("id", session.user.id).single().then(({ data }) => {
-      if (data?.role) setRole(data.role);
-    });
+    let alive=true;
+
+    async function restoreSessionFlow() {
+      const [profileResult,resumable] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("role,is_suspended,suspension_reason")
+          .eq("id", session.user.id)
+          .single(),
+        getResumableConsultation().catch(() => null)
+      ]);
+
+      if(!alive)return;
+
+      const profile=profileResult.data;
+      if(profile?.role)setRole(profile.role);
+      setAccountSuspended(Boolean(profile?.is_suspended));
+      setSuspensionReason(profile?.suspension_reason||null);
+
+      if(profile?.is_suspended)return;
+      if(!resumable)return;
+
+      const next:ConsultationState={
+        id:resumable.id,
+        status:resumable.status,
+        user_id:resumable.user_id,
+        counselor_id:resumable.counselor_id,
+        started_at:resumable.started_at,
+        ends_at:resumable.ends_at
+      };
+      setConsultation(next);
+
+      if(resumable.user_id===session.user.id){
+        const counselor=Array.isArray(resumable.counselor)?resumable.counselor[0]:resumable.counselor;
+        if(counselor)setSelected(counselor as Counselor);
+        setMode(resumable.status==="active"?"chat":"waiting");
+      }else if(resumable.counselor_id===session.user.id){
+        setSelected(null);
+        setMode(resumable.status==="active"?"chat":"counselor");
+      }
+    }
+
+    void restoreSessionFlow();
     void registerPushToken();
+
+    const unsubscribeNotification=subscribeNotificationResponses(() => {
+      void restoreSessionFlow();
+    });
+
+    return () => {
+      alive=false;
+      unsubscribeNotification();
+    };
   }, [session.user.id]);
 
   useEffect(() => {
@@ -682,7 +756,13 @@ function MainApp({ session }: { session: Session }) {
     return subscribeToConsultation(consultation.id, state => {
       setConsultation(state);
       if (state.status === "active") setMode("chat");
-      if (state.status === "ended") setMode("post");
+      if (state.status === "ended") {
+        if (state.user_id === session.user.id) setMode("post");
+        else {
+          setMode("counselor");
+          setConsultation(null);
+        }
+      }
       if (["canceled","refunded"].includes(state.status)) {
         setMode("main");
         setConsultation(null);
@@ -723,12 +803,16 @@ function MainApp({ session }: { session: Session }) {
     }
   }
 
+  if (accountSuspended && mode !== "support") {
+    return <SuspendedAccountScreen reason={suspensionReason} onSupport={() => setMode("support")} />;
+  }
+
   if (mode === "waiting" && consultation && selected) {
     return <WaitingScreen consultationId={consultation.id} counselor={selected} onState={setConsultation} onCancel={cancelWaiting} />;
   }
 
   if (mode === "chat" && consultation) {
-    return <ChatScreen consultation={consultation} peerName={selected?.display_name ?? "相談相手"} onDone={() => setMode("post")} />;
+    return <ChatScreen consultation={consultation} peerName={selected?.display_name ?? (role === "counselor" ? "相談者" : "相談相手")} onDone={() => role === "counselor" ? setMode("counselor") : setMode("post")} />;
   }
 
   if (mode === "post" && consultation?.counselor_id) {
@@ -761,6 +845,10 @@ function MainApp({ session }: { session: Session }) {
     return <FavoritesScreen onBack={() => setMode("main")} onChoose={counselor => void purchase(counselor)} />;
   }
 
+  if (mode === "payments") {
+    return <PaymentHistoryScreen onBack={() => setMode("main")} />;
+  }
+
   if (mode === "earnings") {
     return <CounselorEarningsScreen onBack={() => setMode("counselor")} />;
   }
@@ -791,6 +879,7 @@ function MainApp({ session }: { session: Session }) {
             onApply={() => setMode("counselor-application")}
             onHistory={() => setMode("history")}
             onFavorites={() => setMode("favorites")}
+            onPayments={() => setMode("payments")}
             onSupport={() => setMode("support")}
             onSettings={() => setMode("settings")}
           />
@@ -869,7 +958,9 @@ export default function App() {
   const publishableKey = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? "pk_test_missing";
   return (
     <StripeProvider publishableKey={publishableKey} merchantIdentifier="merchant.jp.koirela.app">
-      <Root />
+      <AppErrorBoundary>
+        <Root />
+      </AppErrorBoundary>
     </StripeProvider>
   );
 }
