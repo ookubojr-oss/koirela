@@ -42,7 +42,7 @@
 
 ## App Storeへ実際に提出する前に必要な実装
 ### iOSアプリ本体
-- WebプロトタイプをReact Native / Expo等のiOSアプリへ移植
+- Capacitorで既存Web UIをiOSアプリ化（設定ファイル追加済み）
 - Bundle ID / App ID
 - iOS署名・証明書・Provisioning
 - 実機ビルド
@@ -107,7 +107,7 @@
 
 
 ## UI監査（2026-09-20）
-- 現在のプロトタイプ: 24画面 + 10ボトムシート
+- 現在のプロトタイプ: 29画面 + 17ボトムシート
 - 画面内の show() 遷移先に未定義画面なし
 - openSheet() の参照先に未定義シートなし
 - ユーザー側の主要正常系・失敗系・安全系・法務導線をカバー
@@ -158,5 +158,35 @@
 - 強制アップデート画面
 - alert()を廃止し、KoiRela共通ダイアログへ統一
 - ボトムシートのフォーカス移動 / Escapeで閉じる / 元のフォーカスへ復帰
-- 現在 28画面 + 13ボトムシート
+- 現在 29画面 + 17ボトムシート
 - JavaScript構文 / 未定義画面遷移 / 未定義シート / duplicate id を再監査し問題なし
+
+
+## 本番基盤の実装状況（2026-09-20）
+追加済み:
+- Viteビルド設定（app / admin / LP）
+- Capacitor iOSシェル設定
+- Supabase Auth / DB / Realtimeクライアントアダプター
+- users / counselors / consultations / messages / payments / ratings / reports / moderation / audit / push token のDBスキーマ
+- RLS（本人・相談参加者・管理者の権限制御）
+- 相談員プロフィール画像 / 本人確認書類用Storage policy
+- サーバー側の相談作成
+- 決済成功後の server-authoritative 15分タイマー
+- 15分延長のサーバー処理
+- 終了時刻超過相談の完了処理
+- Stripe PaymentIntent作成 / Webhook署名検証の土台
+- DBトリガーによる相談員の外部連絡先メッセージ送信ブロック
+- 相談員1回目警告 / 2回目停止 / 検索非表示 / 報酬保留のDB反映
+- 運営管理用バックエンドアダプター
+- Push token登録用Capacitorアダプター
+- 残り1分通知のnotification queue
+- LPを現行の15分100円 / KoiRelaデザインへ更新
+
+外部アカウント・Secretが必要:
+- Supabaseプロジェクト作成とMigration適用
+- Google / Apple OAuth設定
+- LINE OAuthアプリ設定
+- Stripe本番/テストキーとWebhook設定
+- Apple Developer / APNs / Bundle ID / 署名
+- TestFlight / App Store Connect
+- 正式な法務文書
