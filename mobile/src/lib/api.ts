@@ -22,9 +22,10 @@ export async function listCounselors(params?: {
 
   let request = supabase
     .from("counselor_profiles")
-    .select("user_id,display_name,counselor_type,gender,specialty,bio,avatar_path,qualification_label")
+    .select("user_id,display_name,counselor_type,gender,specialty,bio,avatar_path,qualification_label,counselor_availability!inner(is_accepting)")
     .eq("verification_status", "approved")
-    .eq("is_suspended", false);
+    .eq("is_suspended", false)
+    .eq("counselor_availability.is_accepting", true);
 
   if (track === "exp") request = request.eq("counselor_type", "experience");
   if (track === "pro") request = request.eq("counselor_type", "qualified");
@@ -58,6 +59,21 @@ export async function createExtensionPaymentIntent(consultationId: string) {
   const { data, error } = await supabase.functions.invoke("create-extension-payment-intent", {
     body: { consultationId }
   });
+  if (error) throw error;
+  return data;
+}
+
+export async function submitCounselorApplication(payload: {
+  displayName: string;
+  counselorType: "experience" | "qualified";
+  gender: "female" | "male" | "other" | null;
+  specialty?: string;
+  bio?: string;
+  qualificationLabel?: string | null;
+  documentPath: string;
+  qualificationDocumentPath?: string | null;
+}) {
+  const { data, error } = await supabase.functions.invoke("submit-counselor-application", { body: payload });
   if (error) throw error;
   return data;
 }
