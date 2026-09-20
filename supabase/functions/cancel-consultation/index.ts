@@ -49,7 +49,7 @@ Deno.serve(async (req) => {
           payer_id: user.id,
           provider: "stripe",
           provider_payment_intent_id: null,
-          amount_jpy: -Math.abs(intent.amount_received || 100),
+          amount_jpy: Math.abs(intent.amount_received || 100),
           kind: "refund",
           status: refund.status || "pending"
         });
