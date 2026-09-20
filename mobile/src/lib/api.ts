@@ -107,6 +107,7 @@ export async function updateCounselorProfile(payload: {
   gender: "female" | "male" | "other" | null;
   specialty: string;
   bio: string;
+  avatarPath?: string | null;
 }) {
   const { data, error } = await supabase.functions.invoke("update-counselor-profile", { body: payload });
   if (error) throw error;
