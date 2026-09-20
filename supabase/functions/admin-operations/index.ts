@@ -186,7 +186,7 @@ Deno.serve(async req => {
 
       const { data: payments, error: paymentError } = await supabase
         .from("payments")
-        .select("id,provider_payment_intent_id,amount_jpy,kind,status")
+        .select("id,payer_id,provider_payment_intent_id,amount_jpy,kind,status")
         .eq("consultation_id", consultationId)
         .eq("status", "succeeded")
         .in("kind", ["initial", "extension"]);
@@ -221,7 +221,7 @@ Deno.serve(async req => {
           .from("payments")
           .insert({
             consultation_id: consultationId,
-            payer_id: null,
+            payer_id: payment.payer_id,
             provider: "stripe",
             provider_payment_intent_id: null,
             provider_refund_id: refund.id,
