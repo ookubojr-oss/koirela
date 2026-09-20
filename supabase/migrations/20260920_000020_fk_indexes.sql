@@ -1,0 +1,22 @@
+-- Cover foreign keys flagged by Supabase performance advisor.
+create index if not exists admin_audit_logs_admin_id_idx on public.admin_audit_logs(admin_id);
+create index if not exists app_settings_updated_by_idx on public.app_settings(updated_by);
+create index if not exists blocks_blocked_id_idx on public.blocks(blocked_id);
+create index if not exists device_tokens_user_id_idx on public.device_tokens(user_id);
+create index if not exists error_events_user_id_idx on public.error_events(user_id);
+create index if not exists external_identities_user_id_idx on public.external_identities(user_id);
+create index if not exists favorites_counselor_id_idx on public.favorites(counselor_id);
+create index if not exists messages_sender_id_idx on public.messages(sender_id);
+create index if not exists moderation_events_consultation_id_idx on public.moderation_events(consultation_id);
+create index if not exists moderation_events_reviewed_by_idx on public.moderation_events(reviewed_by);
+create index if not exists payments_consultation_id_idx on public.payments(consultation_id);
+create index if not exists payments_payer_id_idx on public.payments(payer_id);
+create index if not exists payouts_counselor_id_idx on public.payouts(counselor_id);
+create index if not exists payouts_processed_by_idx on public.payouts(processed_by);
+create index if not exists ratings_counselor_id_idx on public.ratings(counselor_id);
+create index if not exists ratings_user_id_idx on public.ratings(user_id);
+create index if not exists reports_consultation_id_idx on public.reports(consultation_id);
+create index if not exists reports_counselor_id_idx on public.reports(counselor_id);
+create index if not exists reports_reporter_id_idx on public.reports(reporter_id);
+create index if not exists reports_reviewed_by_idx on public.reports(reviewed_by);
+create index if not exists support_tickets_user_id_idx on public.support_tickets(user_id);
