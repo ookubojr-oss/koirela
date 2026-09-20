@@ -1,5 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { authenticatedUser, serviceClient } from "../_shared/clients.ts";
+import { pushToUser } from "../_shared/push.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -78,6 +79,14 @@ Deno.serve(async (req) => {
       .from("counselor_availability")
       .update({ is_accepting: false, updated_at: new Date().toISOString() })
       .eq("counselor_id", user.id);
+
+    void pushToUser(
+      supabase,
+      consultation.user_id,
+      "相談が始まりました",
+      "15分相談を開始しました。",
+      { type: "consultation_started", consultationId }
+    );
 
     return Response.json(updated, { headers: corsHeaders });
   } catch (error) {
