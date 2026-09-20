@@ -6,22 +6,72 @@ const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "");
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
   try {
     const user = await authenticatedUser(req);
     const payload = await req.json();
     const counselorId = payload.counselorId;
-    if (!counselorId) {
-      return Response.json({ error: "counselorId is required" }, { status: 400, headers: corsHeaders });
+
+    if (!counselorId || counselorId === user.id) {
+      return Response.json({ error: "Invalid counselor" }, { status: 400, headers: corsHeaders });
     }
 
     const supabase = serviceClient();
+
     const { data: counselor, error: counselorError } = await supabase
       .from("counselor_profiles")
       .select("user_id,verification_status,is_suspended")
       .eq("user_id", counselorId)
       .single();
 
-    if (counselorError || !counselor || counselor.verification_status !== "approved" || counselor.is_suspended) {
+    const { data: availability } = await supabase
+      .from("counselor_availability")
+      .select("is_accepting")
+      .eq("counselor_id", counselorId)
+      .maybeSingle();
+
+    if (
+      counselorError ||
+      !counselor ||
+      counselor.verification_status !== "approved" ||
+      counselor.is_suspended ||
+      !availability?.is_accepting
+    ) {
+      return Response.json({ error: "Counselor unavailable" }, { status: 409, headers: corsHeaders });
+    }
+
+    const { data: blockRows } = await supabase
+      .from("blocks")
+      .select("blocker_id,blocked_id")
+      .or(
+        "and(blocker_id.eq." + user.id + ",blocked_id.eq." + counselorId + ")," +
+        "and(blocker_id.eq." + counselorId + ",blocked_id.eq." + user.id + ")"
+      )
+      .limit(1);
+
+    if (blockRows?.length) {
+      return Response.json({ error: "Counselor unavailable" }, { status: 409, headers: corsHeaders });
+    }
+
+    const { data: existingUser } = await supabase
+      .from("consultations")
+      .select("id,status")
+      .eq("user_id", user.id)
+      .in("status", ["awaiting_payment","waiting","active"])
+      .limit(1);
+
+    if (existingUser?.length) {
+      return Response.json({ error: "Another consultation is already in progress" }, { status: 409, headers: corsHeaders });
+    }
+
+    const { data: existingCounselor } = await supabase
+      .from("consultations")
+      .select("id,status")
+      .eq("counselor_id", counselorId)
+      .in("status", ["waiting","active"])
+      .limit(1);
+
+    if (existingCounselor?.length) {
       return Response.json({ error: "Counselor unavailable" }, { status: 409, headers: corsHeaders });
     }
 
@@ -51,14 +101,17 @@ Deno.serve(async (req) => {
       }
     });
 
-    await supabase.from("payments").insert({
+    const { error: paymentError } = await supabase.from("payments").insert({
       consultation_id: consultation.id,
       payer_id: user.id,
       provider: "stripe",
       provider_payment_intent_id: intent.id,
       amount_jpy: consultation.price_jpy,
+      kind: "initial",
       status: intent.status
     });
+
+    if (paymentError) throw paymentError;
 
     return Response.json({
       consultationId: consultation.id,
@@ -67,6 +120,9 @@ Deno.serve(async (req) => {
       currency: "jpy"
     }, { headers: corsHeaders });
   } catch (error) {
-    return Response.json({ error: error instanceof Error ? error.message : "Unknown error" }, { status: 400, headers: corsHeaders });
+    return Response.json(
+      { error: error instanceof Error ? error.message : "Unknown error" },
+      { status: 400, headers: corsHeaders }
+    );
   }
 });
