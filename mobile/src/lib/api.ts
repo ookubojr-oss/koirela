@@ -72,6 +72,7 @@ export async function submitCounselorApplication(payload: {
   qualificationLabel?: string | null;
   documentPath: string;
   qualificationDocumentPath?: string | null;
+  avatarPath?: string | null;
 }) {
   const { data, error } = await supabase.functions.invoke("submit-counselor-application", { body: payload });
   if (error) throw error;
