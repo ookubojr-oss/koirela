@@ -30,6 +30,11 @@ jobs:
           deno check supabase/functions/update-counselor-profile/index.ts
           deno check supabase/functions/admin-operations/index.ts
           deno check supabase/functions/delete-account/index.ts
+          deno check supabase/functions/admin-process-payout/index.ts
+          deno check supabase/functions/payout-connect/index.ts
+          deno check supabase/functions/line-auth-callback/index.ts
+          deno check supabase/functions/line-auth-start/index.ts
+          deno check supabase/functions/report-error/index.ts
 
       - uses: actions/setup-node@v4
         with:
