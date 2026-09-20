@@ -46,6 +46,7 @@ import CounselorEarningsScreen from "./src/screens/CounselorEarningsScreen";
 import SupportScreen from "./src/screens/SupportScreen";
 import OnboardingScreen from "./src/screens/OnboardingScreen";
 import MaintenanceScreen from "./src/screens/MaintenanceScreen";
+import CounselorProfileEditScreen from "./src/screens/CounselorProfileEditScreen";
 
 const COLORS = {
   plum: "#574E66",
@@ -450,7 +451,7 @@ function MyPageScreen({
   );
 }
 
-function CounselorMode({ onBack, onAccept, onEarnings }: { onBack: () => void; onAccept: (row: ConsultationState) => void; onEarnings: () => void }) {
+function CounselorMode({ onBack, onAccept, onEarnings, onProfile }: { onBack: () => void; onAccept: (row: ConsultationState) => void; onEarnings: () => void; onProfile: () => void }) {
   const [requests, setRequests] = useState<ConsultationState[]>([]);
   const [loading, setLoading] = useState(true);
   const [accepting, setAccepting] = useState(false);
@@ -518,6 +519,9 @@ function CounselorMode({ onBack, onAccept, onEarnings }: { onBack: () => void; o
       <View style={styles.content}>
         <Pressable onPress={onBack}><Text style={styles.backText}>‹ マイページ</Text></Pressable>
         <Text style={styles.pageTitle}>相談員モード</Text>
+        <Pressable style={styles.menuButton} onPress={onProfile}>
+          <Text style={styles.menuText}>相談員プロフィールを編集</Text><Text>›</Text>
+        </Pressable>
         <Pressable style={styles.menuButton} onPress={onEarnings}>
           <Text style={styles.menuText}>売上・報酬を見る</Text><Text>›</Text>
         </Pressable>
@@ -565,7 +569,7 @@ function MainApp({ session }: { session: Session }) {
   const [role, setRole] = useState("user");
   const [selected, setSelected] = useState<Counselor | null>(null);
   const [consultation, setConsultation] = useState<ConsultationState | null>(null);
-  const [mode, setMode] = useState<"main" | "waiting" | "chat" | "post" | "counselor" | "profile" | "counselor-application" | "history" | "favorites" | "earnings" | "support" | "settings">("main");
+  const [mode, setMode] = useState<"main" | "waiting" | "chat" | "post" | "counselor" | "profile" | "counselor-profile" | "counselor-application" | "history" | "favorites" | "earnings" | "support" | "settings">("main");
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
   useEffect(() => {
@@ -640,7 +644,7 @@ function MainApp({ session }: { session: Session }) {
   }
 
   if (mode === "counselor") {
-    return <CounselorMode onBack={() => setMode("main")} onEarnings={() => setMode("earnings")} onAccept={state => { setConsultation(state); setSelected(null); setMode("chat"); }} />;
+    return <CounselorMode onBack={() => setMode("main")} onProfile={() => setMode("counselor-profile")} onEarnings={() => setMode("earnings")} onAccept={state => { setConsultation(state); setSelected(null); setMode("chat"); }} />;
   }
 
   if (mode === "profile") {
@@ -661,6 +665,10 @@ function MainApp({ session }: { session: Session }) {
 
   if (mode === "earnings") {
     return <CounselorEarningsScreen onBack={() => setMode("counselor")} />;
+  }
+
+  if (mode === "counselor-profile") {
+    return <CounselorProfileEditScreen onBack={() => setMode("counselor")} />;
   }
 
   if (mode === "support") {
