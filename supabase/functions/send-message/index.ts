@@ -92,6 +92,6 @@ Deno.serve(async (req) => {
         context: { function: "send-message" }
       });
     }
-    return Response.json({ error: message }, { status: 400, headers: corsHeaders });
+    return Response.json({ error: message }, { status: message === "RATE_LIMITED" ? 429 : 400, headers: corsHeaders });
   }
 });
