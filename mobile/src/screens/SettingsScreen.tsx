@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
-import { listBlockedCounselors, loadNotificationPreferences, requestAccountDeletion, saveNotificationPreferences, unblockCounselor } from "../lib/api";
+import { deleteAccountNow, listBlockedCounselors, loadNotificationPreferences, saveNotificationPreferences, unblockCounselor } from "../lib/api";
 import { signOut } from "../lib/auth";
 import { supabase } from "../lib/supabase";
 
@@ -38,16 +38,28 @@ export default function SettingsScreen({onBack}:{onBack:()=>void}) {
   }
 
   function deletion(){
-    Alert.alert("アカウントを削除しますか？","アカウントと、法令上保持する必要がない関連データの削除を開始します。処理に時間がかかる場合は完了後に案内します。",[
-      {text:"キャンセル",style:"cancel"},
-      {text:"削除を開始",style:"destructive",onPress:async()=>{
-        try{
-          await requestAccountDeletion();
-          await signOut();
-          Alert.alert("削除リクエストを受け付けました");
-        }catch(e:any){Alert.alert("削除を開始できませんでした",e?.message||"もう一度お試しください")}
-      }}
-    ]);
+    Alert.alert(
+      "アカウントを完全に削除しますか？",
+      "進行中の相談がない場合、プロフィール・通知情報・アップロード画像などを削除し、必要な取引記録は個人を特定しにくい形で保持します。この操作は元に戻せません。",
+      [
+        {text:"キャンセル",style:"cancel"},
+        {text:"完全に削除",style:"destructive",onPress:async()=>{
+          try{
+            setLoading(true);
+            await deleteAccountNow();
+            await signOut().catch(()=>{});
+            Alert.alert("アカウントを削除しました");
+          }catch(e:any){
+            const msg=e?.message==="ACTIVE_CONSULTATION_EXISTS"
+              ?"進行中または待機中の相談を終了・キャンセルしてから削除してください。"
+              :e?.message||"もう一度お試しください";
+            Alert.alert("削除できませんでした",msg);
+          }finally{
+            setLoading(false);
+          }
+        }}
+      ]
+    );
   }
 
   if(loading)return <SafeAreaView style={styles.center}><ActivityIndicator color={C.coral}/></SafeAreaView>;
