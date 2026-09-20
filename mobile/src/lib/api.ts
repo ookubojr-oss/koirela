@@ -1,0 +1,135 @@
+import { supabase } from "./supabase";
+
+export type Counselor = {
+  user_id: string;
+  display_name: string;
+  counselor_type: "experience" | "qualified";
+  gender: "female" | "male" | "other" | null;
+  specialty: string | null;
+  bio: string | null;
+  avatar_path: string | null;
+  qualification_label: string | null;
+};
+
+export async function listCounselors(params?: {
+  track?: "all" | "exp" | "pro";
+  gender?: "all" | "female" | "male" | "other";
+  query?: string;
+}) {
+  const track = params?.track ?? "all";
+  const gender = params?.gender ?? "all";
+  const query = params?.query?.trim() ?? "";
+
+  let request = supabase
+    .from("counselor_profiles")
+    .select("user_id,display_name,counselor_type,gender,specialty,bio,avatar_path,qualification_label")
+    .eq("verification_status", "approved")
+    .eq("is_suspended", false);
+
+  if (track === "exp") request = request.eq("counselor_type", "experience");
+  if (track === "pro") request = request.eq("counselor_type", "qualified");
+  if (gender !== "all") request = request.eq("gender", gender);
+  if (query) {
+    const safe = query.replace(/[%_,()]/g, " ");
+    request = request.or(
+      "display_name.ilike.%" + safe + "%,specialty.ilike.%" + safe + "%,bio.ilike.%" + safe + "%"
+    );
+  }
+
+  const { data, error } = await request.order("updated_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as Counselor[];
+}
+
+export async function createPaymentIntent(counselorId: string) {
+  const { data, error } = await supabase.functions.invoke("create-payment-intent", {
+    body: { counselorId }
+  });
+  if (error) throw error;
+  return data as {
+    consultationId: string;
+    paymentIntentClientSecret: string;
+    amount: number;
+    currency: string;
+  };
+}
+
+export async function createExtensionPaymentIntent(consultationId: string) {
+  const { data, error } = await supabase.functions.invoke("create-extension-payment-intent", {
+    body: { consultationId }
+  });
+  if (error) throw error;
+  return data;
+}
+
+export async function acceptConsultation(consultationId: string) {
+  const { data, error } = await supabase.functions.invoke("start-consultation", {
+    body: { consultationId }
+  });
+  if (error) throw error;
+  return data;
+}
+
+export async function cancelConsultation(consultationId: string) {
+  const { data, error } = await supabase.functions.invoke("cancel-consultation", {
+    body: { consultationId }
+  });
+  if (error) throw error;
+  return data;
+}
+
+export async function endConsultation(consultationId: string) {
+  const { data, error } = await supabase.functions.invoke("end-consultation", {
+    body: { consultationId }
+  });
+  if (error) throw error;
+  return data;
+}
+
+export async function sendMessage(consultationId: string, body: string, context: string[] = []) {
+  const { data, error } = await supabase.functions.invoke("send-message", {
+    body: { consultationId, body, context }
+  });
+  if (error) throw error;
+  return data;
+}
+
+export function subscribeToMessages(consultationId: string, onMessage: (message: any) => void) {
+  const channel = supabase
+    .channel("messages:" + consultationId)
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "messages",
+        filter: "consultation_id=eq." + consultationId
+      },
+      payload => onMessage(payload.new)
+    )
+    .subscribe();
+
+  return () => {
+    void supabase.removeChannel(channel);
+  };
+}
+
+export function subscribeToConsultation(consultationId: string, onChange: (row: any) => void) {
+  const channel = supabase
+    .channel("consultation:" + consultationId)
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "consultations",
+        filter: "id=eq." + consultationId
+      },
+      payload => onChange(payload.new)
+    )
+    .subscribe();
+
+  return () => {
+    void supabase.removeChannel(channel);
+  };
+}
