@@ -1129,8 +1129,10 @@ export type Database = {
         Returns: {
           estimated_net_jpy: number
           estimated_platform_fee_jpy: number
+          fee_configured: boolean
           month_consultations: number
           month_gross_jpy: number
+          platform_fee_percent: number
           today_consultations: number
         }[]
       }
