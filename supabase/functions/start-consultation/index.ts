@@ -3,6 +3,7 @@ import { authenticatedUser, serviceClient } from "../_shared/clients.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
   try {
     const user = await authenticatedUser(req);
     const payload = await req.json();
@@ -29,8 +30,31 @@ Deno.serve(async (req) => {
       .eq("user_id", user.id)
       .single();
 
-    if (!counselor || counselor.is_suspended || counselor.verification_status !== "approved") {
+    const { data: availability } = await supabase
+      .from("counselor_availability")
+      .select("is_accepting")
+      .eq("counselor_id", user.id)
+      .maybeSingle();
+
+    if (
+      !counselor ||
+      counselor.is_suspended ||
+      counselor.verification_status !== "approved" ||
+      !availability?.is_accepting
+    ) {
       return Response.json({ error: "Counselor unavailable" }, { status: 409, headers: corsHeaders });
+    }
+
+    const { data: otherActive } = await supabase
+      .from("consultations")
+      .select("id")
+      .eq("counselor_id", user.id)
+      .eq("status", "active")
+      .neq("id", consultationId)
+      .limit(1);
+
+    if (otherActive?.length) {
+      return Response.json({ error: "Another consultation is already active" }, { status: 409, headers: corsHeaders });
     }
 
     const startedAt = new Date();
@@ -45,12 +69,21 @@ Deno.serve(async (req) => {
       })
       .eq("id", consultationId)
       .eq("status", "waiting")
-      .select("id,status,started_at,ends_at")
+      .select("id,status,user_id,counselor_id,started_at,ends_at")
       .single();
 
     if (updateError) throw updateError;
+
+    await supabase
+      .from("counselor_availability")
+      .update({ is_accepting: false, updated_at: new Date().toISOString() })
+      .eq("counselor_id", user.id);
+
     return Response.json(updated, { headers: corsHeaders });
   } catch (error) {
-    return Response.json({ error: error instanceof Error ? error.message : "Unknown error" }, { status: 400, headers: corsHeaders });
+    return Response.json(
+      { error: error instanceof Error ? error.message : "Unknown error" },
+      { status: 400, headers: corsHeaders }
+    );
   }
 });
