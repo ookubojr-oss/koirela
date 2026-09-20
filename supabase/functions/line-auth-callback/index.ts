@@ -84,17 +84,34 @@ Deno.serve(async req=>{
       if(userError||!userData.user)throw new Error("Mapped user not found");
       email=userData.user.email||undefined;
     }else{
-      email=typeof identity.email==="string"&&identity.email.includes("@")
-        ? identity.email
-        : syntheticEmail(subject);
+      const verifiedEmail=typeof identity.email==="string"&&identity.email.includes("@")
+        ? identity.email.toLowerCase()
+        : null;
 
-      const {data:created,error:createError}=await supabase.auth.admin.createUser({
-        email,
-        email_confirm:true,
-        user_metadata:{nickname:displayName,line_subject:subject,line_picture:identity.picture||null}
-      });
-      if(createError||!created.user)throw createError||new Error("Could not create user");
-      userId=created.user.id;
+      if(verifiedEmail){
+        for(let page=1;page<=5&&!userId;page++){
+          const {data:list,error:listError}=await supabase.auth.admin.listUsers({page,perPage:100});
+          if(listError)throw listError;
+          const existing=(list.users||[]).find((u:any)=>(u.email||"").toLowerCase()===verifiedEmail);
+          if(existing){
+            userId=existing.id;
+            email=existing.email||verifiedEmail;
+            break;
+          }
+          if((list.users||[]).length<100)break;
+        }
+      }
+
+      if(!userId){
+        email=verifiedEmail||syntheticEmail(subject);
+        const {data:created,error:createError}=await supabase.auth.admin.createUser({
+          email,
+          email_confirm:true,
+          user_metadata:{nickname:displayName,line_subject:subject,line_picture:identity.picture||null}
+        });
+        if(createError||!created.user)throw createError||new Error("Could not create user");
+        userId=created.user.id;
+      }
 
       const {error:mapError}=await supabase.from("external_identities").insert({
         provider:"line",
