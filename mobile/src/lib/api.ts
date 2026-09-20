@@ -79,6 +79,29 @@ export async function submitCounselorApplication(payload: {
   return data;
 }
 
+export async function getCounselorProfile() {
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) throw new Error("ログインが必要です");
+  const { data, error } = await supabase
+    .from("counselor_profiles")
+    .select("user_id,display_name,counselor_type,gender,specialty,bio,avatar_path,qualification_label,verification_status,is_suspended")
+    .eq("user_id", auth.user.id)
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updateCounselorProfile(payload: {
+  displayName: string;
+  gender: "female" | "male" | "other" | null;
+  specialty: string;
+  bio: string;
+}) {
+  const { data, error } = await supabase.functions.invoke("update-counselor-profile", { body: payload });
+  if (error) throw error;
+  return data;
+}
+
 export async function setCounselorAvailability(isAccepting: boolean) {
   const { data, error } = await supabase.functions.invoke("set-counselor-availability", {
     body: { isAccepting }
