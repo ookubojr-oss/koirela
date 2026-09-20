@@ -40,19 +40,29 @@ Deno.serve(async (req) => {
       const intent = await stripe.paymentIntents.retrieve(payment.provider_payment_intent_id);
 
       if (intent.status === "succeeded") {
-        const refund = await stripe.refunds.create({
-          payment_intent: intent.id,
-          metadata: { consultation_id: consultationId, reason: "canceled_before_start" }
-        });
-        await supabase.from("payments").insert({
-          consultation_id: consultationId,
-          payer_id: user.id,
-          provider: "stripe",
-          provider_payment_intent_id: null,
-          amount_jpy: Math.abs(intent.amount_received || 100),
-          kind: "refund",
-          status: refund.status || "pending"
-        });
+        const { data: existingRefund } = await supabase
+          .from("payments")
+          .select("id")
+          .eq("refunded_payment_intent_id", intent.id)
+          .maybeSingle();
+
+        if (!existingRefund) {
+          const refund = await stripe.refunds.create({
+            payment_intent: intent.id,
+            metadata: { consultation_id: consultationId, reason: "canceled_before_start" }
+          });
+          await supabase.from("payments").insert({
+            consultation_id: consultationId,
+            payer_id: user.id,
+            provider: "stripe",
+            provider_payment_intent_id: null,
+            provider_refund_id: refund.id,
+            refunded_payment_intent_id: intent.id,
+            amount_jpy: Math.abs(intent.amount_received || 100),
+            kind: "refund",
+            status: refund.status || "pending"
+          });
+        }
       } else if (!["canceled","requires_capture"].includes(intent.status)) {
         try { await stripe.paymentIntents.cancel(intent.id); } catch (_) {}
       }
