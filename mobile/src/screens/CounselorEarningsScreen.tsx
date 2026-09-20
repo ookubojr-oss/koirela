@@ -72,9 +72,15 @@ export default function CounselorEarningsScreen({onBack}:{onBack:()=>void}) {
 
     {!loading&&summary?<>
       <View style={styles.hero}>
-        <Text style={styles.heroLabel}>今月の受取見込み</Text>
-        <Text style={styles.heroValue}>{Number(summary.estimated_net_jpy||0).toLocaleString()}円</Text>
-        <Text style={styles.heroSub}>売上 {Number(summary.month_gross_jpy||0).toLocaleString()}円 − 手数料見込み {Number(summary.estimated_platform_fee_jpy||0).toLocaleString()}円</Text>
+        <Text style={styles.heroLabel}>{summary.fee_configured?"今月の受取見込み":"今月の売上"}</Text>
+        <Text style={styles.heroValue}>
+          {Number(summary.fee_configured?summary.estimated_net_jpy:summary.month_gross_jpy||0).toLocaleString()}円
+        </Text>
+        <Text style={styles.heroSub}>
+          {summary.fee_configured
+            ? "売上 "+Number(summary.month_gross_jpy||0).toLocaleString()+"円 − 手数料見込み "+Number(summary.estimated_platform_fee_jpy||0).toLocaleString()+"円"
+            : "手数料率は公開前に確定します。現在は受取見込み額を表示していません。"}
+        </Text>
       </View>
       <View style={styles.grid}>
         <Stat label="今日の相談" value={(summary.today_consultations||0)+"件"}/>
@@ -106,7 +112,7 @@ export default function CounselorEarningsScreen({onBack}:{onBack:()=>void}) {
       </View>)}
     </View>
 
-    <Text style={styles.note}>※ 手数料率・締め日・振込日は公開前に相談員規約へ正式に記載します。振込機能の本番利用にはStripe Connectの審査・本番アカウント設定が必要です。</Text>
+    <Text style={styles.note}>※ 手数料率・締め日・振込日は公開前に相談員規約へ正式に記載します。手数料設定が確定するまでは運営からの送金処理は実行できません。振込機能の本番利用にはStripe Connectの審査・本番アカウント設定が必要です。</Text>
   </ScrollView></SafeAreaView>
 }
 
