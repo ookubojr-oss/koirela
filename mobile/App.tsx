@@ -32,6 +32,8 @@ import {
   type Counselor
 } from "./src/lib/api";
 import { clearConsultationNotifications, registerPushToken, scheduleOneMinuteWarning } from "./src/lib/notifications";
+import CounselorApplicationScreen from "./src/screens/CounselorApplicationScreen";
+import ProfileEditScreen from "./src/screens/ProfileEditScreen";
 
 const COLORS = {
   plum: "#574E66",
@@ -358,20 +360,44 @@ function ChatScreen({ consultation, peerName, onDone }: {
   );
 }
 
-function MyPageScreen({ role, onCounselorMode }: { role: string; onCounselorMode: () => void }) {
+function MyPageScreen({
+  role,
+  onCounselorMode,
+  onProfile,
+  onApply
+}: {
+  role: string;
+  onCounselorMode: () => void;
+  onProfile: () => void;
+  onApply: () => void;
+}) {
   return (
     <ScrollView contentContainerStyle={styles.content}>
       <Text style={styles.pageTitle}>マイページ</Text>
-      <View style={styles.card}>
+      <Pressable style={styles.card} onPress={onProfile}>
         <View style={styles.profileRow}>
           <View style={styles.avatar}><Text style={styles.avatarText}>も</Text></View>
-          <View><Text style={styles.listenerName}>プロフィール</Text><Text style={styles.muted}>{role === "counselor" ? "相談員アカウント" : "相談ユーザー"}</Text></View>
+          <View style={{flex:1}}>
+            <Text style={styles.listenerName}>プロフィール</Text>
+            <Text style={styles.muted}>{role === "counselor" ? "相談員アカウント" : "相談ユーザー"}</Text>
+          </View>
+          <Text>›</Text>
         </View>
-      </View>
+      </Pressable>
+
       {role === "counselor" ? (
-        <Pressable style={styles.menuButton} onPress={onCounselorMode}><Text style={styles.menuText}>相談員モード</Text><Text>›</Text></Pressable>
-      ) : null}
-      <Pressable style={styles.menuButton} onPress={() => void signOut()}><Text style={[styles.menuText, { color: COLORS.danger }]}>ログアウト</Text></Pressable>
+        <Pressable style={styles.menuButton} onPress={onCounselorMode}>
+          <Text style={styles.menuText}>相談員モード</Text><Text>›</Text>
+        </Pressable>
+      ) : (
+        <Pressable style={styles.menuButton} onPress={onApply}>
+          <Text style={styles.menuText}>相談員として活動する</Text><Text>›</Text>
+        </Pressable>
+      )}
+
+      <Pressable style={styles.menuButton} onPress={() => void signOut()}>
+        <Text style={[styles.menuText, { color: COLORS.danger }]}>ログアウト</Text>
+      </Pressable>
     </ScrollView>
   );
 }
@@ -488,7 +514,7 @@ function MainApp({ session }: { session: Session }) {
   const [role, setRole] = useState("user");
   const [selected, setSelected] = useState<Counselor | null>(null);
   const [consultation, setConsultation] = useState<ConsultationState | null>(null);
-  const [mode, setMode] = useState<"main" | "waiting" | "chat" | "counselor">("main");
+  const [mode, setMode] = useState<"main" | "waiting" | "chat" | "counselor" | "profile" | "counselor-application">("main");
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
   useEffect(() => {
@@ -555,13 +581,28 @@ function MainApp({ session }: { session: Session }) {
     return <CounselorMode onBack={() => setMode("main")} onAccept={state => { setConsultation(state); setSelected(null); setMode("chat"); }} />;
   }
 
+  if (mode === "profile") {
+    return <ProfileEditScreen onBack={() => setMode("main")} />;
+  }
+
+  if (mode === "counselor-application") {
+    return <CounselorApplicationScreen onBack={() => setMode("main")} onDone={() => setMode("main")} />;
+  }
+
   return (
     <SafeAreaView style={styles.appRoot}>
       <StatusBar style="dark" />
       <View style={{ flex: 1 }}>
         {tab === "home" ? <HomeScreen onFind={() => setTab("find")} /> : null}
         {tab === "find" ? <FindScreen onChoose={purchase} /> : null}
-        {tab === "mypage" ? <MyPageScreen role={role} onCounselorMode={() => setMode("counselor")} /> : null}
+        {tab === "mypage" ? (
+          <MyPageScreen
+            role={role}
+            onCounselorMode={() => setMode("counselor")}
+            onProfile={() => setMode("profile")}
+            onApply={() => setMode("counselor-application")}
+          />
+        ) : null}
       </View>
       <View style={styles.tabbar}>
         {[
