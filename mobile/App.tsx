@@ -16,7 +16,6 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
 import type { Session } from "@supabase/supabase-js";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "./src/lib/supabase";
 import { signInWithEmail, signInWithOAuth, signOut } from "./src/lib/auth";
 import {
@@ -44,7 +43,6 @@ import PostConsultationScreen from "./src/screens/PostConsultationScreen";
 import FavoritesScreen from "./src/screens/FavoritesScreen";
 import CounselorEarningsScreen from "./src/screens/CounselorEarningsScreen";
 import SupportScreen from "./src/screens/SupportScreen";
-import OnboardingScreen from "./src/screens/OnboardingScreen";
 import MaintenanceScreen from "./src/screens/MaintenanceScreen";
 import CounselorProfileEditScreen from "./src/screens/CounselorProfileEditScreen";
 
@@ -715,17 +713,14 @@ function MainApp({ session }: { session: Session }) {
 function Root() {
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(false);
-  const [onboarded, setOnboarded] = useState<boolean | null>(null);
   const [maintenance, setMaintenance] = useState<{enabled?:boolean;title?:string;message?:string}>({enabled:false});
 
   useEffect(() => {
     void Promise.all([
       supabase.auth.getSession(),
-      AsyncStorage.getItem("koirela_onboarding_v1"),
       loadMaintenanceSetting().catch(() => ({enabled:false}))
-    ]).then(([authResult,onboardingValue,maintenanceValue]) => {
+    ]).then(([authResult,maintenanceValue]) => {
       setSession(authResult.data.session);
-      setOnboarded(onboardingValue === "done");
       setMaintenance(maintenanceValue);
       setReady(true);
     });
@@ -734,21 +729,12 @@ function Root() {
     return () => data.subscription.unsubscribe();
   }, []);
 
-  async function completeOnboarding() {
-    await AsyncStorage.setItem("koirela_onboarding_v1","done");
-    setOnboarded(true);
-  }
-
-  if (!ready || onboarded === null) {
+  if (!ready) {
     return <SafeAreaView style={styles.center}><ActivityIndicator color={COLORS.coral} /></SafeAreaView>;
   }
 
   if (maintenance.enabled) {
     return <MaintenanceScreen title={maintenance.title} message={maintenance.message} />;
-  }
-
-  if (!onboarded) {
-    return <OnboardingScreen onDone={() => void completeOnboarding()} />;
   }
 
   return session ? <MainApp session={session} /> : <AuthScreen />;
