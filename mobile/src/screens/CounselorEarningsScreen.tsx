@@ -111,7 +111,7 @@ export default function CounselorEarningsScreen({onBack}:{onBack:()=>void}) {
 }
 
 function Stat({label,value}:{label:string;value:string}){return <View style={styles.stat}><Text style={styles.meta}>{label}</Text><Text style={styles.statValue}>{value}</Text></View>}
-function statusLabel(v:string){return v==="paid"?"送金済み":v==="processing"?"送金処理中":v==="held"?"運営確認中":v==="failed"?"失敗":"振込予定"}
+function statusLabel(v:string){return v==="paid"?"Stripe Connectへ送金済み":v==="processing"?"送金処理中":v==="held"?"運営確認中":v==="failed"?"失敗":"振込予定"}
 
 const styles=StyleSheet.create({
  root:{flex:1,backgroundColor:C.bg},content:{padding:20,paddingBottom:50,gap:12},back:{fontSize:12,fontWeight:"700",color:C.plum},title:{fontSize:23,fontWeight:"800",color:C.plum},
