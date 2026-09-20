@@ -1,5 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { authenticatedUser, serviceClient } from "../_shared/clients.ts";
+import { pushToUser } from "../_shared/push.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -12,7 +13,7 @@ Deno.serve(async (req) => {
 
     const { data: counselor, error } = await supabase
       .from("counselor_profiles")
-      .select("verification_status,is_suspended")
+      .select("display_name,verification_status,is_suspended")
       .eq("user_id", user.id)
       .single();
 
@@ -47,6 +48,32 @@ Deno.serve(async (req) => {
       .single();
 
     if (upsertError) throw upsertError;
+
+    if (isAccepting) {
+      const { data: followers } = await supabase
+        .from("favorites")
+        .select("user_id")
+        .eq("counselor_id", user.id);
+
+      for (const follower of followers ?? []) {
+        const { data: prefs } = await supabase
+          .from("notification_preferences")
+          .select("enabled,counselor_online")
+          .eq("user_id", follower.user_id)
+          .maybeSingle();
+
+        if (prefs?.enabled && prefs?.counselor_online) {
+          void pushToUser(
+            supabase,
+            follower.user_id,
+            "お気に入りの相談員が受付を開始しました",
+            (counselor.display_name || "相談員") + "さんが相談受付を開始しました。",
+            { type: "favorite_counselor_online", counselorId: user.id }
+          );
+        }
+      }
+    }
+
     return Response.json(data, { headers: corsHeaders });
   } catch (error) {
     return Response.json(
