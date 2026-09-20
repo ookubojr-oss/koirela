@@ -62,6 +62,14 @@ export async function createExtensionPaymentIntent(consultationId: string) {
   return data;
 }
 
+export async function setCounselorAvailability(isAccepting: boolean) {
+  const { data, error } = await supabase.functions.invoke("set-counselor-availability", {
+    body: { isAccepting }
+  });
+  if (error) throw error;
+  return data as { counselor_id: string; is_accepting: boolean; updated_at: string };
+}
+
 export async function acceptConsultation(consultationId: string) {
   const { data, error } = await supabase.functions.invoke("start-consultation", {
     body: { consultationId }
