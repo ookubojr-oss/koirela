@@ -119,6 +119,115 @@ export async function sendMessage(consultationId: string, body: string, context:
   return data;
 }
 
+
+export async function rateConsultation(consultationId: string, counselorId: string, stars: number) {
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) throw new Error("ログインが必要です");
+  const { data, error } = await supabase.from("ratings").upsert({
+    consultation_id: consultationId,
+    user_id: auth.user.id,
+    counselor_id: counselorId,
+    stars
+  }, { onConflict: "consultation_id" }).select().single();
+  if (error) throw error;
+  return data;
+}
+
+export async function reportCounselor(
+  consultationId: string,
+  counselorId: string,
+  reason: string,
+  context: string[] = []
+) {
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) throw new Error("ログインが必要です");
+  const { data, error } = await supabase.from("reports").insert({
+    consultation_id: consultationId,
+    reporter_id: auth.user.id,
+    counselor_id: counselorId,
+    reason,
+    context
+  }).select().single();
+  if (error) throw error;
+  return data;
+}
+
+export async function blockCounselor(counselorId: string) {
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) throw new Error("ログインが必要です");
+  const { error } = await supabase.from("blocks").upsert({
+    blocker_id: auth.user.id,
+    blocked_id: counselorId
+  }, { onConflict: "blocker_id,blocked_id" });
+  if (error) throw error;
+}
+
+export async function unblockCounselor(counselorId: string) {
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) throw new Error("ログインが必要です");
+  const { error } = await supabase.from("blocks")
+    .delete()
+    .eq("blocker_id", auth.user.id)
+    .eq("blocked_id", counselorId);
+  if (error) throw error;
+}
+
+export async function listBlockedCounselors() {
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) throw new Error("ログインが必要です");
+  const { data, error } = await supabase.from("blocks")
+    .select("blocked_id,created_at")
+    .eq("blocker_id", auth.user.id)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function listConsultationHistory() {
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) throw new Error("ログインが必要です");
+  const { data, error } = await supabase
+    .from("consultations")
+    .select("id,status,price_jpy,duration_seconds,started_at,ends_at,ended_at,created_at,counselor_id,counselor:counselor_profiles!consultations_counselor_id_fkey(display_name,avatar_path,counselor_type)")
+    .eq("user_id", auth.user.id)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function loadNotificationPreferences() {
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) throw new Error("ログインが必要です");
+  const { data, error } = await supabase.from("notification_preferences")
+    .select("enabled,one_minute_warning,counselor_online")
+    .eq("user_id", auth.user.id)
+    .maybeSingle();
+  if (error) throw error;
+  return data ?? { enabled: false, one_minute_warning: true, counselor_online: false };
+}
+
+export async function saveNotificationPreferences(values: {
+  enabled: boolean;
+  one_minute_warning: boolean;
+  counselor_online: boolean;
+}) {
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) throw new Error("ログインが必要です");
+  const { data, error } = await supabase.from("notification_preferences").upsert({
+    user_id: auth.user.id,
+    ...values,
+    updated_at: new Date().toISOString()
+  }, { onConflict: "user_id" }).select().single();
+  if (error) throw error;
+  return data;
+}
+
+export async function requestAccountDeletion() {
+  const { data, error } = await supabase.rpc("request_account_deletion");
+  if (error) throw error;
+  return data;
+}
+
 export function subscribeToMessages(consultationId: string, onMessage: (message: any) => void) {
   const channel = supabase
     .channel("messages:" + consultationId)
