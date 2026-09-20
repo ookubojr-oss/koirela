@@ -30,7 +30,7 @@ import {
   subscribeToMessages,
   type Counselor
 } from "./src/lib/api";
-import { registerPushToken } from "./src/lib/notifications";
+import { clearConsultationNotifications, registerPushToken, scheduleOneMinuteWarning } from "./src/lib/notifications";
 
 const COLORS = {
   plum: "#574E66",
@@ -259,6 +259,11 @@ function ChatScreen({ consultation, peerName, onDone }: {
   }, [consultation.id]);
 
   useEffect(() => {
+    void scheduleOneMinuteWarning(consultation.ends_at);
+    return () => { void clearConsultationNotifications(); };
+  }, [consultation.ends_at]);
+
+  useEffect(() => {
     const render = () => {
       if (!consultation.ends_at) return setRemaining(0);
       const seconds = Math.max(0, Math.ceil((new Date(consultation.ends_at).getTime() - Date.now()) / 1000));
@@ -314,6 +319,7 @@ function ChatScreen({ consultation, peerName, onDone }: {
   async function finish() {
     try {
       await endConsultation(consultation.id);
+      await clearConsultationNotifications();
       onDone();
     } catch (error: any) {
       Alert.alert("終了できませんでした", error?.message ?? "もう一度お試しください");
