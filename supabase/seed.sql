@@ -1,0 +1,3 @@
+-- Optional local-development seed notes.
+-- Create auth users through Supabase Auth first, then insert matching profile rows.
+-- Production must never seed real identities or credentials into source control.
