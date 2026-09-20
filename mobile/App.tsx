@@ -232,7 +232,7 @@ function FindScreen({ onChoose }: { onChoose: (c: Counselor) => void }) {
               <View style={styles.avatar}><Text style={styles.avatarText}>{item.display_name.slice(0,1)}</Text></View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.listenerName}>{item.display_name}</Text>
-                <Text style={styles.roleText}>{item.counselor_type === "qualified" ? "資格者" : "経験者"}</Text>
+                <Text style={styles.roleText}>{item.counselor_type === "qualified" ? "資格者" : "経験者"}{item.rating_count ? " ・ ★ "+item.average_rating+" ("+item.rating_count+")" : ""}</Text>
               </View>
               <Pressable onPress={() => void toggleFavorite(item.user_id)} accessibilityLabel="お気に入り">
                 <Text style={{fontSize:20,color:favoriteIds.includes(item.user_id)?COLORS.coral:"#D8D1DB"}}>{favoriteIds.includes(item.user_id) ? "♥" : "♡"}</Text>
