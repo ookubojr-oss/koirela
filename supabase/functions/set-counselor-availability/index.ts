@@ -1,5 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { authenticatedUser, serviceClient } from "../_shared/clients.ts";
+import { expireStaleConsultations } from "../_shared/consultations.ts";
 import { pushToUser } from "../_shared/push.ts";
 
 Deno.serve(async (req) => {
@@ -10,6 +11,7 @@ Deno.serve(async (req) => {
     const payload = await req.json();
     const isAccepting = Boolean(payload.isAccepting);
     const supabase = serviceClient();
+    await expireStaleConsultations(supabase,user.id);
 
     const { data: counselor, error } = await supabase
       .from("counselor_profiles")
