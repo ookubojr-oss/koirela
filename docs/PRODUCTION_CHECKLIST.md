@@ -4,71 +4,91 @@ Updated: 2026-09-20
 
 ## Implemented in feature/production-foundation
 
-- [x] Production branch separated from the HTML prototype
-- [x] Supabase schema for profiles, counselors, consultations, messages, payments, ratings, reports, blocks, notifications, moderation and audit logs
-- [x] Row Level Security baseline
-- [x] Auth profile bootstrap
-- [x] Counselor discovery filters: type, gender, name/content, approved, accepting, not suspended
-- [x] Server-authoritative 15-minute start/end timestamp
-- [x] Stripe PaymentIntent creation for initial 100 JPY consultation
-- [x] Stripe webhook processing
-- [x] 15-minute 100 JPY paid extension with idempotent webhook handling
-- [x] Cancel-before-start and refund path
-- [x] Realtime messages and consultation state
-- [x] Server-side counselor-only off-platform solicitation screening
-- [x] First violation warning / second violation suspension
-- [x] User report requires admin confirmation before becoming a strike
-- [x] Suspended counselor cannot accept consultations
+### Core
+- [x] Production branch separated from HTML prototype
+- [x] Supabase schema / RLS / Storage / Realtime foundation
+- [x] Email signup, email confirmation and password reset
+- [x] Apple / Google OAuth foundation
+- [x] LINE Login OAuth bridge foundation
+- [x] Counselor search by name/content/type/gender
+- [x] Favorites and counselor-online notification
+- [x] Consultation history and one-tap reconsult
+- [x] Server-authoritative 15-minute timer
+- [x] Initial 100 JPY payment and 100 JPY extension
+- [x] Cancel-before-start and refund flow
+- [x] Payment history / receipt-information screen
+- [x] Realtime messaging
+- [x] Waiting/active consultation recovery after app restart
+- [x] Push notifications and one-minute warning
+- [x] Rating tags / report / block
+
+### Counselor
+- [x] Counselor application
+- [x] Identity / qualification private uploads
+- [x] Counselor profile edit including photo/camera/remove
 - [x] Counselor availability ON/OFF
-- [x] Push notification foundation
-- [x] One-minute local notification based on server ends_at
-- [x] Private counselor verification document storage
-- [x] Counselor application and admin approval/rejection RPC
-- [x] Production admin dashboard with admin authentication
-- [x] Admin moderation review, overturn, restore, user-report confirmation and audit logs
-- [x] Admin counselor application review with temporary signed document links
-- [x] Expo / React Native mobile foundation
-- [x] Mobile Apple / Google OAuth foundation
-- [x] Mobile email sign-in
-- [x] Mobile home / find / my page
-- [x] Mobile PaymentSheet flow
-- [x] Mobile waiting / realtime chat / extension / end
-- [x] Mobile counselor reception and request acceptance
-- [x] Mobile user profile image choose / take / delete
-- [x] Mobile counselor application with image/document upload
-- [x] Mobile consultation history
-- [x] Mobile rating / report / block
-- [x] Mobile notification and safety settings
-- [x] In-app account-deletion initiation workflow
-- [x] LP updated to current visual system and 15-min / 100-yen model
-- [x] README and environment documentation updated
+- [x] Counselor earnings summary
+- [x] Stripe Connect payout onboarding foundation
+- [x] Admin-triggered counselor payout allocation/transfer foundation
 
-## Requires external account configuration before it can be live
+### Safety / operations
+- [x] Counselor-only off-platform solicitation detection
+- [x] First violation warning / second violation suspension
+- [x] User report only counts after admin confirmation
+- [x] User account suspension state
+- [x] Counselor suspension / restore
+- [x] Admin user search by email/nickname/ID
+- [x] Admin counselor search / violations / reception / payout state
+- [x] Admin force-end consultation
+- [x] Admin Stripe refund
+- [x] Admin moderation and audit history
+- [x] Support ticket management
+- [x] Maintenance mode
+- [x] API rate limiting for payment/message/consultation/auth/error endpoints
+- [x] Client error reporting / error dashboard
+- [x] Push delivery error tracking and invalid-token cleanup
+- [x] Account immediate deletion backend and de-identification path
 
-- [ ] Create production Supabase project and apply migrations
-- [ ] Configure Supabase Auth redirect URLs
+### Release preparation
+- [x] LP aligned with current 15-min / 100-yen model
+- [x] Legal draft pages: terms/privacy/commercial-law/refund/counselor terms
+- [x] App Store metadata draft
+- [x] App privacy declaration worksheet
+- [x] App Store release checklist
+- [x] Device test matrix
+- [x] Maestro smoke flows
+- [x] GitHub Actions type/static checks
+- [x] Security/rate-limit documentation
+
+## External configuration / real-world actions still required
+
+- [ ] Create production Supabase project and apply all migrations
+- [ ] Configure Supabase Auth URLs, email templates and auth security settings
 - [ ] Configure Apple OAuth credentials
 - [ ] Configure Google OAuth credentials
-- [ ] Implement/configure LINE login with owned LINE channel credentials
+- [ ] Create LINE Login channel, approve email permission if used, set callback URL and secrets
 - [ ] Create Stripe account and set test/live keys
-- [ ] Deploy Stripe webhook and Edge Functions
-- [ ] Decide counselor revenue share / payout policy
-- [ ] Select and configure counselor payout provider / Stripe Connect if appropriate
+- [ ] Enable/configure Stripe Connect for the actual business model
+- [ ] Set final counselor platform fee, payout schedule and tax process
+- [ ] Deploy Edge Functions and Stripe webhook
 - [ ] Configure Expo EAS project
 - [ ] Configure Apple Developer Team / Bundle ID / merchant identifier
-- [ ] Configure Google Play package / payment capabilities if Android release is planned
-- [ ] Configure Expo push credentials / APNs / FCM
-- [ ] Create at least one real admin account and assign role=admin
-- [ ] Decide identity-verification provider or manual-review operating procedure
-- [ ] Final legal review: terms, privacy, operator information, cancellation/refund, log retention
-- [ ] Define actual account deletion processing/purge worker and legally required retention exceptions
-- [ ] Build and run native app on real iPhone / Android devices
-- [ ] Test payment, cancellation/refund, timer recovery, background/foreground and poor networks
-- [ ] Test moderation bypass attempts and false positives
-- [ ] Accessibility and localization review
-- [ ] App Store Connect metadata/screenshots/privacy declarations
-- [ ] TestFlight review and production submission
+- [ ] Configure APNs / FCM / Expo push credentials
+- [ ] Create real admin account and assign role=admin
+- [ ] Choose final identity-verification provider or formalize manual review
+- [ ] Replace all legal placeholders with actual operator information
+- [ ] Professional legal/tax review of terms, privacy, commerce disclosure, payouts and retention
+- [ ] Final App Store icon, splash and screenshots
+- [ ] Complete App Store privacy answers from deployed production SDK/data map
+- [ ] Run real-device two-account E2E matrix
+- [ ] Run Stripe test payments/refunds/Connect payouts end to end
+- [ ] Run LINE/Apple/Google login on production-like builds
+- [ ] Accessibility review
+- [ ] TestFlight review
+- [ ] Production submission
 
 ## Important
 
-The code foundation is not the same as a live service. No production secrets are committed to Git. Payment, authentication, push, identity verification, deletion completion and App Store submission cannot be completed until the corresponding external accounts and credentials are configured.
+“Implemented” means source-code foundation exists in this branch. It does not mean external providers are connected or that live money/auth/push has been verified.
+
+No production secrets are committed to Git. Do not merge to `main` until migrations, functions, provider configuration and real-device tests have passed.
