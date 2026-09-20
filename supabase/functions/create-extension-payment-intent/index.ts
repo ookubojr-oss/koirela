@@ -1,6 +1,7 @@
 import Stripe from "npm:stripe@17.7.0";
 import { corsHeaders } from "../_shared/cors.ts";
 import { authenticatedUser, serviceClient } from "../_shared/clients.ts";
+import { logError } from "../_shared/monitoring.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "");
@@ -68,6 +69,15 @@ Deno.serve(async (req) => {
       currency: "jpy"
     }, { headers: corsHeaders });
   } catch (error) {
-    return Response.json({ error: error instanceof Error ? error.message : "Unknown error" }, { status: error instanceof Error && error.message === "RATE_LIMITED" ? 429 : 400, headers: corsHeaders });
+    const message = error instanceof Error ? error.message : "Unknown error";
+    if (!["Counselor unavailable","Consultation ended","Forbidden","RATE_LIMITED"].includes(message)) {
+      await logError(serviceClient(), {
+        source: "payment",
+        message,
+        stack: error instanceof Error ? error.stack : null,
+        context: { function: "create-extension-payment-intent" }
+      });
+    }
+    return Response.json({ error: message }, { status: error instanceof Error && error.message === "RATE_LIMITED" ? 429 : 400, headers: corsHeaders });
   }
 });
