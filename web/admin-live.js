@@ -386,6 +386,13 @@ async function searchAccounts(){
   }
 }
 
+const boundAdminClicks = new WeakSet();
+function bindClick(element, handler) {
+  if (boundAdminClicks.has(element)) return;
+  boundAdminClicks.add(element);
+  element.addEventListener("click", handler);
+}
+
 async function runAdminOperation(body) {
   const { data, error } = await supabase.functions.invoke("admin-operations", { body });
   if (error) throw error;
@@ -393,7 +400,7 @@ async function runAdminOperation(body) {
 }
 
 function bindActions() {
-  document.querySelectorAll("[data-suspend-user]").forEach(btn=>btn.addEventListener("click",async()=>{
+  document.querySelectorAll("[data-suspend-user]").forEach(btn=>bindClick(btn,async()=>{
     const userId=btn.dataset.suspendUser;
     const reason=prompt("利用停止理由を入力してください","運営判断による利用停止");
     if(reason===null)return;
@@ -404,7 +411,7 @@ function bindActions() {
     await loadAll();
   }));
 
-  document.querySelectorAll("[data-restore-user]").forEach(btn=>btn.addEventListener("click",async()=>{
+  document.querySelectorAll("[data-restore-user]").forEach(btn=>bindClick(btn,async()=>{
     const userId=btn.dataset.restoreUser;
     if(!confirm("このユーザーの利用停止を解除しますか？"))return;
     btn.disabled=true;
@@ -413,7 +420,7 @@ function bindActions() {
     await loadAll();
   }));
 
-  document.querySelectorAll("[data-process-payout]").forEach(btn=>btn.addEventListener("click",async()=>{
+  document.querySelectorAll("[data-process-payout]").forEach(btn=>bindClick(btn,async()=>{
     const counselorId=btn.dataset.processPayout;
     const now=new Date();
     const first=new Date(now.getFullYear(),now.getMonth(),1);
@@ -431,7 +438,7 @@ function bindActions() {
     await loadAll();
   }));
 
-  document.querySelectorAll("[data-force-suspend]").forEach(btn => btn.addEventListener("click", async () => {
+  document.querySelectorAll("[data-force-suspend]").forEach(btn => bindClick(btn, async () => {
     const counselorId=btn.dataset.forceSuspend;
     const reason=prompt("停止理由を入力してください","運営判断による停止");
     if(reason===null)return;
@@ -441,21 +448,21 @@ function bindActions() {
     await loadAll();
   }));
 
-  document.querySelectorAll("[data-force-end]").forEach(btn => btn.addEventListener("click", async () => {
+  document.querySelectorAll("[data-force-end]").forEach(btn => bindClick(btn, async () => {
     if(!confirm("この相談を運営側から終了しますか？"))return;
     btn.disabled=true;
     try{await runAdminOperation({action:"force_end_consultation",consultationId:btn.dataset.forceEnd});}catch(e){alert(e.message||"終了できませんでした");}
     await loadAll();
   }));
 
-  document.querySelectorAll("[data-refund]").forEach(btn => btn.addEventListener("click", async () => {
+  document.querySelectorAll("[data-refund]").forEach(btn => bindClick(btn, async () => {
     if(!confirm("この相談の決済をStripeで返金しますか？ この操作は実際の返金処理を行います。"))return;
     btn.disabled=true;
     try{await runAdminOperation({action:"refund_consultation",consultationId:btn.dataset.refund});}catch(e){alert(e.message||"返金できませんでした");}
     await loadAll();
   }));
 
-  document.querySelectorAll("[data-support-answer]").forEach(btn => btn.addEventListener("click", async () => {
+  document.querySelectorAll("[data-support-answer]").forEach(btn => bindClick(btn, async () => {
     const id=btn.dataset.supportAnswer;
     const reply=document.getElementById("reply-"+id)?.value?.trim()||"";
     if(!reply)return alert("返信内容を入力してください");
@@ -463,25 +470,25 @@ function bindActions() {
     const {error}=await supabase.from("support_tickets").update({admin_reply:reply,status:"answered",updated_at:new Date().toISOString()}).eq("id",id);
     if(error)alert(error.message);await loadAll();
   }));
-  document.querySelectorAll("[data-support-close]").forEach(btn => btn.addEventListener("click", async () => {
+  document.querySelectorAll("[data-support-close]").forEach(btn => bindClick(btn, async () => {
     btn.disabled=true;const {error}=await supabase.from("support_tickets").update({status:"closed",updated_at:new Date().toISOString()}).eq("id",btn.dataset.supportClose);
     if(error)alert(error.message);await loadAll();
   }));
-  document.querySelectorAll("[data-deletion-processing]").forEach(btn => btn.addEventListener("click", async () => {
+  document.querySelectorAll("[data-deletion-processing]").forEach(btn => bindClick(btn, async () => {
     const {error}=await supabase.from("account_deletion_requests").update({status:"processing"}).eq("user_id",btn.dataset.deletionProcessing);
     if(error)alert(error.message);await loadAll();
   }));
-  document.querySelectorAll("[data-deletion-complete]").forEach(btn => btn.addEventListener("click", async () => {
+  document.querySelectorAll("[data-deletion-complete]").forEach(btn => bindClick(btn, async () => {
     if(!confirm("削除処理完了として記録しますか？ 実データ削除処理は別途バックエンドで完了している必要があります。"))return;
     const {error}=await supabase.from("account_deletion_requests").update({status:"completed",completed_at:new Date().toISOString()}).eq("user_id",btn.dataset.deletionComplete);
     if(error)alert(error.message);await loadAll();
   }));
 
-  document.querySelectorAll("[data-open-doc]").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll("[data-open-doc]").forEach(btn => bindClick(btn, () => {
     void openVerificationDocument(btn.dataset.openDoc);
   }));
 
-  document.querySelectorAll("[data-review-counselor]").forEach(btn => btn.addEventListener("click", async () => {
+  document.querySelectorAll("[data-review-counselor]").forEach(btn => bindClick(btn, async () => {
     const counselorId = btn.dataset.reviewCounselor;
     const reviewStatus = btn.dataset.reviewStatus;
     const counselor = state.counselors.get(counselorId);
@@ -496,26 +503,26 @@ function bindActions() {
     await loadAll();
   }));
 
-  document.querySelectorAll("[data-toggle]").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll("[data-toggle]").forEach(btn => bindClick(btn, () => {
     const body = document.getElementById("body-"+btn.dataset.toggle);
     if (body) body.hidden = !body.hidden;
   }));
 
-  document.querySelectorAll("[data-confirm-report]").forEach(btn => btn.addEventListener("click", async () => {
+  document.querySelectorAll("[data-confirm-report]").forEach(btn => bindClick(btn, async () => {
     btn.disabled = true;
     const { error } = await supabase.rpc("admin_confirm_report",{p_report_id:btn.dataset.confirmReport});
     if (error) alert(error.message);
     await loadAll();
   }));
 
-  document.querySelectorAll("[data-overturn]").forEach(btn => btn.addEventListener("click", async () => {
+  document.querySelectorAll("[data-overturn]").forEach(btn => bindClick(btn, async () => {
     btn.disabled = true;
     const { error } = await supabase.rpc("admin_overturn_moderation",{p_event_id:btn.dataset.overturn});
     if (error) alert(error.message);
     await loadAll();
   }));
 
-  document.querySelectorAll("[data-restore]").forEach(btn => btn.addEventListener("click", async () => {
+  document.querySelectorAll("[data-restore]").forEach(btn => bindClick(btn, async () => {
     if (!confirm("相談員アカウントの停止を解除しますか？")) return;
     btn.disabled = true;
     const { error } = await supabase.rpc("admin_restore_counselor",{p_counselor_id:btn.dataset.restore});
@@ -563,7 +570,7 @@ document.getElementById("admin-search").addEventListener("input", event => {
   state.query = event.target.value;
   renderDashboard();
 });
-document.querySelectorAll("[data-filter]").forEach(btn => btn.addEventListener("click", () => {
+document.querySelectorAll("[data-filter]").forEach(btn => bindClick(btn, () => {
   document.querySelectorAll("[data-filter]").forEach(x => x.classList.remove("on"));
   btn.classList.add("on");
   state.filter = btn.dataset.filter;
