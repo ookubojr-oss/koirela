@@ -12,6 +12,9 @@ verify_jwt = true
 [functions.set-counselor-availability]
 verify_jwt = true
 
+[functions.submit-counselor-application]
+verify_jwt = true
+
 [functions.end-consultation]
 verify_jwt = true
 
