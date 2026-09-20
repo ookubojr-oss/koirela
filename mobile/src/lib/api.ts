@@ -9,6 +9,8 @@ export type Counselor = {
   bio: string | null;
   avatar_path: string | null;
   qualification_label: string | null;
+  average_rating?: number | null;
+  rating_count?: number;
 };
 
 export async function listCounselors(params?: {
@@ -37,9 +39,18 @@ export async function listCounselors(params?: {
     );
   }
 
-  const { data, error } = await request.order("updated_at", { ascending: false });
+  const [{ data, error }, statsResult] = await Promise.all([
+    request.order("updated_at", { ascending: false }),
+    supabase.rpc("counselor_rating_stats")
+  ]);
   if (error) throw error;
-  return (data ?? []) as Counselor[];
+  if (statsResult.error) throw statsResult.error;
+  const stats = new Map((statsResult.data ?? []).map((row: any) => [row.counselor_id,row]));
+  return (data ?? []).map((row: any) => ({
+    ...row,
+    average_rating: stats.get(row.user_id)?.average_rating ?? null,
+    rating_count: Number(stats.get(row.user_id)?.rating_count ?? 0)
+  })) as Counselor[];
 }
 
 export async function createPaymentIntent(counselorId: string) {
@@ -143,14 +154,15 @@ export async function sendMessage(consultationId: string, body: string, context:
 }
 
 
-export async function rateConsultation(consultationId: string, counselorId: string, stars: number) {
+export async function rateConsultation(consultationId: string, counselorId: string, stars: number, tags: string[] = []) {
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) throw new Error("ログインが必要です");
   const { data, error } = await supabase.from("ratings").upsert({
     consultation_id: consultationId,
     user_id: auth.user.id,
     counselor_id: counselorId,
-    stars
+    stars,
+    tags
   }, { onConflict: "consultation_id" }).select().single();
   if (error) throw error;
   return data;
