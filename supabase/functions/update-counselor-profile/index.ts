@@ -45,6 +45,7 @@ Deno.serve(async req => {
     const specialty=clean(body.specialty,120);
     const bio=clean(body.bio,1000);
     const gender=body.gender ? clean(body.gender,20) : null;
+    const avatarPath = typeof body.avatarPath === "string" ? clean(body.avatarPath,500) : body.avatarPath === null ? null : undefined;
     if (!displayName || ![null,"female","male","other"].includes(gender)) {
       return Response.json({error:"Invalid profile"},{status:400,headers:corsHeaders});
     }
@@ -70,15 +71,18 @@ Deno.serve(async req => {
       },{status:422,headers:corsHeaders});
     }
 
+    const updates: Record<string, unknown> = {
+      display_name:displayName,
+      specialty:specialty||null,
+      bio:bio||null,
+      gender,
+      updated_at:new Date().toISOString()
+    };
+    if (avatarPath !== undefined) updates.avatar_path = avatarPath;
+
     const {data,error}=await supabase
       .from("counselor_profiles")
-      .update({
-        display_name:displayName,
-        specialty:specialty||null,
-        bio:bio||null,
-        gender,
-        updated_at:new Date().toISOString()
-      })
+      .update(updates)
       .eq("user_id",user.id)
       .select("user_id,display_name,counselor_type,gender,specialty,bio,avatar_path,qualification_label,verification_status,is_suspended")
       .single();
