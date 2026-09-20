@@ -8,11 +8,13 @@ export default function PostConsultationScreen({
   consultationId,counselorId,onDone
 }:{consultationId:string;counselorId:string;onDone:()=>void}) {
   const [stars,setStars]=useState(0);
+  const [tags,setTags]=useState<string[]>([]);
   const [busy,setBusy]=useState(false);
+  const tagOptions=["話しやすかった","丁寧だった","共感してくれた","整理できた","また相談したい"];
 
   async function saveRating(){
     if(!stars)return Alert.alert("評価を選んでください");
-    try{setBusy(true);await rateConsultation(consultationId,counselorId,stars);onDone()}
+    try{setBusy(true);await rateConsultation(consultationId,counselorId,stars,tags);onDone()}
     catch(e:any){Alert.alert("保存できませんでした",e?.message||"もう一度お試しください")}
     finally{setBusy(false)}
   }
@@ -41,6 +43,8 @@ export default function PostConsultationScreen({
     <View style={styles.stars}>
       {[1,2,3,4,5].map(n=><Pressable key={n} onPress={()=>setStars(n)}><Text style={[styles.star,n<=stars&&styles.starOn]}>★</Text></Pressable>)}
     </View>
+    <Text style={styles.tagTitle}>よかったところ（複数選択可）</Text>
+    <View style={styles.tags}>{tagOptions.map(tag=><Pressable key={tag} style={[styles.tag,tags.includes(tag)&&styles.tagOn]} onPress={()=>setTags(current=>current.includes(tag)?current.filter(x=>x!==tag):[...current,tag])}><Text style={[styles.tagText,tags.includes(tag)&&styles.tagTextOn]}>{tag}</Text></Pressable>)}</View>
     <Pressable style={styles.primary} onPress={saveRating} disabled={busy}>{busy?<ActivityIndicator color="#fff"/>:<Text style={styles.primaryText}>評価して終了</Text>}</Pressable>
     <Pressable style={styles.secondary} onPress={()=>report("外部サービスへの勧誘")} disabled={busy}><Text style={styles.dangerText}>外部サービスに誘導された</Text></Pressable>
     <Pressable style={styles.secondary} onPress={()=>report("不適切な発言")} disabled={busy}><Text style={styles.secondaryText}>その他の問題を通報</Text></Pressable>
@@ -53,7 +57,7 @@ const styles=StyleSheet.create({
  root:{flex:1,backgroundColor:C.bg,justifyContent:"center",padding:22},card:{backgroundColor:"#fff",borderRadius:30,padding:22,alignItems:"center"},
  icon:{width:62,height:62,borderRadius:24,backgroundColor:C.pink,alignItems:"center",justifyContent:"center"},heart:{fontSize:30,color:C.coral},
  title:{fontSize:20,fontWeight:"800",color:C.plum,marginTop:14},lead:{fontSize:11,color:C.muted,marginTop:6},
- stars:{flexDirection:"row",gap:5,marginVertical:22},star:{fontSize:34,color:"#E9E3EB"},starOn:{color:"#F2B84B"},
+ stars:{flexDirection:"row",gap:5,marginTop:22,marginBottom:14},star:{fontSize:34,color:"#E9E3EB"},starOn:{color:"#F2B84B"},tagTitle:{fontSize:10,fontWeight:"800",color:C.muted,marginBottom:8},tags:{flexDirection:"row",flexWrap:"wrap",gap:6,justifyContent:"center",marginBottom:18},tag:{borderWidth:1,borderColor:C.line,borderRadius:999,paddingHorizontal:10,paddingVertical:7},tagOn:{backgroundColor:C.plum,borderColor:C.plum},tagText:{fontSize:9,fontWeight:"700",color:C.muted},tagTextOn:{color:"#fff"},
  primary:{width:"100%",height:52,borderRadius:999,backgroundColor:C.coral,alignItems:"center",justifyContent:"center"},primaryText:{color:"#fff",fontWeight:"800"},
  secondary:{width:"100%",height:44,alignItems:"center",justifyContent:"center",borderBottomWidth:1,borderBottomColor:C.line},secondaryText:{fontSize:10,fontWeight:"700",color:C.plum},dangerText:{fontSize:10,fontWeight:"700",color:C.danger},
  skip:{padding:13},skipText:{fontSize:10,color:C.muted,fontWeight:"700"}
