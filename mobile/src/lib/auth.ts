@@ -93,7 +93,7 @@ export async function signInWithOAuth(provider: "apple" | "google") {
 }
 
 export async function signInWithLine() {
-  const redirectTo = Linking.createURL("auth/line");
+  const redirectTo = "koirela://auth/line";
   const { data, error } = await supabase.functions.invoke("line-auth-start", {
     body: { appRedirect: redirectTo }
   });
