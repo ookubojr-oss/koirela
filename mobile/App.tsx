@@ -26,6 +26,7 @@ import {
   endConsultation,
   listCounselors,
   sendMessage,
+  setCounselorAvailability,
   subscribeToConsultation,
   subscribeToMessages,
   type Counselor
@@ -378,18 +379,30 @@ function MyPageScreen({ role, onCounselorMode }: { role: string; onCounselorMode
 function CounselorMode({ onBack, onAccept }: { onBack: () => void; onAccept: (row: ConsultationState) => void }) {
   const [requests, setRequests] = useState<ConsultationState[]>([]);
   const [loading, setLoading] = useState(true);
+  const [accepting, setAccepting] = useState(false);
+  const [busyAvailability, setBusyAvailability] = useState(false);
 
   async function load() {
     const { data: auth } = await supabase.auth.getUser();
     if (!auth.user) return;
-    const { data, error } = await supabase
-      .from("consultations")
-      .select("id,status,user_id,counselor_id,created_at")
-      .eq("counselor_id", auth.user.id)
-      .eq("status", "waiting")
-      .order("created_at", { ascending: true });
-    if (error) Alert.alert("取得できませんでした", error.message);
-    setRequests((data ?? []) as any);
+
+    const [requestRes, availabilityRes] = await Promise.all([
+      supabase
+        .from("consultations")
+        .select("id,status,user_id,counselor_id,created_at")
+        .eq("counselor_id", auth.user.id)
+        .eq("status", "waiting")
+        .order("created_at", { ascending: true }),
+      supabase
+        .from("counselor_availability")
+        .select("is_accepting")
+        .eq("counselor_id", auth.user.id)
+        .maybeSingle()
+    ]);
+
+    if (requestRes.error) Alert.alert("取得できませんでした", requestRes.error.message);
+    setRequests((requestRes.data ?? []) as any);
+    setAccepting(Boolean(availabilityRes.data?.is_accepting));
     setLoading(false);
   }
 
@@ -403,9 +416,23 @@ function CounselorMode({ onBack, onAccept }: { onBack: () => void; onAccept: (ro
     return () => { void supabase.removeChannel(channel); };
   }, []);
 
+  async function toggleAvailability() {
+    try {
+      setBusyAvailability(true);
+      const next = !accepting;
+      const result = await setCounselorAvailability(next);
+      setAccepting(result.is_accepting);
+    } catch (error: any) {
+      Alert.alert("受付状態を変更できませんでした", error?.message ?? "もう一度お試しください");
+    } finally {
+      setBusyAvailability(false);
+    }
+  }
+
   async function accept(row: ConsultationState) {
     try {
       const state = await acceptConsultation(row.id);
+      setAccepting(false);
       onAccept(state);
     } catch (error: any) {
       Alert.alert("開始できませんでした", error?.message ?? "もう一度お試しください");
@@ -417,13 +444,38 @@ function CounselorMode({ onBack, onAccept }: { onBack: () => void; onAccept: (ro
       <View style={styles.content}>
         <Pressable onPress={onBack}><Text style={styles.backText}>‹ マイページ</Text></Pressable>
         <Text style={styles.pageTitle}>相談員モード</Text>
+
+        <View style={styles.card}>
+          <View style={styles.listenerFoot}>
+            <View>
+              <Text style={styles.cardTitle}>受付ステータス</Text>
+              <Text style={styles.muted}>{accepting ? "新しい相談を受付中" : "受付を停止しています"}</Text>
+            </View>
+            <Pressable
+              style={[styles.smallPrimary, !accepting && { backgroundColor: COLORS.plum }]}
+              onPress={toggleAvailability}
+              disabled={busyAvailability}
+            >
+              <Text style={styles.smallPrimaryText}>{busyAvailability ? "…" : (accepting ? "ON" : "OFF")}</Text>
+            </Pressable>
+          </View>
+        </View>
+
         {loading ? <ActivityIndicator color={COLORS.coral} /> : null}
-        {requests.length === 0 && !loading ? <View style={styles.emptyCard}><Text style={styles.emptyHeart}>♡</Text><Text style={styles.cardTitle}>待機中の相談はありません</Text></View> : null}
+        {requests.length === 0 && !loading ? (
+          <View style={styles.emptyCard}>
+            <Text style={styles.emptyHeart}>♡</Text>
+            <Text style={styles.cardTitle}>待機中の相談はありません</Text>
+          </View>
+        ) : null}
+
         {requests.map(row => (
           <View key={row.id} style={styles.listenerCard}>
             <Text style={styles.cardTitle}>匿名ユーザーからの相談</Text>
             <Text style={styles.muted}>15分相談・決済確認済み</Text>
-            <Pressable style={styles.primaryButton} onPress={() => accept(row)}><Text style={styles.primaryButtonText}>相談を受ける</Text></Pressable>
+            <Pressable style={styles.primaryButton} onPress={() => accept(row)}>
+              <Text style={styles.primaryButtonText}>相談を受ける</Text>
+            </Pressable>
           </View>
         ))}
       </View>
