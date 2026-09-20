@@ -96,6 +96,20 @@ Deno.serve(async (req) => {
       .from("payments")
       .update({ status: intent.status, updated_at: new Date().toISOString() })
       .eq("provider_payment_intent_id", intent.id);
+
+    if(event.type === "payment_intent.payment_failed"){
+      await logError(supabase,{
+        userId:intent.metadata.user_id||null,
+        source:"payment",
+        severity:"warning",
+        message:intent.last_payment_error?.message||"PaymentIntent failed",
+        context:{
+          paymentIntentId:intent.id,
+          consultationId:intent.metadata.consultation_id||null,
+          code:intent.last_payment_error?.code||null
+        }
+      });
+    }
   }
 
   return new Response("ok");
