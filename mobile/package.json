@@ -22,7 +22,10 @@
     "@stripe/stripe-react-native": "0.64.0",
     "@supabase/supabase-js": "^2.57.0",
     "@react-native-async-storage/async-storage": "^2.2.0",
-    "react-native-url-polyfill": "^2.0.0"
+    "react-native-url-polyfill": "^2.0.0",
+    "expo-image-picker": "~57.0.19",
+    "expo-document-picker": "~57.0.2",
+    "expo-file-system": "~57.0.7"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",
