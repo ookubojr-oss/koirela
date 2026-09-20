@@ -1,6 +1,7 @@
 import Stripe from "npm:stripe@17.7.0";
 import { corsHeaders } from "../_shared/cors.ts";
 import { authenticatedUser, serviceClient } from "../_shared/clients.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "");
 
@@ -13,10 +14,11 @@ Deno.serve(async (req) => {
     const counselorId = payload.counselorId;
 
     if (!counselorId || counselorId === user.id) {
-      return Response.json({ error: "Invalid counselor" }, { status: 400, headers: corsHeaders });
+      return Response.json({ error: "Invalid counselor" }, { status: error instanceof Error && error.message === "RATE_LIMITED" ? 429 : 400, headers: corsHeaders });
     }
 
     const supabase = serviceClient();
+    await enforceRateLimit(supabase,"payment-create",user.id,5,600);
 
     const { data: counselor, error: counselorError } = await supabase
       .from("counselor_profiles")
