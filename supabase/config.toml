@@ -38,3 +38,18 @@ verify_jwt = true
 
 [functions.delete-account]
 verify_jwt = true
+
+[functions.report-error]
+verify_jwt = true
+
+[functions.line-auth-start]
+verify_jwt = false
+
+[functions.line-auth-callback]
+verify_jwt = false
+
+[functions.payout-connect]
+verify_jwt = true
+
+[functions.admin-process-payout]
+verify_jwt = true
