@@ -22,6 +22,7 @@ export async function signUpWithEmail(email: string, password: string, nickname:
 
 export async function signInWithOAuth(provider: "apple" | "google") {
   const redirectTo = Linking.createURL("auth/callback");
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
@@ -29,6 +30,7 @@ export async function signInWithOAuth(provider: "apple" | "google") {
       skipBrowserRedirect: true
     }
   });
+
   if (error) throw error;
   if (!data.url) throw new Error("OAuth URL was not returned");
 
@@ -36,6 +38,14 @@ export async function signInWithOAuth(provider: "apple" | "google") {
   if (result.type !== "success" || !result.url) return null;
 
   const parsed = Linking.parse(result.url);
+  const code = parsed.queryParams?.code;
+
+  if (typeof code === "string") {
+    const { data: sessionData, error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
+    if (sessionError) throw sessionError;
+    return sessionData;
+  }
+
   const accessToken = parsed.queryParams?.access_token;
   const refreshToken = parsed.queryParams?.refresh_token;
 
@@ -48,7 +58,7 @@ export async function signInWithOAuth(provider: "apple" | "google") {
     return sessionData;
   }
 
-  return null;
+  throw new Error("OAuth callback did not contain an authorization code");
 }
 
 export async function signOut() {
