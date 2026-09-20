@@ -264,6 +264,12 @@ export async function requestAccountDeletion() {
   return data;
 }
 
+export async function deleteAccountNow() {
+  const { data, error } = await supabase.functions.invoke("delete-account", { body: {} });
+  if (error) throw error;
+  return data as { deleted: boolean };
+}
+
 
 export async function listFavoriteCounselors() {
   const { data: auth } = await supabase.auth.getUser();
