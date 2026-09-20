@@ -14,6 +14,7 @@ export const supabase = createClient(url ?? "https://invalid.local", anon ?? "mi
     storage: AsyncStorage,
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: false
+    detectSessionInUrl: false,
+    flowType: "pkce"
   }
 });
