@@ -161,7 +161,8 @@ create table public.push_tokens (
   last_seen_at timestamptz not null default now()
 );
 
-create or replace view public.counselor_directory as
+create or replace view public.counselor_directory
+with (security_invoker = true) as
 select
   cp.user_id as id,
   cp.display_name,
@@ -177,7 +178,10 @@ select
   cp.rating_count,
   cp.verification_status,
   (cp.verification_status = 'approved' and cp.is_discoverable and cp.suspended_at is null) as is_discoverable
-from public.counselor_profiles cp;
+from public.counselor_profiles cp
+where cp.verification_status='approved'
+  and cp.is_discoverable
+  and cp.suspended_at is null;
 
 create or replace function public.handle_new_user()
 returns trigger
