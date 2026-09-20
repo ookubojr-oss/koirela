@@ -34,6 +34,9 @@ import {
 import { clearConsultationNotifications, registerPushToken, scheduleOneMinuteWarning } from "./src/lib/notifications";
 import CounselorApplicationScreen from "./src/screens/CounselorApplicationScreen";
 import ProfileEditScreen from "./src/screens/ProfileEditScreen";
+import HistoryScreen from "./src/screens/HistoryScreen";
+import SettingsScreen from "./src/screens/SettingsScreen";
+import PostConsultationScreen from "./src/screens/PostConsultationScreen";
 
 const COLORS = {
   plum: "#574E66",
@@ -364,12 +367,16 @@ function MyPageScreen({
   role,
   onCounselorMode,
   onProfile,
-  onApply
+  onApply,
+  onHistory,
+  onSettings
 }: {
   role: string;
   onCounselorMode: () => void;
   onProfile: () => void;
   onApply: () => void;
+  onHistory: () => void;
+  onSettings: () => void;
 }) {
   return (
     <ScrollView contentContainerStyle={styles.content}>
@@ -385,6 +392,10 @@ function MyPageScreen({
         </View>
       </Pressable>
 
+      <Pressable style={styles.menuButton} onPress={onHistory}>
+        <Text style={styles.menuText}>相談履歴</Text><Text>›</Text>
+      </Pressable>
+
       {role === "counselor" ? (
         <Pressable style={styles.menuButton} onPress={onCounselorMode}>
           <Text style={styles.menuText}>相談員モード</Text><Text>›</Text>
@@ -395,8 +406,8 @@ function MyPageScreen({
         </Pressable>
       )}
 
-      <Pressable style={styles.menuButton} onPress={() => void signOut()}>
-        <Text style={[styles.menuText, { color: COLORS.danger }]}>ログアウト</Text>
+      <Pressable style={styles.menuButton} onPress={onSettings}>
+        <Text style={styles.menuText}>設定・安全</Text><Text>›</Text>
       </Pressable>
     </ScrollView>
   );
@@ -514,7 +525,7 @@ function MainApp({ session }: { session: Session }) {
   const [role, setRole] = useState("user");
   const [selected, setSelected] = useState<Counselor | null>(null);
   const [consultation, setConsultation] = useState<ConsultationState | null>(null);
-  const [mode, setMode] = useState<"main" | "waiting" | "chat" | "counselor" | "profile" | "counselor-application">("main");
+  const [mode, setMode] = useState<"main" | "waiting" | "chat" | "post" | "counselor" | "profile" | "counselor-application" | "history" | "settings">("main");
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
   useEffect(() => {
@@ -529,7 +540,8 @@ function MainApp({ session }: { session: Session }) {
     return subscribeToConsultation(consultation.id, state => {
       setConsultation(state);
       if (state.status === "active") setMode("chat");
-      if (["ended","canceled","refunded"].includes(state.status)) {
+      if (state.status === "ended") setMode("post");
+      if (["canceled","refunded"].includes(state.status)) {
         setMode("main");
         setConsultation(null);
       }
@@ -574,7 +586,17 @@ function MainApp({ session }: { session: Session }) {
   }
 
   if (mode === "chat" && consultation) {
-    return <ChatScreen consultation={consultation} peerName={selected?.display_name ?? "相談相手"} onDone={() => { setMode("main"); setConsultation(null); }} />;
+    return <ChatScreen consultation={consultation} peerName={selected?.display_name ?? "相談相手"} onDone={() => setMode("post")} />;
+  }
+
+  if (mode === "post" && consultation?.counselor_id) {
+    return (
+      <PostConsultationScreen
+        consultationId={consultation.id}
+        counselorId={consultation.counselor_id}
+        onDone={() => { setConsultation(null); setSelected(null); setMode("main"); setTab("home"); }}
+      />
+    );
   }
 
   if (mode === "counselor") {
@@ -589,6 +611,14 @@ function MainApp({ session }: { session: Session }) {
     return <CounselorApplicationScreen onBack={() => setMode("main")} onDone={() => setMode("main")} />;
   }
 
+  if (mode === "history") {
+    return <HistoryScreen onBack={() => setMode("main")} />;
+  }
+
+  if (mode === "settings") {
+    return <SettingsScreen onBack={() => setMode("main")} />;
+  }
+
   return (
     <SafeAreaView style={styles.appRoot}>
       <StatusBar style="dark" />
@@ -601,6 +631,8 @@ function MainApp({ session }: { session: Session }) {
             onCounselorMode={() => setMode("counselor")}
             onProfile={() => setMode("profile")}
             onApply={() => setMode("counselor-application")}
+            onHistory={() => setMode("history")}
+            onSettings={() => setMode("settings")}
           />
         ) : null}
       </View>
