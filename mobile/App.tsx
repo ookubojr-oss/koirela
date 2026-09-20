@@ -16,6 +16,7 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
 import type { Session } from "@supabase/supabase-js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "./src/lib/supabase";
 import { signInWithEmail, signInWithOAuth, signOut } from "./src/lib/auth";
 import {
@@ -25,7 +26,10 @@ import {
   createPaymentIntent,
   endConsultation,
   listCounselors,
+  listFavoriteIds,
+  loadMaintenanceSetting,
   sendMessage,
+  setFavoriteCounselor,
   setCounselorAvailability,
   subscribeToConsultation,
   subscribeToMessages,
@@ -37,6 +41,11 @@ import ProfileEditScreen from "./src/screens/ProfileEditScreen";
 import HistoryScreen from "./src/screens/HistoryScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import PostConsultationScreen from "./src/screens/PostConsultationScreen";
+import FavoritesScreen from "./src/screens/FavoritesScreen";
+import CounselorEarningsScreen from "./src/screens/CounselorEarningsScreen";
+import SupportScreen from "./src/screens/SupportScreen";
+import OnboardingScreen from "./src/screens/OnboardingScreen";
+import MaintenanceScreen from "./src/screens/MaintenanceScreen";
 
 const COLORS = {
   plum: "#574E66",
@@ -152,6 +161,21 @@ function FindScreen({ onChoose }: { onChoose: (c: Counselor) => void }) {
   const [track, setTrack] = useState<"all" | "exp" | "pro">("all");
   const [gender, setGender] = useState<"all" | "female" | "male" | "other">("all");
   const [loading, setLoading] = useState(true);
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    void listFavoriteIds().then(setFavoriteIds).catch(() => {});
+  }, []);
+
+  async function toggleFavorite(counselorId: string) {
+    const next = !favoriteIds.includes(counselorId);
+    try {
+      await setFavoriteCounselor(counselorId, next);
+      setFavoriteIds(current => next ? [...current, counselorId] : current.filter(id => id !== counselorId));
+    } catch (error: any) {
+      Alert.alert("お気に入りを変更できませんでした", error?.message ?? "もう一度お試しください");
+    }
+  }
 
   useEffect(() => {
     let alive = true;
@@ -209,6 +233,9 @@ function FindScreen({ onChoose }: { onChoose: (c: Counselor) => void }) {
                 <Text style={styles.listenerName}>{item.display_name}</Text>
                 <Text style={styles.roleText}>{item.counselor_type === "qualified" ? "資格者" : "経験者"}</Text>
               </View>
+              <Pressable onPress={() => void toggleFavorite(item.user_id)} accessibilityLabel="お気に入り">
+                <Text style={{fontSize:20,color:favoriteIds.includes(item.user_id)?COLORS.coral:"#D8D1DB"}}>{favoriteIds.includes(item.user_id) ? "♥" : "♡"}</Text>
+              </Pressable>
             </View>
             <Text style={styles.listenerBio}>{item.bio || item.specialty || "相談内容を一緒に整理します。"}</Text>
             <View style={styles.listenerFoot}>
@@ -369,14 +396,18 @@ function MyPageScreen({
   onProfile,
   onApply,
   onHistory,
-  onSettings
+  onFavorites,
+  onSettings,
+  onSupport
 }: {
   role: string;
   onCounselorMode: () => void;
   onProfile: () => void;
   onApply: () => void;
   onHistory: () => void;
+  onFavorites: () => void;
   onSettings: () => void;
+  onSupport: () => void;
 }) {
   return (
     <ScrollView contentContainerStyle={styles.content}>
@@ -392,8 +423,11 @@ function MyPageScreen({
         </View>
       </Pressable>
 
+      <Pressable style={styles.menuButton} onPress={onFavorites}>
+        <Text style={styles.menuText}>お気に入り相談員</Text><Text>›</Text>
+      </Pressable>
       <Pressable style={styles.menuButton} onPress={onHistory}>
-        <Text style={styles.menuText}>相談履歴</Text><Text>›</Text>
+        <Text style={styles.menuText}>相談履歴・もう一度相談</Text><Text>›</Text>
       </Pressable>
 
       {role === "counselor" ? (
@@ -406,6 +440,9 @@ function MyPageScreen({
         </Pressable>
       )}
 
+      <Pressable style={styles.menuButton} onPress={onSupport}>
+        <Text style={styles.menuText}>お問い合わせ</Text><Text>›</Text>
+      </Pressable>
       <Pressable style={styles.menuButton} onPress={onSettings}>
         <Text style={styles.menuText}>設定・安全</Text><Text>›</Text>
       </Pressable>
@@ -413,7 +450,7 @@ function MyPageScreen({
   );
 }
 
-function CounselorMode({ onBack, onAccept }: { onBack: () => void; onAccept: (row: ConsultationState) => void }) {
+function CounselorMode({ onBack, onAccept, onEarnings }: { onBack: () => void; onAccept: (row: ConsultationState) => void; onEarnings: () => void }) {
   const [requests, setRequests] = useState<ConsultationState[]>([]);
   const [loading, setLoading] = useState(true);
   const [accepting, setAccepting] = useState(false);
@@ -481,6 +518,9 @@ function CounselorMode({ onBack, onAccept }: { onBack: () => void; onAccept: (ro
       <View style={styles.content}>
         <Pressable onPress={onBack}><Text style={styles.backText}>‹ マイページ</Text></Pressable>
         <Text style={styles.pageTitle}>相談員モード</Text>
+        <Pressable style={styles.menuButton} onPress={onEarnings}>
+          <Text style={styles.menuText}>売上・報酬を見る</Text><Text>›</Text>
+        </Pressable>
 
         <View style={styles.card}>
           <View style={styles.listenerFoot}>
@@ -525,7 +565,7 @@ function MainApp({ session }: { session: Session }) {
   const [role, setRole] = useState("user");
   const [selected, setSelected] = useState<Counselor | null>(null);
   const [consultation, setConsultation] = useState<ConsultationState | null>(null);
-  const [mode, setMode] = useState<"main" | "waiting" | "chat" | "post" | "counselor" | "profile" | "counselor-application" | "history" | "settings">("main");
+  const [mode, setMode] = useState<"main" | "waiting" | "chat" | "post" | "counselor" | "profile" | "counselor-application" | "history" | "favorites" | "earnings" | "support" | "settings">("main");
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
   useEffect(() => {
@@ -600,7 +640,7 @@ function MainApp({ session }: { session: Session }) {
   }
 
   if (mode === "counselor") {
-    return <CounselorMode onBack={() => setMode("main")} onAccept={state => { setConsultation(state); setSelected(null); setMode("chat"); }} />;
+    return <CounselorMode onBack={() => setMode("main")} onEarnings={() => setMode("earnings")} onAccept={state => { setConsultation(state); setSelected(null); setMode("chat"); }} />;
   }
 
   if (mode === "profile") {
@@ -612,7 +652,19 @@ function MainApp({ session }: { session: Session }) {
   }
 
   if (mode === "history") {
-    return <HistoryScreen onBack={() => setMode("main")} />;
+    return <HistoryScreen onBack={() => setMode("main")} onReconsult={counselor => void purchase(counselor)} />;
+  }
+
+  if (mode === "favorites") {
+    return <FavoritesScreen onBack={() => setMode("main")} onChoose={counselor => void purchase(counselor)} />;
+  }
+
+  if (mode === "earnings") {
+    return <CounselorEarningsScreen onBack={() => setMode("counselor")} />;
+  }
+
+  if (mode === "support") {
+    return <SupportScreen onBack={() => setMode("main")} />;
   }
 
   if (mode === "settings") {
@@ -632,6 +684,8 @@ function MainApp({ session }: { session: Session }) {
             onProfile={() => setMode("profile")}
             onApply={() => setMode("counselor-application")}
             onHistory={() => setMode("history")}
+            onFavorites={() => setMode("favorites")}
+            onSupport={() => setMode("support")}
             onSettings={() => setMode("settings")}
           />
         ) : null}
@@ -653,19 +707,42 @@ function MainApp({ session }: { session: Session }) {
 function Root() {
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(false);
+  const [onboarded, setOnboarded] = useState<boolean | null>(null);
+  const [maintenance, setMaintenance] = useState<{enabled?:boolean;title?:string;message?:string}>({enabled:false});
 
   useEffect(() => {
-    void supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
+    void Promise.all([
+      supabase.auth.getSession(),
+      AsyncStorage.getItem("koirela_onboarding_v1"),
+      loadMaintenanceSetting().catch(() => ({enabled:false}))
+    ]).then(([authResult,onboardingValue,maintenanceValue]) => {
+      setSession(authResult.data.session);
+      setOnboarded(onboardingValue === "done");
+      setMaintenance(maintenanceValue);
       setReady(true);
     });
+
     const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => setSession(nextSession));
     return () => data.subscription.unsubscribe();
   }, []);
 
-  if (!ready) {
+  async function completeOnboarding() {
+    await AsyncStorage.setItem("koirela_onboarding_v1","done");
+    setOnboarded(true);
+  }
+
+  if (!ready || onboarded === null) {
     return <SafeAreaView style={styles.center}><ActivityIndicator color={COLORS.coral} /></SafeAreaView>;
   }
+
+  if (maintenance.enabled) {
+    return <MaintenanceScreen title={maintenance.title} message={maintenance.message} />;
+  }
+
+  if (!onboarded) {
+    return <OnboardingScreen onDone={() => void completeOnboarding()} />;
+  }
+
   return session ? <MainApp session={session} /> : <AuthScreen />;
 }
 
