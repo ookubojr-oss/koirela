@@ -393,9 +393,12 @@ function ChatScreen({ consultation, peerName, onDone }: {
   const [text, setText] = useState("");
   const [remaining, setRemaining] = useState(0);
   const [sending, setSending] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
   useEffect(() => {
+    void supabase.auth.getUser().then(({data}) => setCurrentUserId(data.user?.id ?? null));
+
     void supabase
       .from("messages")
       .select("id,sender_id,body,kind,created_at")
@@ -423,6 +426,18 @@ function ChatScreen({ consultation, peerName, onDone }: {
     const id = setInterval(render, 1000);
     return () => clearInterval(id);
   }, [consultation.ends_at]);
+
+  useEffect(() => {
+    if (!consultation.ends_at) return;
+    const delay = Math.max(0, new Date(consultation.ends_at).getTime() - Date.now()) + 300;
+    const id = setTimeout(() => {
+      void endConsultation(consultation.id)
+        .then(() => clearConsultationNotifications())
+        .then(onDone)
+        .catch(() => {});
+    }, delay);
+    return () => clearTimeout(id);
+  }, [consultation.id, consultation.ends_at, onDone]);
 
   const clock = useMemo(() => {
     const m = Math.floor(remaining / 60);
@@ -488,19 +503,29 @@ function ChatScreen({ consultation, peerName, onDone }: {
           data={messages}
           keyExtractor={item => String(item.id)}
           contentContainerStyle={styles.messages}
-          renderItem={({ item }) => (
-            <View style={[styles.message, item.kind === "system" ? styles.systemMessage : styles.leftMessage]}>
-              <Text style={item.kind === "system" ? styles.systemText : styles.messageText}>{item.body}</Text>
-            </View>
-          )}
+          renderItem={({ item }) => {
+            const own = item.kind !== "system" && item.sender_id === currentUserId;
+            return (
+              <View style={[
+                styles.message,
+                item.kind === "system" ? styles.systemMessage : (own ? styles.rightMessage : styles.leftMessage)
+              ]}>
+                <Text style={item.kind === "system" ? styles.systemText : [styles.messageText, own && styles.ownMessageText]}>
+                  {item.body}
+                </Text>
+              </View>
+            );
+          }}
         />
         <View style={styles.chatActions}>
-          <Pressable onPress={extend}><Text style={styles.chatLink}>＋15分延長 100円</Text></Pressable>
+          {currentUserId === consultation.user_id
+            ? <Pressable onPress={extend} disabled={remaining <= 0}><Text style={styles.chatLink}>＋15分延長 100円</Text></Pressable>
+            : <View />}
           <Pressable onPress={finish}><Text style={[styles.chatLink, { color: COLORS.danger }]}>相談を終了</Text></Pressable>
         </View>
         <View style={styles.composer}>
-          <TextInput style={styles.composerInput} value={text} onChangeText={setText} placeholder="メッセージを書く…" multiline />
-          <Pressable style={styles.sendButton} onPress={submit} disabled={sending}><Text style={styles.sendText}>→</Text></Pressable>
+          <TextInput style={styles.composerInput} value={text} onChangeText={setText} placeholder="メッセージを書く…" multiline editable={remaining > 0} />
+          <Pressable style={styles.sendButton} onPress={submit} disabled={sending || remaining <= 0}><Text style={styles.sendText}>→</Text></Pressable>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -1043,8 +1068,10 @@ const styles = StyleSheet.create({
   messages:{padding:16,gap:8},
   message:{maxWidth:"82%",padding:11,borderRadius:17},
   leftMessage:{alignSelf:"flex-start",backgroundColor:"#F5F1F6"},
+  rightMessage:{alignSelf:"flex-end",backgroundColor:COLORS.plum},
   systemMessage:{alignSelf:"center",backgroundColor:"transparent"},
   messageText:{fontSize:13,lineHeight:19,color:COLORS.text},
+  ownMessageText:{color:"#fff"},
   systemText:{fontSize:10,color:COLORS.muted},
   composer:{flexDirection:"row",gap:8,padding:10,borderTopWidth:1,borderTopColor:COLORS.line},
   composerInput:{flex:1,minHeight:44,maxHeight:100,borderRadius:22,backgroundColor:"#F7F4F7",paddingHorizontal:15,paddingVertical:11},
