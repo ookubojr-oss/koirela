@@ -11,7 +11,9 @@
       "bundleIdentifier": "jp.koirela.app",
       "infoPlist": {
         "CFBundleAllowMixedLocalizations": true,
-        "CFBundleLocalizations": ["ja"]
+        "CFBundleLocalizations": [
+          "ja"
+        ]
       }
     },
     "android": {
@@ -25,7 +27,19 @@
           "enableGooglePay": true
         }
       ],
-      "expo-notifications"
+      "expo-notifications",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "プロフィール画像や審査書類を選ぶために写真へのアクセスを使用します。",
+          "cameraPermission": "プロフィール画像や審査書類を撮影するためにカメラを使用します。",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-document-picker",
+        {}
+      ]
     ],
     "extra": {
       "eas": {
