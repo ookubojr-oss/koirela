@@ -1,5 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { authenticatedUser, serviceClient } from "../_shared/clients.ts";
+import { logError } from "../_shared/monitoring.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
 import { pushToUser } from "../_shared/push.ts";
 
@@ -92,8 +93,17 @@ Deno.serve(async (req) => {
 
     return Response.json(updated, { headers: corsHeaders });
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    if (!["Counselor unavailable","Consultation ended","Forbidden","RATE_LIMITED"].includes(message)) {
+      await logError(serviceClient(), {
+        source: "edge",
+        message,
+        stack: error instanceof Error ? error.stack : null,
+        context: { function: "start-consultation" }
+      });
+    }
     return Response.json(
-      { error: error instanceof Error ? error.message : "Unknown error" },
+      { error: message },
       { status: error instanceof Error && error.message === "RATE_LIMITED" ? 429 : 400, headers: corsHeaders }
     );
   }
