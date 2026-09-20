@@ -46,6 +46,17 @@ export async function consumeAuthUrl(url: string) {
     return data;
   }
 
+  const tokenHash = parsed.queryParams?.token_hash;
+  const otpType = parsed.queryParams?.type;
+  if (typeof tokenHash === "string" && typeof otpType === "string") {
+    const { data, error } = await supabase.auth.verifyOtp({
+      token_hash: tokenHash,
+      type: otpType as "magiclink" | "recovery" | "email"
+    });
+    if (error) throw error;
+    return data;
+  }
+
   const accessToken = parsed.queryParams?.access_token;
   const refreshToken = parsed.queryParams?.refresh_token;
 
@@ -76,6 +87,20 @@ export async function signInWithOAuth(provider: "apple" | "google") {
   if (!data.url) throw new Error("OAuth URL was not returned");
 
   const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
+  if (result.type !== "success" || !result.url) return null;
+
+  return consumeAuthUrl(result.url);
+}
+
+export async function signInWithLine() {
+  const redirectTo = Linking.createURL("auth/line");
+  const { data, error } = await supabase.functions.invoke("line-auth-start", {
+    body: { appRedirect: redirectTo }
+  });
+  if (error) throw error;
+  if (!data?.authorizeUrl) throw new Error("LINE login is not configured");
+
+  const result = await WebBrowser.openAuthSessionAsync(data.authorizeUrl, redirectTo);
   if (result.type !== "success" || !result.url) return null;
 
   return consumeAuthUrl(result.url);
