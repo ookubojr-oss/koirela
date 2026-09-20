@@ -1,5 +1,6 @@
 import { corsHeaders } from "../_shared/cors.ts";
 import { authenticatedUser, serviceClient } from "../_shared/clients.ts";
+import { pushToUser } from "../_shared/push.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -44,6 +45,17 @@ Deno.serve(async (req) => {
       kind: "system",
       body: "相談を終了しました"
     });
+
+    const otherUserId=consultation.user_id===user.id?consultation.counselor_id:consultation.user_id;
+    if(otherUserId){
+      void pushToUser(
+        supabase,
+        otherUserId,
+        "相談が終了しました",
+        "相談が終了しました。アプリで履歴を確認できます。",
+        {type:"consultation_ended",consultationId}
+      );
+    }
 
     return Response.json(updated, { headers: corsHeaders });
   } catch (error) {
