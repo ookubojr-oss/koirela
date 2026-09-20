@@ -24,6 +24,7 @@ Deno.serve(async (req) => {
     const qualificationLabel = clean(body.qualificationLabel,120) || null;
     const documentPath = clean(body.documentPath,500);
     const qualificationDocumentPath = clean(body.qualificationDocumentPath,500) || null;
+    const avatarPath = clean(body.avatarPath,500) || null;
 
     if (!displayName || !allowedType.has(counselorType)) {
       return Response.json({ error: "Invalid counselor profile" }, { status: 400, headers: corsHeaders });
@@ -61,6 +62,7 @@ Deno.serve(async (req) => {
         specialty:specialty || null,
         bio:bio || null,
         qualification_label:qualificationLabel,
+        avatar_path:avatarPath,
         verification_status:"pending",
         is_suspended:false,
         updated_at:new Date().toISOString()
