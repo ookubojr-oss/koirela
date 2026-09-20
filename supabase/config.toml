@@ -1,0 +1,16 @@
+project_id = "koirela"
+
+[functions.create-payment-intent]
+verify_jwt = true
+
+[functions.start-consultation]
+verify_jwt = true
+
+[functions.send-message]
+verify_jwt = true
+
+[functions.moderate-message]
+verify_jwt = true
+
+[functions.stripe-webhook]
+verify_jwt = false
