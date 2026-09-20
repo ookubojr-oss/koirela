@@ -1,6 +1,7 @@
 import Stripe from "npm:stripe@17.7.0";
 import { corsHeaders } from "../_shared/cors.ts";
 import { authenticatedUser, serviceClient } from "../_shared/clients.ts";
+import { enforceRateLimit } from "../_shared/rate-limit.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "");
 
@@ -12,6 +13,7 @@ Deno.serve(async (req) => {
     const payload = await req.json();
     const consultationId = payload.consultationId;
     const supabase = serviceClient();
+    await enforceRateLimit(supabase,"payment-extension",user.id,8,600);
 
     const { data: consultation, error } = await supabase
       .from("consultations")
@@ -66,6 +68,6 @@ Deno.serve(async (req) => {
       currency: "jpy"
     }, { headers: corsHeaders });
   } catch (error) {
-    return Response.json({ error: error instanceof Error ? error.message : "Unknown error" }, { status: 400, headers: corsHeaders });
+    return Response.json({ error: error instanceof Error ? error.message : "Unknown error" }, { status: error instanceof Error && error.message === "RATE_LIMITED" ? 429 : 400, headers: corsHeaders });
   }
 });
