@@ -16,6 +16,11 @@ const state = {
   deletions: [],
   analytics: {},
   maintenance: {enabled:false,title:"メンテナンス中",message:""},
+  accounts: [],
+  availability: new Map(),
+  payoutAccounts: new Map(),
+  errors: [],
+  counselorQuery: "",
   audit: [],
   filter: "all",
   query: ""
@@ -73,21 +78,24 @@ async function loadAll() {
     return;
   }
 
-  const [moderationRes, reportsRes, counselorsRes, verificationRes, consultationRes, paymentRes, supportRes, deletionRes, analyticsRes, maintenanceRes, auditRes] = await Promise.all([
+  const [moderationRes, reportsRes, counselorsRes, verificationRes, availabilityRes, payoutAccountRes, consultationRes, paymentRes, supportRes, deletionRes, analyticsRes, maintenanceRes, errorRes, auditRes] = await Promise.all([
     supabase.from("moderation_events").select("*").order("created_at",{ascending:false}).limit(200),
     supabase.from("reports").select("*").order("created_at",{ascending:false}).limit(200),
     supabase.from("counselor_profiles").select("user_id,display_name,counselor_type,gender,specialty,bio,qualification_label,is_suspended,verification_status,created_at").limit(500),
     supabase.from("identity_verifications").select("counselor_id,document_path,qualification_document_path,status,created_at,reviewed_at").limit(500),
+    supabase.from("counselor_availability").select("counselor_id,is_accepting,updated_at").limit(500),
+    supabase.from("counselor_payout_accounts").select("counselor_id,status,payouts_enabled,details_submitted,last_synced_at").limit(500),
     supabase.from("consultations").select("id,status,price_jpy,created_at,user_id,counselor_id").order("created_at",{ascending:false}).limit(100),
     supabase.from("payments").select("consultation_id,amount_jpy,status,kind,created_at").order("created_at",{ascending:false}).limit(200),
     supabase.from("support_tickets").select("*").order("created_at",{ascending:false}).limit(100),
     supabase.from("account_deletion_requests").select("*").order("requested_at",{ascending:false}).limit(100),
     supabase.rpc("admin_analytics_summary"),
     supabase.from("app_settings").select("value").eq("key","maintenance").maybeSingle(),
+    supabase.from("error_events").select("id,user_id,source,severity,name,message,context,app_version,created_at").order("created_at",{ascending:false}).limit(50),
     supabase.from("admin_audit_logs").select("*").order("created_at",{ascending:false}).limit(100)
   ]);
 
-  const firstError = moderationRes.error || reportsRes.error || counselorsRes.error || verificationRes.error || consultationRes.error || paymentRes.error || supportRes.error || deletionRes.error || analyticsRes.error || maintenanceRes.error || auditRes.error;
+  const firstError = moderationRes.error || reportsRes.error || counselorsRes.error || verificationRes.error || availabilityRes.error || payoutAccountRes.error || consultationRes.error || paymentRes.error || supportRes.error || deletionRes.error || analyticsRes.error || maintenanceRes.error || errorRes.error || auditRes.error;
   if (firstError) {
     setStatus(firstError.message, true);
     return;
@@ -97,12 +105,15 @@ async function loadAll() {
   state.reports = reportsRes.data || [];
   state.counselors = new Map((counselorsRes.data || []).map(row => [row.user_id,row]));
   state.verifications = new Map((verificationRes.data || []).map(row => [row.counselor_id,row]));
+  state.availability = new Map((availabilityRes.data || []).map(row => [row.counselor_id,row]));
+  state.payoutAccounts = new Map((payoutAccountRes.data || []).map(row => [row.counselor_id,row]));
   state.consultations = consultationRes.data || [];
   state.payments = paymentRes.data || [];
   state.support = supportRes.data || [];
   state.deletions = deletionRes.data || [];
   state.analytics = analyticsRes.data || {};
   state.maintenance = maintenanceRes.data?.value || {enabled:false,title:"メンテナンス中",message:""};
+  state.errors = errorRes.data || [];
   state.audit = auditRes.data || [];
   renderDashboard();
 }
@@ -213,6 +224,8 @@ function renderDashboard() {
 
   renderApplications();
   renderOperations();
+  renderAccountSearch();
+  renderErrors();
 
   const audit = document.getElementById("audit-list");
   audit.innerHTML = state.audit.length
@@ -233,14 +246,29 @@ function renderOperations() {
   });
 
   const counselorRows = document.getElementById("counselor-rows");
-  const counselors = [...state.counselors.values()].sort((a,b) => String(a.display_name).localeCompare(String(b.display_name),"ja"));
+  const counselorQuery=state.counselorQuery.trim().toLowerCase();
+  const counselors = [...state.counselors.values()]
+    .filter(c=>{
+      if(!counselorQuery)return true;
+      const availability=state.availability.get(c.user_id);
+      return [c.display_name,c.user_id,c.verification_status,c.is_suspended?"停止中":"利用可能",availability?.is_accepting?"受付中":"受付停止"].join(" ").toLowerCase().includes(counselorQuery);
+    })
+    .sort((a,b) => String(a.display_name).localeCompare(String(b.display_name),"ja"));
+
   counselorRows.innerHTML = counselors.length ? counselors.map(c => {
-    const stateLabel = c.is_suspended ? "停止中" : "利用可能";
-    const action = c.is_suspended
+    const availability=state.availability.get(c.user_id);
+    const payout=state.payoutAccounts.get(c.user_id);
+    const violations=state.moderation.filter(x=>x.counselor_id===c.user_id&&x.status==="active"&&Number(x.strike_number)>0).length;
+    const stateLabel = c.is_suspended ? "停止中" : (availability?.is_accepting ? "受付中" : "受付停止");
+    const payoutLabel=payout?.payouts_enabled?"設定済み":payout?.status==="pending"?"設定中":"未設定";
+    const suspendAction = c.is_suspended
       ? '<button data-restore="'+esc(c.user_id)+'">停止解除</button>'
       : '<button class="danger-button" data-force-suspend="'+esc(c.user_id)+'">強制停止</button>';
-    return '<tr><td>'+esc(c.display_name)+'</td><td>'+esc(c.user_id.slice(0,8))+'…</td><td>'+esc(c.verification_status)+'</td><td>'+esc(stateLabel)+'</td><td>'+action+'</td></tr>';
-  }).join("") : '<tr><td colspan="5">相談員がいません。</td></tr>';
+    const payoutAction = c.verification_status==="approved" && !c.is_suspended
+      ? ' <button data-process-payout="'+esc(c.user_id)+'">報酬送金</button>'
+      : "";
+    return '<tr><td>'+esc(c.display_name)+'</td><td>'+esc(c.user_id.slice(0,8))+'…</td><td>'+esc(c.verification_status)+'</td><td>'+esc(stateLabel)+'</td><td>'+violations+'回</td><td>'+esc(payoutLabel)+'</td><td>'+suspendAction+payoutAction+'</td></tr>';
+  }).join("") : '<tr><td colspan="7">該当する相談員がいません。</td></tr>';
 
   const consultationRows = document.getElementById("consultation-rows");
   consultationRows.innerHTML = state.consultations.length ? state.consultations.map(c => {
@@ -271,6 +299,34 @@ function renderOperations() {
   document.getElementById("maintenance-enabled").checked = Boolean(state.maintenance.enabled);
   document.getElementById("maintenance-title").value = state.maintenance.title || "メンテナンス中";
   document.getElementById("maintenance-message").value = state.maintenance.message || "";
+}
+
+function renderAccountSearch() {
+  const body=document.getElementById("account-search-rows");
+  if(!body)return;
+  if(!state.accounts.length){
+    body.innerHTML='<tr><td colspan="6">検索してください。</td></tr>';
+    return;
+  }
+  body.innerHTML=state.accounts.map(a=>{
+    const status=a.isSuspended?"利用停止中":"利用可能";
+    const action=a.isSuspended
+      ? '<button data-restore-user="'+esc(a.id)+'">停止解除</button>'
+      : '<button class="danger-button" data-suspend-user="'+esc(a.id)+'">利用停止</button>';
+    return '<tr><td>'+esc(a.nickname)+'<br><small>'+esc(a.id.slice(0,8))+'…</small></td><td>'+esc(a.email||"—")+'</td><td>'+esc(a.role)+'</td><td>'+esc(status)+'</td><td>'+esc(fmt(a.createdAt))+'</td><td>'+action+'</td></tr>';
+  }).join("");
+}
+
+function renderErrors() {
+  const box=document.getElementById("error-list");
+  if(!box)return;
+  if(!state.errors.length){
+    box.innerHTML='<div class="empty">記録されたシステムエラーはありません。</div>';
+    return;
+  }
+  box.innerHTML=state.errors.map(e=>
+    '<article class="error-card"><div class="error-head"><b>'+esc(e.severity.toUpperCase()+' · '+e.source+(e.name?' · '+e.name:''))+'</b><time>'+esc(fmt(e.created_at))+'</time></div><div class="error-message">'+esc(e.message)+'</div><div class="error-meta">version '+esc(e.app_version||"—")+' / user '+esc(e.user_id?e.user_id.slice(0,8)+'…':"anonymous")+'</div></article>'
+  ).join("");
 }
 
 function genderLabel(value) {
@@ -314,6 +370,22 @@ async function openVerificationDocument(path) {
   window.open(data.signedUrl, "_blank", "noopener,noreferrer");
 }
 
+async function searchAccounts(){
+  const input=document.getElementById("account-search");
+  const query=input?.value?.trim()||"";
+  const body=document.getElementById("account-search-rows");
+  if(body)body.innerHTML='<tr><td colspan="6">検索中…</td></tr>';
+  try{
+    const result=await runAdminOperation({action:"search_accounts",query});
+    state.accounts=result?.accounts||[];
+    renderAccountSearch();
+    bindActions();
+  }catch(e){
+    if(body)body.innerHTML='<tr><td colspan="6">検索できませんでした。</td></tr>';
+    alert(e.message||"検索できませんでした");
+  }
+}
+
 async function runAdminOperation(body) {
   const { data, error } = await supabase.functions.invoke("admin-operations", { body });
   if (error) throw error;
@@ -321,6 +393,44 @@ async function runAdminOperation(body) {
 }
 
 function bindActions() {
+  document.querySelectorAll("[data-suspend-user]").forEach(btn=>btn.addEventListener("click",async()=>{
+    const userId=btn.dataset.suspendUser;
+    const reason=prompt("利用停止理由を入力してください","運営判断による利用停止");
+    if(reason===null)return;
+    if(!confirm("このユーザーを利用停止にしますか？"))return;
+    btn.disabled=true;
+    try{await runAdminOperation({action:"suspend_user",userId,reason});}catch(e){alert(e.message||"停止できませんでした");}
+    await searchAccounts();
+    await loadAll();
+  }));
+
+  document.querySelectorAll("[data-restore-user]").forEach(btn=>btn.addEventListener("click",async()=>{
+    const userId=btn.dataset.restoreUser;
+    if(!confirm("このユーザーの利用停止を解除しますか？"))return;
+    btn.disabled=true;
+    try{await runAdminOperation({action:"restore_user",userId});}catch(e){alert(e.message||"解除できませんでした");}
+    await searchAccounts();
+    await loadAll();
+  }));
+
+  document.querySelectorAll("[data-process-payout]").forEach(btn=>btn.addEventListener("click",async()=>{
+    const counselorId=btn.dataset.processPayout;
+    const now=new Date();
+    const first=new Date(now.getFullYear(),now.getMonth(),1);
+    const last=new Date(now.getFullYear(),now.getMonth()+1,0);
+    const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+    const periodStart=prompt("集計開始日",iso(first));
+    if(!periodStart)return;
+    const periodEnd=prompt("集計終了日",iso(last));
+    if(!periodEnd)return;
+    if(!confirm(periodStart+"〜"+periodEnd+" の未送金売上を送金しますか？"))return;
+    btn.disabled=true;
+    const {data,error}=await supabase.functions.invoke("admin-process-payout",{body:{counselorId,periodStart,periodEnd}});
+    if(error)alert(error.message||"送金できませんでした");
+    else alert("送金処理を実行しました。受取額: "+Number(data.netJpy||0).toLocaleString()+"円");
+    await loadAll();
+  }));
+
   document.querySelectorAll("[data-force-suspend]").forEach(btn => btn.addEventListener("click", async () => {
     const counselorId=btn.dataset.forceSuspend;
     const reason=prompt("停止理由を入力してください","運営判断による停止");
@@ -427,6 +537,15 @@ document.getElementById("admin-login-form").addEventListener("submit", async eve
 });
 
 document.getElementById("admin-refresh").addEventListener("click", loadAll);
+document.getElementById("account-search-button").addEventListener("click",()=>void searchAccounts());
+document.getElementById("account-search").addEventListener("keydown",event=>{
+  if(event.key==="Enter"){event.preventDefault();void searchAccounts();}
+});
+document.getElementById("counselor-search").addEventListener("input",event=>{
+  state.counselorQuery=event.target.value;
+  renderOperations();
+  bindActions();
+});
 document.getElementById("maintenance-save").addEventListener("click", async () => {
   const enabled=document.getElementById("maintenance-enabled").checked;
   const title=document.getElementById("maintenance-title").value.trim()||"メンテナンス中";
