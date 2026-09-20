@@ -10,6 +10,12 @@ const state = {
   reports: [],
   counselors: new Map(),
   verifications: new Map(),
+  consultations: [],
+  payments: [],
+  support: [],
+  deletions: [],
+  analytics: {},
+  maintenance: {enabled:false,title:"メンテナンス中",message:""},
   audit: [],
   filter: "all",
   query: ""
@@ -67,15 +73,21 @@ async function loadAll() {
     return;
   }
 
-  const [moderationRes, reportsRes, counselorsRes, verificationRes, auditRes] = await Promise.all([
+  const [moderationRes, reportsRes, counselorsRes, verificationRes, consultationRes, paymentRes, supportRes, deletionRes, analyticsRes, maintenanceRes, auditRes] = await Promise.all([
     supabase.from("moderation_events").select("*").order("created_at",{ascending:false}).limit(200),
     supabase.from("reports").select("*").order("created_at",{ascending:false}).limit(200),
     supabase.from("counselor_profiles").select("user_id,display_name,counselor_type,gender,specialty,bio,qualification_label,is_suspended,verification_status,created_at").limit(500),
     supabase.from("identity_verifications").select("counselor_id,document_path,qualification_document_path,status,created_at,reviewed_at").limit(500),
+    supabase.from("consultations").select("id,status,price_jpy,created_at,user_id,counselor_id").order("created_at",{ascending:false}).limit(100),
+    supabase.from("payments").select("consultation_id,amount_jpy,status,kind,created_at").order("created_at",{ascending:false}).limit(200),
+    supabase.from("support_tickets").select("*").order("created_at",{ascending:false}).limit(100),
+    supabase.from("account_deletion_requests").select("*").order("requested_at",{ascending:false}).limit(100),
+    supabase.rpc("admin_analytics_summary"),
+    supabase.from("app_settings").select("value").eq("key","maintenance").maybeSingle(),
     supabase.from("admin_audit_logs").select("*").order("created_at",{ascending:false}).limit(100)
   ]);
 
-  const firstError = moderationRes.error || reportsRes.error || counselorsRes.error || verificationRes.error || auditRes.error;
+  const firstError = moderationRes.error || reportsRes.error || counselorsRes.error || verificationRes.error || consultationRes.error || paymentRes.error || supportRes.error || deletionRes.error || analyticsRes.error || maintenanceRes.error || auditRes.error;
   if (firstError) {
     setStatus(firstError.message, true);
     return;
@@ -85,6 +97,12 @@ async function loadAll() {
   state.reports = reportsRes.data || [];
   state.counselors = new Map((counselorsRes.data || []).map(row => [row.user_id,row]));
   state.verifications = new Map((verificationRes.data || []).map(row => [row.counselor_id,row]));
+  state.consultations = consultationRes.data || [];
+  state.payments = paymentRes.data || [];
+  state.support = supportRes.data || [];
+  state.deletions = deletionRes.data || [];
+  state.analytics = analyticsRes.data || {};
+  state.maintenance = maintenanceRes.data?.value || {enabled:false,title:"メンテナンス中",message:""};
   state.audit = auditRes.data || [];
   renderDashboard();
 }
@@ -156,6 +174,9 @@ function renderDashboard() {
   document.getElementById("stat-suspended").textContent = String([...state.counselors.values()].filter(x => x.is_suspended).length);
   document.getElementById("stat-events").textContent = String(state.moderation.length);
   document.getElementById("stat-reports").textContent = String(state.reports.filter(x => x.status === "open").length);
+  document.getElementById("analytics-users").textContent = String(state.analytics.users || 0);
+  document.getElementById("analytics-completed").textContent = String(state.analytics.completed_month || 0);
+  document.getElementById("analytics-gross").textContent = Number(state.analytics.gross_month_jpy || 0).toLocaleString() + "円";
 
   const list = filteredRows();
   const box = document.getElementById("live-logs");
@@ -191,6 +212,7 @@ function renderDashboard() {
   }
 
   renderApplications();
+  renderOperations();
 
   const audit = document.getElementById("audit-list");
   audit.innerHTML = state.audit.length
@@ -202,6 +224,39 @@ function renderDashboard() {
   bindActions();
 }
 
+
+function renderOperations() {
+  const paymentByConsultation = new Map();
+  state.payments.forEach(p => {
+    const current = paymentByConsultation.get(p.consultation_id);
+    if (!current || Date.parse(p.created_at) > Date.parse(current.created_at)) paymentByConsultation.set(p.consultation_id,p);
+  });
+
+  const consultationRows = document.getElementById("consultation-rows");
+  consultationRows.innerHTML = state.consultations.length ? state.consultations.map(c => {
+    const p = paymentByConsultation.get(c.id);
+    return '<tr><td>'+esc(fmt(c.created_at))+'</td><td>'+esc(c.id.slice(0,8))+'…</td><td>'+esc(c.status)+'</td><td>'+Number(c.price_jpy||0).toLocaleString()+'円</td><td>'+esc(p?.status||"—")+'</td></tr>';
+  }).join("") : '<tr><td colspan="5">相談履歴はまだありません。</td></tr>';
+
+  const support = document.getElementById("support-list");
+  support.innerHTML = state.support.length ? state.support.map(t =>
+    '<article class="ticket-card"><div class="ticket-top"><b>'+esc(t.subject)+'</b><span>'+esc(t.status)+'</span></div><div class="ticket-body">'+esc(t.message)+'</div>'+
+    '<textarea class="ticket-reply" id="reply-'+esc(t.id)+'" placeholder="運営からの返信">'+esc(t.admin_reply||"")+'</textarea>'+
+    '<div class="actions"><button data-support-answer="'+esc(t.id)+'">返信して回答済みにする</button><button data-support-close="'+esc(t.id)+'">完了にする</button></div></article>'
+  ).join("") : '<div class="empty">お問い合わせはありません。</div>';
+
+  const deletions = document.getElementById("deletion-rows");
+  deletions.innerHTML = state.deletions.length ? state.deletions.map(d =>
+    '<tr><td>'+esc(fmt(d.requested_at))+'</td><td>'+esc(d.user_id)+'</td><td>'+esc(d.status)+'</td><td>'+
+    (d.status==="pending"?'<button data-deletion-processing="'+esc(d.user_id)+'">処理中にする</button> ':'')+
+    (d.status!=="completed"?'<button data-deletion-complete="'+esc(d.user_id)+'">完了にする</button>':'')+
+    '</td></tr>'
+  ).join("") : '<tr><td colspan="4">削除申請はありません。</td></tr>';
+
+  document.getElementById("maintenance-enabled").checked = Boolean(state.maintenance.enabled);
+  document.getElementById("maintenance-title").value = state.maintenance.title || "メンテナンス中";
+  document.getElementById("maintenance-message").value = state.maintenance.message || "";
+}
 
 function genderLabel(value) {
   return value === "female" ? "女性" : value === "male" ? "男性" : value === "other" ? "その他" : "回答しない";
@@ -245,6 +300,28 @@ async function openVerificationDocument(path) {
 }
 
 function bindActions() {
+  document.querySelectorAll("[data-support-answer]").forEach(btn => btn.addEventListener("click", async () => {
+    const id=btn.dataset.supportAnswer;
+    const reply=document.getElementById("reply-"+id)?.value?.trim()||"";
+    if(!reply)return alert("返信内容を入力してください");
+    btn.disabled=true;
+    const {error}=await supabase.from("support_tickets").update({admin_reply:reply,status:"answered",updated_at:new Date().toISOString()}).eq("id",id);
+    if(error)alert(error.message);await loadAll();
+  }));
+  document.querySelectorAll("[data-support-close]").forEach(btn => btn.addEventListener("click", async () => {
+    btn.disabled=true;const {error}=await supabase.from("support_tickets").update({status:"closed",updated_at:new Date().toISOString()}).eq("id",btn.dataset.supportClose);
+    if(error)alert(error.message);await loadAll();
+  }));
+  document.querySelectorAll("[data-deletion-processing]").forEach(btn => btn.addEventListener("click", async () => {
+    const {error}=await supabase.from("account_deletion_requests").update({status:"processing"}).eq("user_id",btn.dataset.deletionProcessing);
+    if(error)alert(error.message);await loadAll();
+  }));
+  document.querySelectorAll("[data-deletion-complete]").forEach(btn => btn.addEventListener("click", async () => {
+    if(!confirm("削除処理完了として記録しますか？ 実データ削除処理は別途バックエンドで完了している必要があります。"))return;
+    const {error}=await supabase.from("account_deletion_requests").update({status:"completed",completed_at:new Date().toISOString()}).eq("user_id",btn.dataset.deletionComplete);
+    if(error)alert(error.message);await loadAll();
+  }));
+
   document.querySelectorAll("[data-open-doc]").forEach(btn => btn.addEventListener("click", () => {
     void openVerificationDocument(btn.dataset.openDoc);
   }));
@@ -305,6 +382,14 @@ document.getElementById("admin-login-form").addEventListener("submit", async eve
 });
 
 document.getElementById("admin-refresh").addEventListener("click", loadAll);
+document.getElementById("maintenance-save").addEventListener("click", async () => {
+  const enabled=document.getElementById("maintenance-enabled").checked;
+  const title=document.getElementById("maintenance-title").value.trim()||"メンテナンス中";
+  const message=document.getElementById("maintenance-message").value.trim();
+  const {error}=await supabase.rpc("admin_update_maintenance",{p_enabled:enabled,p_title:title,p_message:message});
+  if(error)return alert(error.message);
+  await loadAll();
+});
 document.getElementById("admin-logout").addEventListener("click", async () => {
   if (supabase) await supabase.auth.signOut();
   state.profile = null;
