@@ -31,9 +31,10 @@ export class KoiRelaAPI {
   async listCounselors({ track = "all", gender = "all", query = "" } = {}) {
     let request = this.supabase
       .from("counselor_profiles")
-      .select("user_id,display_name,counselor_type,gender,specialty,bio,avatar_path,qualification_label")
+      .select("user_id,display_name,counselor_type,gender,specialty,bio,avatar_path,qualification_label,counselor_availability!inner(is_accepting)")
       .eq("verification_status", "approved")
-      .eq("is_suspended", false);
+      .eq("is_suspended", false)
+      .eq("counselor_availability.is_accepting", true);
 
     if (track === "exp") request = request.eq("counselor_type", "experience");
     if (track === "pro") request = request.eq("counselor_type", "qualified");
