@@ -53,6 +53,59 @@ export async function listCounselors(params?: {
   })) as Counselor[];
 }
 
+
+export async function getResumableConsultation() {
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return null;
+
+  const { data, error } = await supabase
+    .from("consultations")
+    .select("id,status,user_id,counselor_id,started_at,ends_at,created_at,counselor:counselor_profiles!consultations_counselor_id_fkey(user_id,display_name,counselor_type,gender,specialty,bio,avatar_path,qualification_label)")
+    .or("user_id.eq." + auth.user.id + ",counselor_id.eq." + auth.user.id)
+    .in("status", ["waiting","active"])
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function listPaymentHistory() {
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) throw new Error("ログインが必要です");
+
+  const { data, error } = await supabase
+    .from("payments")
+    .select("id,consultation_id,amount_jpy,status,kind,provider_payment_intent_id,provider_refund_id,created_at,updated_at")
+    .eq("payer_id", auth.user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function createPayoutOnboardingLink() {
+  const { data, error } = await supabase.functions.invoke("payout-connect", {
+    body: { action: "onboarding" }
+  });
+  if (error) throw error;
+  return data as { url: string; expiresAt: number };
+}
+
+export async function syncPayoutAccountStatus() {
+  const { data, error } = await supabase.functions.invoke("payout-connect", {
+    body: { action: "status" }
+  });
+  if (error) throw error;
+  return data as {
+    status: "pending" | "verified";
+    detailsSubmitted: boolean;
+    payoutsEnabled: boolean;
+    chargesEnabled: boolean;
+  };
+}
+
 export async function createPaymentIntent(counselorId: string) {
   const { data, error } = await supabase.functions.invoke("create-payment-intent", {
     body: { counselorId }
