@@ -23,7 +23,7 @@ async function removeFolder(
     }
 
     if (data.length < 100) break;
-    offset += data.length;
+    offset = 0;
   }
 }
 
@@ -73,6 +73,8 @@ Deno.serve(async req => {
     await supabase.from("payments").update({ payer_id: null }).eq("payer_id", userId);
     await supabase.from("reports").update({ reporter_id: null }).eq("reporter_id", userId);
     await supabase.from("reports").update({ counselor_id: null }).eq("counselor_id", userId);
+    await supabase.from("reports").update({ reviewed_by: null }).eq("reviewed_by", userId);
+    await supabase.from("app_settings").update({ updated_by: null }).eq("updated_by", userId);
     await supabase.from("moderation_events").update({ counselor_id: null }).eq("counselor_id", userId);
     await supabase.from("moderation_events").update({ reviewed_by: null }).eq("reviewed_by", userId);
     await supabase.from("admin_audit_logs").update({ admin_id: null }).eq("admin_id", userId);
