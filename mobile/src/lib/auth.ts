@@ -14,10 +14,51 @@ export async function signUpWithEmail(email: string, password: string, nickname:
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { nickname } }
+    options: {
+      data: { nickname },
+      emailRedirectTo: Linking.createURL("auth/callback")
+    }
   });
   if (error) throw error;
   return data;
+}
+
+export async function requestPasswordReset(email: string) {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: Linking.createURL("auth/reset")
+  });
+  if (error) throw error;
+}
+
+export async function updatePassword(password: string) {
+  const { data, error } = await supabase.auth.updateUser({ password });
+  if (error) throw error;
+  return data;
+}
+
+export async function consumeAuthUrl(url: string) {
+  const parsed = Linking.parse(url);
+  const code = parsed.queryParams?.code;
+
+  if (typeof code === "string") {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) throw error;
+    return data;
+  }
+
+  const accessToken = parsed.queryParams?.access_token;
+  const refreshToken = parsed.queryParams?.refresh_token;
+
+  if (typeof accessToken === "string" && typeof refreshToken === "string") {
+    const { data, error } = await supabase.auth.setSession({
+      access_token: accessToken,
+      refresh_token: refreshToken
+    });
+    if (error) throw error;
+    return data;
+  }
+
+  return null;
 }
 
 export async function signInWithOAuth(provider: "apple" | "google") {
@@ -37,28 +78,7 @@ export async function signInWithOAuth(provider: "apple" | "google") {
   const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
   if (result.type !== "success" || !result.url) return null;
 
-  const parsed = Linking.parse(result.url);
-  const code = parsed.queryParams?.code;
-
-  if (typeof code === "string") {
-    const { data: sessionData, error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
-    if (sessionError) throw sessionError;
-    return sessionData;
-  }
-
-  const accessToken = parsed.queryParams?.access_token;
-  const refreshToken = parsed.queryParams?.refresh_token;
-
-  if (typeof accessToken === "string" && typeof refreshToken === "string") {
-    const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
-      access_token: accessToken,
-      refresh_token: refreshToken
-    });
-    if (sessionError) throw sessionError;
-    return sessionData;
-  }
-
-  throw new Error("OAuth callback did not contain an authorization code");
+  return consumeAuthUrl(result.url);
 }
 
 export async function signOut() {
