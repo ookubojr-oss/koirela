@@ -110,8 +110,13 @@ export async function sendMessage(consultationId, body) {
     .from('messages')
     .insert({ consultation_id: consultationId, sender_id: authData.user.id, body: text })
     .select()
-    .single();
+    .maybeSingle();
   if (error) throw error;
+  if (!data) {
+    const moderationError = new Error('MESSAGE_BLOCKED');
+    moderationError.code = 'MESSAGE_BLOCKED';
+    throw moderationError;
+  }
   return data;
 }
 
