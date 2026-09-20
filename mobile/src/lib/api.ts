@@ -55,20 +55,11 @@ export async function listCounselors(params?: {
 
 
 export async function getResumableConsultation() {
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return null;
-
-  const { data, error } = await supabase
-    .from("consultations")
-    .select("id,status,user_id,counselor_id,started_at,ends_at,created_at,counselor:counselor_profiles!consultations_counselor_id_fkey(user_id,display_name,counselor_type,gender,specialty,bio,avatar_path,qualification_label)")
-    .or("user_id.eq." + auth.user.id + ",counselor_id.eq." + auth.user.id)
-    .in("status", ["waiting","active"])
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
+  const { data, error } = await supabase.functions.invoke("sync-consultation-state", {
+    body: {}
+  });
   if (error) throw error;
-  return data;
+  return data?.consultation ?? null;
 }
 
 export async function listPaymentHistory() {
