@@ -3,7 +3,16 @@ project_id = "koirela"
 [functions.create-payment-intent]
 verify_jwt = true
 
+[functions.create-extension-payment-intent]
+verify_jwt = true
+
 [functions.start-consultation]
+verify_jwt = true
+
+[functions.end-consultation]
+verify_jwt = true
+
+[functions.cancel-consultation]
 verify_jwt = true
 
 [functions.send-message]
