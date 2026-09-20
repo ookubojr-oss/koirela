@@ -1,5 +1,6 @@
 import Stripe from "npm:stripe@17.7.0";
 import { serviceClient } from "../_shared/clients.ts";
+import { pushToUser } from "../_shared/push.ts";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "");
 const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET") ?? "";
@@ -36,11 +37,23 @@ Deno.serve(async (req) => {
       });
       if (error) return new Response("Extension apply failed", { status: 500 });
     } else if (consultationId) {
-      await supabase
+      const { data: waitingConsultation } = await supabase
         .from("consultations")
         .update({ status: "waiting" })
         .eq("id", consultationId)
-        .eq("status", "awaiting_payment");
+        .eq("status", "awaiting_payment")
+        .select("id,counselor_id")
+        .maybeSingle();
+
+      if (waitingConsultation?.counselor_id) {
+        void pushToUser(
+          supabase,
+          waitingConsultation.counselor_id,
+          "新しい相談リクエスト",
+          "15分相談のリクエストが届きました。",
+          { type: "consultation_request", consultationId }
+        );
+      }
     }
   }
 
