@@ -1,0 +1,10 @@
+import React,{useState} from "react";
+import {Pressable,SafeAreaView,StyleSheet,Text,View} from "react-native";
+const C={plum:"#574E66",coral:"#F2837B",pink:"#FBEAE8",bg:"#FCF9FA",muted:"#8A8292"};
+const pages=[
+  {mark:"01",title:"話したい相手を選ぶ",body:"名前や相談内容、経験者・資格者、希望する性別などから探せます。"},
+  {mark:"02",title:"15分 100円で相談",body:"料金を確認してから開始。時間はサーバー側で管理します。"},
+  {mark:"03",title:"匿名で1対1",body:"終了時刻までリアルタイムで話せます。必要なときだけ15分延長できます。"}
+];
+export default function OnboardingScreen({onDone}:{onDone:()=>void}){const [i,setI]=useState(0);const p=pages[i];return <SafeAreaView style={styles.root}><View style={styles.card}><View style={styles.mark}><Text style={styles.markText}>{p.mark}</Text></View><Text style={styles.title}>{p.title}</Text><Text style={styles.body}>{p.body}</Text><View style={styles.dots}>{pages.map((_,n)=><View key={n} style={[styles.dot,n===i&&styles.dotOn]}/>)}</View><Pressable style={styles.primary} onPress={()=>i===pages.length-1?onDone():setI(i+1)}><Text style={styles.primaryText}>{i===pages.length-1?"はじめる":"次へ"}</Text></Pressable>{i<pages.length-1?<Pressable style={styles.skip} onPress={onDone}><Text style={styles.skipText}>スキップ</Text></Pressable>:null}</View></SafeAreaView>}
+const styles=StyleSheet.create({root:{flex:1,backgroundColor:C.bg,justifyContent:"center",padding:22},card:{backgroundColor:"#fff",borderRadius:32,padding:26,alignItems:"center"},mark:{width:64,height:64,borderRadius:25,backgroundColor:C.pink,alignItems:"center",justifyContent:"center"},markText:{fontSize:18,fontWeight:"900",color:C.coral},title:{fontSize:24,fontWeight:"800",color:C.plum,textAlign:"center",marginTop:22},body:{fontSize:12,lineHeight:20,color:C.muted,textAlign:"center",marginTop:10},dots:{flexDirection:"row",gap:7,marginVertical:24},dot:{width:7,height:7,borderRadius:4,backgroundColor:"#E8E1EA"},dotOn:{width:24,backgroundColor:C.coral},primary:{width:"100%",height:52,borderRadius:999,backgroundColor:C.coral,alignItems:"center",justifyContent:"center"},primaryText:{color:"#fff",fontWeight:"800"},skip:{padding:14},skipText:{fontSize:10,fontWeight:"700",color:C.muted}});
