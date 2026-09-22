@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
     const counselorId = payload.counselorId;
 
     if (!counselorId || counselorId === user.id) {
-      return Response.json({ error: "Invalid counselor" }, { status: error instanceof Error && error.message === "RATE_LIMITED" ? 429 : 400, headers: corsHeaders });
+      return Response.json({ error: "Invalid counselor" }, { status: 400, headers: corsHeaders });
     }
 
     const supabase = serviceClient();
