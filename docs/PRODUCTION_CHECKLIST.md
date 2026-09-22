@@ -1,6 +1,6 @@
 # KoiRela production checklist
 
-Updated: 2026-09-20
+Updated: 2026-09-22
 
 ## Implemented in feature/production-foundation
 
@@ -48,6 +48,7 @@ Updated: 2026-09-20
 - [x] Client error reporting / error dashboard
 - [x] Push delivery error tracking and invalid-token cleanup
 - [x] Account immediate deletion backend and de-identification path
+- [x] Internal OAuth/rate-limit tables removed from anon/authenticated Data API access
 
 ### Release preparation
 - [x] LP aligned with current 15-min / 100-yen model
@@ -62,7 +63,7 @@ Updated: 2026-09-20
 
 ## External configuration / real-world actions still required
 
-- [ ] Create production Supabase project and apply all migrations
+- [x] Create production Supabase project and apply all migrations
 - [ ] Configure Supabase Auth URLs, email templates and auth security settings
 - [ ] Configure Apple OAuth credentials
 - [ ] Configure Google OAuth credentials
@@ -70,7 +71,7 @@ Updated: 2026-09-20
 - [ ] Create Stripe account and set test/live keys
 - [ ] Enable/configure Stripe Connect for the actual business model
 - [ ] Set final counselor platform fee, payout schedule and tax process
-- [ ] Deploy Edge Functions and Stripe webhook
+- [x] Deploy Edge Functions and Stripe webhook
 - [ ] Configure Expo EAS project
 - [ ] Configure Apple Developer Team / Bundle ID / merchant identifier
 - [ ] Configure APNs / FCM / Expo push credentials
@@ -87,8 +88,16 @@ Updated: 2026-09-20
 - [ ] TestFlight review
 - [ ] Production submission
 
+## Current status notes
+
+- Production Supabase project is active and healthy.
+- Database migrations are applied through the current production hardening migration.
+- Edge Functions including Stripe webhook are deployed.
+- Supabase Security Advisor still reports intentional SECURITY DEFINER RPC warnings for authenticated-only functions that perform their own admin/ownership checks; these were reviewed rather than blindly converted to SECURITY INVOKER.
+- Auth provider credentials, Stripe credentials, and the first real admin user are still external-account tasks.
+
 ## Important
 
 “Implemented” means source-code foundation exists in this branch. It does not mean external providers are connected or that live money/auth/push has been verified.
 
-No production secrets are committed to Git. Do not merge to `main` until migrations, functions, provider configuration and real-device tests have passed.
+No production secrets are committed to Git. Do not merge to `main` until provider configuration and real-device tests have passed.
