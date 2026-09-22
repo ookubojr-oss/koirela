@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
     const context = Array.isArray(payload.context) ? payload.context : [];
 
     if (!consultationId || typeof body !== "string" || !body.trim()) {
-      return Response.json({ error: "Invalid message" }, { status: error instanceof Error && error.message === "RATE_LIMITED" ? 429 : 400, headers: corsHeaders });
+      return Response.json({ error: "Invalid message" }, { status: 400, headers: corsHeaders });
     }
 
     const supabase = serviceClient();
