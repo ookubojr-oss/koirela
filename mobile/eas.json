@@ -1,0 +1,32 @@
+{
+  "cli": {
+    "version": ">= 16.0.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://mxygxdpzhqsnlewjctgg.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_7gl-ELtfQnnn28f9pmZ_Lw_x-9oRq1Q"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://mxygxdpzhqsnlewjctgg.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_7gl-ELtfQnnn28f9pmZ_Lw_x-9oRq1Q"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://mxygxdpzhqsnlewjctgg.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_7gl-ELtfQnnn28f9pmZ_Lw_x-9oRq1Q"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
