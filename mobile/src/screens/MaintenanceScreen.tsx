@@ -1,0 +1,5 @@
+import React from "react";
+import {SafeAreaView,StyleSheet,Text,View} from "react-native";
+const C={plum:"#574E66",coral:"#F2837B",pink:"#FBEAE8",bg:"#FCF9FA",muted:"#8A8292"};
+export default function MaintenanceScreen({title,message}:{title?:string;message?:string}){return <SafeAreaView style={styles.root}><View style={styles.card}><View style={styles.mark}><Text style={styles.icon}>♡</Text></View><Text style={styles.title}>{title||"メンテナンス中"}</Text><Text style={styles.body}>{message||"現在メンテナンスを行っています。しばらくしてからお試しください。"}</Text></View></SafeAreaView>}
+const styles=StyleSheet.create({root:{flex:1,backgroundColor:C.bg,alignItems:"center",justifyContent:"center",padding:24},card:{backgroundColor:"#fff",borderRadius:30,padding:28,alignItems:"center",maxWidth:420},mark:{width:68,height:68,borderRadius:26,backgroundColor:C.pink,alignItems:"center",justifyContent:"center"},icon:{fontSize:30,color:C.coral},title:{fontSize:22,fontWeight:"800",color:C.plum,marginTop:18},body:{fontSize:11,lineHeight:19,textAlign:"center",color:C.muted,marginTop:8}});
