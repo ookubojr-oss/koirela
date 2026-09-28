@@ -94,7 +94,10 @@ export async function scheduleOneMinuteWarning(endsAt: string | null | undefined
       body: "続けたい場合は、終了時に15分延長できます。",
       data: { type: "one_minute_warning" }
     },
-    trigger: triggerAt
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.DATE,
+      date: triggerAt
+    }
   });
 }
 
