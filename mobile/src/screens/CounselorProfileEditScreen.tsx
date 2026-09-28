@@ -47,6 +47,7 @@ export default function CounselorProfileEditScreen({onBack}:{onBack:()=>void}) {
       if(result.canceled)return;
 
       const asset=result.assets[0];
+      if (!asset) return;
       setBusy(true);
       const newPath=await uploadLocalFile({
         bucket:"avatars",
