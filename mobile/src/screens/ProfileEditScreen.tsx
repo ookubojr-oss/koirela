@@ -33,6 +33,7 @@ export default function ProfileEditScreen({onBack}:{onBack:()=>void}) {
         : await ImagePicker.launchImageLibraryAsync({mediaTypes:["images"],allowsEditing:true,aspect:[1,1],quality:.85});
       if(r.canceled)return;
       const a=r.assets[0];
+      if (!a) return;
       setBusy(true);
       const path=await uploadLocalFile({bucket:"avatars",uri:a.uri,mimeType:a.mimeType,fileName:a.fileName||"avatar.jpg",folder:"profile"});
       const {data:auth}=await supabase.auth.getUser();
