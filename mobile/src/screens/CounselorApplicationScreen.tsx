@@ -49,6 +49,7 @@ export default function CounselorApplicationScreen({ onBack, onDone }: {
         : await ImagePicker.launchImageLibraryAsync({mediaTypes:["images"],allowsEditing:true,aspect:[1,1],quality:.85});
       if (result.canceled) return;
       const a=result.assets[0];
+      if (!a) return;
       setAvatar({uri:a.uri,name:a.fileName||"avatar.jpg",mimeType:a.mimeType||"image/jpeg"});
     } catch (e:any) {
       Alert.alert("画像を選べませんでした",e?.message||"もう一度お試しください");
@@ -64,6 +65,7 @@ export default function CounselorApplicationScreen({ onBack, onDone }: {
       });
       if (result.canceled) return;
       const a=result.assets[0];
+      if (!a) return;
       const picked={uri:a.uri,name:a.name,mimeType:a.mimeType};
       if (kind==="identity") setIdentity(picked); else setQualification(picked);
     } catch (e:any) {
