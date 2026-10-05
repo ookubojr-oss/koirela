@@ -48,7 +48,7 @@ Updated: 2026-10-05
 - [x] Internal OAuth/rate-limit/identity mapping tables removed from anon/authenticated Data API access
 - [x] Current SECURITY DEFINER RPC surface reviewed for internal admin/ownership checks
 - [x] Supabase dependency versions pinned in Edge Functions and mobile code
-- [x] GitHub Actions upgraded and high/critical production dependency audit added
+- [x] GitHub Actions upgraded; dependency advisories are reported and critical findings block CI
 - [x] PR diff scanned for common secret/private-key patterns
 
 ### Release preparation
