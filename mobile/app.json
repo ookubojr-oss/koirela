@@ -14,10 +14,12 @@
         "CFBundleLocalizations": [
           "ja"
         ]
-      }
+      },
+      "buildNumber": "1"
     },
     "android": {
-      "package": "jp.koirela.app"
+      "package": "jp.koirela.app",
+      "versionCode": 1
     },
     "plugins": [
       [
