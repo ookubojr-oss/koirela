@@ -29,6 +29,7 @@ These are anti-abuse defaults, not performance targets. Tune after observing rea
 
 - one active consultation per customer
 - one active consultation per counselor
+- consultation participants can read chat messages only while the paid consultation is actively running; retained messages remain server-side for moderation/support
 - suspended users are rejected by authenticated Edge Functions
 - suspended counselors are removed from discovery and reception
 - blocked customer/counselor pairs cannot start a paid consultation
