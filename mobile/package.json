@@ -20,7 +20,7 @@
     "react": "19.2.3",
     "react-native": "0.86.0",
     "@stripe/stripe-react-native": "0.64.0",
-    "@supabase/supabase-js": "^2.57.0",
+    "@supabase/supabase-js": "2.117.2",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "react-native-url-polyfill": "^2.0.0",
     "expo-image-picker": "~57.0.19",
