@@ -47,6 +47,7 @@ Updated: 2026-10-05
 - [x] Account deletion backend and de-identification path
 - [x] Internal OAuth/rate-limit/identity mapping tables removed from anon/authenticated Data API access
 - [x] Current SECURITY DEFINER RPC surface reviewed for internal admin/ownership checks
+- [x] Paid consultation messages are participant-readable only while the live session is active; retained copies remain server-side for safety/support
 - [x] Supabase dependency versions pinned in Edge Functions and mobile code
 - [x] GitHub Actions upgraded; dependency advisories are reported and critical findings block CI
 - [x] PR diff scanned for common secret/private-key patterns
@@ -64,6 +65,7 @@ Updated: 2026-10-05
 - [x] Stripe test webhook endpoint created
 - [x] Supabase Stripe webhook Edge Function deployed
 - [x] Stripe Google Pay environment follows the configured test/live publishable key
+- [x] Apple / Google store payment-policy rationale documented for live 1:1 human services
 
 ## External configuration / real-world actions still required
 
