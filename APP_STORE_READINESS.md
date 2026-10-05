@@ -1,162 +1,50 @@
-# KoiRela App Store公開準備チェックリスト
+# KoiRela App Store readiness
 
-## このブランチで実装済みのUI
-- 3タブ構成（ホーム / さがす / マイページ）
-- 初回導線 / Appleで続ける / Googleで続ける / LINEで続ける
-- 相談員一覧 / 絞り込み
-- 相談員プロフィール
-- 15分100円の相談開始確認
-- 支払い方法確認
-- 決済エラー / 再試行
-- 相談員呼び出し待機 / キャンセル
-- 支払い履歴 / 利用明細
-- 15分タイマー付きチャット
-- 相談終了 / 15分延長 / 星評価
-- 相談履歴
-- プロフィール編集
-- お問い合わせ
-- 設定
-- 利用規約掲載画面
-- プライバシーポリシー掲載画面
-- 通報理由選択 / 通報完了
-- ブロック / ブロック解除 / ブロック一覧
-- ログアウト
-- アカウント削除導線
-- 安心・安全ガイド
-- 料金・キャンセル・返金案内
-- 運営情報
-- 相談員モード
-  - 受付ON/OFF
-  - 相談リクエスト
-  - 当日の相談件数
-  - 報酬表示
-  - 相談員登録4ステップ
-  - 本人確認書類アップロード導線
-  - 資格証アップロード導線
-  - 審査待ち
-  - 相談員プロフィール編集
-  - 報酬・振込先
-  - 過去相談
-- KoiRela共通モーションデザイン
-  - ふわっ / ぽよん / 浮遊 / タップ反応 / スクロール反応
+Updated: 2026-10-05
 
-## App Storeへ実際に提出する前に必要な実装
-### iOSアプリ本体
-- WebプロトタイプをReact Native / Expo等のiOSアプリへ移植
-- Bundle ID / App ID
-- iOS署名・証明書・Provisioning
-- 実機ビルド
-- TestFlight配布
+## Current status
 
-### バックエンド
-- ユーザー認証
-- Apple Sign in実接続
-- データベース
-- リアルタイムチャット
-- 相談開始・終了時刻のサーバー管理
-- 15分延長
-- 支払い処理
-- 相談履歴
-- 評価
-- 通報 / ブロック
-- お問い合わせ送信
-- アカウント削除の実処理
-- 相談員の受付状態
-- 報酬 / 振込データ
+KoiRela is no longer only an HTML prototype. The `feature/production-foundation` branch now contains the Expo / React Native mobile app, Supabase backend, Realtime chat, Storage, RLS, Edge Functions, Stripe payment foundation, moderation/admin operations, account deletion, release documentation and automated static checks.
 
-### 運営管理
-- 相談員審査
-- 資格確認
-- 通報対応
-- ユーザー / 相談員停止
-- 返金対応
-- 問い合わせ管理
-- 不正利用対策
+The remaining work is primarily external-provider configuration, account verification, real-device validation and App Store submission work.
 
-### 法務・公開情報
-- 正式な利用規約
-- 正式なプライバシーポリシー
-- 特商法・事業者情報（必要な形を確認）
-- 料金 / キャンセル / 返金ルール
-- 相談員向け規約
-- 安全ガイドライン
-- 個人情報の保存期間・削除方針
+## Implemented application foundation
 
-### App Store Connect
-- Apple Developer Program
-- App Store Connectでアプリ登録
-- アプリ名
-- サブタイトル
-- 説明文
-- キーワード
-- カテゴリ
-- 年齢レーティング
-- App Privacy回答
-- サポートURL
-- プライバシーポリシーURL
-- アプリアイコン
-- iPhoneスクリーンショット
-- 審査用連絡先
-- 審査用デモアカウント
-- ビルド選択
-- App Reviewへ提出
+- Expo / React Native app with KoiRela app scheme and iOS/Android package scaffolding
+- Email/password auth plus Apple / Google / LINE login foundations
+- Supabase database, RLS, Storage and Realtime
+- Counselor discovery, favorites, history, profile editing and counselor application
+- 15-minute / 100 JPY consultation lifecycle and 15-minute extension
+- Stripe PaymentIntent, webhook, refund and Connect payout foundations
+- Realtime one-to-one chat with server-authoritative consultation timing
+- Push notification registration and one-minute warning foundation
+- Rating, reporting, blocking, moderation and suspension flows
+- Admin operations, support tickets, audit logs and maintenance mode
+- In-app account deletion foundation
+- Terms / privacy / commercial-law / refund / counselor-term drafts
+- App Store metadata, privacy worksheet, device matrix and Maestro smoke flows
+- GitHub Actions static/type checks and high-severity production dependency audit
 
-## 重要
-現在のindex.htmlは操作確認用プロトタイプです。
-画面と導線はApp Store公開を見据えて揃えていますが、このHTMLだけをそのままApp Storeへ提出できる状態ではありません。
+## Launch blockers
 
+1. **Stripe account alignment and activation**
+   The Stripe Dashboard account used to copy API keys, the Stripe account connected to tooling, the mobile publishable key and the Supabase server/webhook secrets must all refer to the same Stripe account. Do not run real payment testing until this is verified.
 
-## UI監査（2026-09-20）
-- 現在のプロトタイプ: 24画面 + 10ボトムシート
-- 画面内の show() 遷移先に未定義画面なし
-- openSheet() の参照先に未定義シートなし
-- ユーザー側の主要正常系・失敗系・安全系・法務導線をカバー
-- 相談員側の登録・審査・受付・プロフィール・報酬・履歴をカバー
-- 認証は Apple / Google / LINE の3方式を想定
-- 実際のOAuth、本人確認、決済、バックエンド、法務文書は未接続
+2. **Authentication provider configuration**
+   Supabase Auth redirect URLs/security settings and Apple, Google and LINE provider credentials still require external dashboard setup. Leaked-password protection should be enabled before launch.
 
+3. **Expo / Apple release ownership**
+   Create/link the EAS project, replace the placeholder EAS project ID, register the Apple Bundle ID and merchant identifier, and configure signing/push credentials.
 
-## UX / アクセシビリティ改善監査（2026-09-20）
-適用済み:
-- ネイティブ form のメール/パスワードログイン
-- email autocomplete="username"
-- password autocomplete="current-password"
-- Enterでログイン送信
-- パスワード表示/非表示ボタン
-- Google / Apple / LINE のソーシャルログイン
-- ログイン方法の or 区切り
-- 相談開始フローの3段階Steps（確認 / Payment / 開始）
-- checkout stepは単一のzero-based indexから completed/current/upcoming を描画
-- current stepに aria-current="step"
-- 支払い方法と相談員種別にネイティブ radio
-- 通知にネイティブ checkbox role="switch"
-- 独立設定にネイティブ checkbox
-- 生年月日にcivil date文字列を使うカレンダーポップオーバー
-- カレンダーの矢印キー / PageUp / PageDown / Escape操作
-- input / textarea の caret-color
-- 利用規約 / プライバシーポリシーにScrollspy
-- Scrollspyに aria-current="location" とIntersectionObserver/rootMargin
-- 画面遷移先・シート参照先・duplicate id・JavaScript構文を監査
+4. **Test identities**
+   A real admin account and at least one approved counselor test account are still required for end-to-end validation.
 
-見送り:
-- Masonry: 相談員一覧は比較しやすい縦並びの方が適切で、Pinterest型は順序と読みやすさを悪化させるため不採用
-- macOS NSAlert: KoiRelaはiOS/Web向けのため直接適用しない。確認UIは既存のアクセシブルなdialog/bottom sheet方式を継続
+5. **Real-device validation**
+   Run the two-device lifecycle: payment -> waiting -> counselor accepts -> realtime chat -> timer -> extension/end -> rating/refund/recovery.
 
+6. **Legal / store assets**
+   Replace operator/domain placeholders, complete professional legal/tax review, finalize icon/splash/screenshots and App Store privacy answers.
 
-## Production-state UX追加（2026-09-20）
-- 相談員検索のテキスト検索 / 0件状態 / 条件リセット
-- オフライン検知バナー / 再接続通知
-- チャット送信失敗 / 再送
-- 相談員入力中インジケータ
-- チャット接続状態表示
-- 相談終了1分前トースト
-- 通知許可前の説明シート
-- 初回3ステップのミニオンボーディング
-- Google / Apple / LINE のアカウント連携管理
-- 支払い利用明細
-- メンテナンス画面
-- 強制アップデート画面
-- alert()を廃止し、KoiRela共通ダイアログへ統一
-- ボトムシートのフォーカス移動 / Escapeで閉じる / 元のフォーカスへ復帰
-- 現在 28画面 + 13ボトムシート
-- JavaScript構文 / 未定義画面遷移 / 未定義シート / duplicate id を再監査し問題なし
+## Release rule
+
+Keep Stripe in test mode and keep PR #2 as a draft until provider configuration and the real-device matrix pass. Do not merge the production foundation to `main` or switch to live money solely because static checks pass.
