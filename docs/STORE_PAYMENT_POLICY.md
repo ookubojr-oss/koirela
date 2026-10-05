@@ -50,6 +50,6 @@ https://support.google.com/googleplay/android-developer/answer/9858738
 
 - Do not add replayable chat/session recordings as a paid deliverable without a new store-policy review.
 - Do not add paid group sessions without a new billing implementation review.
-- Keep the consultation record needed for safety/support separate from a user-facing replayable paid product.
+- Keep the consultation record needed for safety/support separate from a user-facing replayable paid product. Current RLS permits participant message reads only while the consultation is active and before its server-side end time.
 - Keep pricing and service descriptions consistent across app UI, store metadata, legal pages, and reviewer notes.
 - Re-check Apple and Google policy pages immediately before production submission.
