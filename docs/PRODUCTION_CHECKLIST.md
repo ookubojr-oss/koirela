@@ -1,6 +1,6 @@
 # KoiRela production checklist
 
-Updated: 2026-09-22
+Updated: 2026-10-05
 
 ## Implemented in feature/production-foundation
 
@@ -37,18 +37,19 @@ Updated: 2026-09-22
 - [x] User report only counts after admin confirmation
 - [x] User account suspension state
 - [x] Counselor suspension / restore
-- [x] Admin user search by email/nickname/ID
-- [x] Admin counselor search / violations / reception / payout state
-- [x] Admin force-end consultation
-- [x] Admin Stripe refund
-- [x] Admin moderation and audit history
-- [x] Support ticket management
+- [x] Admin user/counselor/report/support operations
+- [x] Admin Stripe refund foundation
+- [x] Admin audit history
 - [x] Maintenance mode
 - [x] API rate limiting for payment/message/consultation/auth/error endpoints
 - [x] Client error reporting / error dashboard
 - [x] Push delivery error tracking and invalid-token cleanup
-- [x] Account immediate deletion backend and de-identification path
-- [x] Internal OAuth/rate-limit tables removed from anon/authenticated Data API access
+- [x] Account deletion backend and de-identification path
+- [x] Internal OAuth/rate-limit/identity mapping tables removed from anon/authenticated Data API access
+- [x] Current SECURITY DEFINER RPC surface reviewed for internal admin/ownership checks
+- [x] Supabase dependency versions pinned in Edge Functions and mobile code
+- [x] GitHub Actions upgraded and high/critical production dependency audit added
+- [x] PR diff scanned for common secret/private-key patterns
 
 ### Release preparation
 - [x] LP aligned with current 15-min / 100-yen model
@@ -60,24 +61,30 @@ Updated: 2026-09-22
 - [x] Maestro smoke flows
 - [x] GitHub Actions type/static checks
 - [x] Security/rate-limit documentation
+- [x] Stripe test webhook endpoint created
+- [x] Supabase Stripe webhook Edge Function deployed
+- [x] Stripe Google Pay environment follows the configured test/live publishable key
 
 ## External configuration / real-world actions still required
 
-- [x] Create production Supabase project and apply all migrations
-- [ ] Configure Supabase Auth URLs, email templates and auth security settings
-- [ ] Configure Apple OAuth credentials
-- [ ] Configure Google OAuth credentials
-- [ ] Create LINE Login channel, approve email permission if used, set callback URL and secrets
-- [ ] Create Stripe account and set test/live keys
+- [ ] Align the Stripe Dashboard account, ChatGPT-connected Stripe account, app publishable key, Supabase `STRIPE_SECRET_KEY`, and webhook signing secret to the same Stripe account
+- [ ] Verify `STRIPE_WEBHOOK_SECRET` is the signing secret for that exact webhook endpoint
+- [ ] Complete Stripe account activation / business verification
 - [ ] Enable/configure Stripe Connect for the actual business model
 - [ ] Set final counselor platform fee, payout schedule and tax process
-- [x] Deploy Edge Functions and Stripe webhook
-- [ ] Configure Expo EAS project
+- [ ] Enable Supabase Auth leaked-password protection
+- [ ] Configure Supabase Auth redirect URLs, email templates and auth security settings
+- [ ] Configure Apple OAuth credentials
+- [ ] Configure Google OAuth credentials
+- [ ] Create/configure LINE Login channel and set callback URL / secrets
+- [ ] Configure Expo EAS project and replace `REPLACE_WITH_EAS_PROJECT_ID`
+- [ ] Set EAS public environment variables, including Stripe publishable key and legal base URL
 - [ ] Configure Apple Developer Team / Bundle ID / merchant identifier
 - [ ] Configure APNs / FCM / Expo push credentials
-- [ ] Create real admin account and assign role=admin
+- [ ] Create/assign a real admin account
+- [ ] Create and approve at least one counselor test account
 - [ ] Choose final identity-verification provider or formalize manual review
-- [ ] Replace all legal placeholders with actual operator information
+- [ ] Replace legal placeholders with actual operator information
 - [ ] Professional legal/tax review of terms, privacy, commerce disclosure, payouts and retention
 - [ ] Final App Store icon, splash and screenshots
 - [ ] Complete App Store privacy answers from deployed production SDK/data map
@@ -85,19 +92,24 @@ Updated: 2026-09-22
 - [ ] Run Stripe test payments/refunds/Connect payouts end to end
 - [ ] Run LINE/Apple/Google login on production-like builds
 - [ ] Accessibility review
+- [ ] Commit a reproducible mobile lockfile once dependencies are installed in the release environment
 - [ ] TestFlight review
 - [ ] Production submission
 
-## Current status notes
+## Current verified state
 
-- Production Supabase project is active and healthy.
-- Database migrations are applied through the current production hardening migration.
-- Edge Functions including Stripe webhook are deployed.
-- Supabase Security Advisor still reports intentional SECURITY DEFINER RPC warnings for authenticated-only functions that perform their own admin/ownership checks; these were reviewed rather than blindly converted to SECURITY INVOKER.
-- Auth provider credentials, Stripe credentials, and the first real admin user are still external-account tasks.
+- Supabase project `KoiRela Tokyo` is active and healthy in Tokyo.
+- Realtime is enabled for `consultations`, `counselor_availability`, and `messages`.
+- KoiRela Storage has a public `avatars` bucket and private `counselor-verification` bucket.
+- Server-only tables `external_identities`, `oauth_states`, and `rate_limit_buckets` have RLS enabled and no anon/authenticated table privileges.
+- Security Advisor still reports intentional authenticated SECURITY DEFINER RPC warnings; each current function was reviewed for its admin/ownership guard instead of being blindly converted.
+- Leaked-password protection is still disabled and must be enabled before launch.
+- Database currently has one Auth user/profile, zero admin accounts, zero approved counselors, zero payments, and zero consultations.
+- Stripe webhook infrastructure exists, but payment testing is blocked until Stripe account/secret alignment is verified.
+- PR #2 remains a draft and must not be merged to `main` until provider configuration and real-device tests pass.
 
 ## Important
 
-“Implemented” means source-code foundation exists in this branch. It does not mean external providers are connected or that live money/auth/push has been verified.
+“Implemented” means the source-code foundation exists. It does not mean external providers are connected or that live money/auth/push has been verified.
 
-No production secrets are committed to Git. Do not merge to `main` until provider configuration and real-device tests have passed.
+Never commit service-role keys, Stripe secret keys, webhook signing secrets, OAuth client secrets, or Apple credentials.
