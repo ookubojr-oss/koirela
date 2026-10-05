@@ -960,6 +960,60 @@ export type Database = {
           },
         ]
       }
+      realestate_reel_jobs: {
+        Row: {
+          caption: string | null
+          claimed_at: string | null
+          completed_at: string | null
+          created_at: string
+          error: string | null
+          id: string
+          message: string
+          output_path: string | null
+          progress: number
+          property: Json
+          source_files: Json
+          status: string
+          thumbnail_path: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          caption?: string | null
+          claimed_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          message?: string
+          output_path?: string | null
+          progress?: number
+          property?: Json
+          source_files?: Json
+          status?: string
+          thumbnail_path?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          caption?: string | null
+          claimed_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          message?: string
+          output_path?: string | null
+          progress?: number
+          property?: Json
+          source_files?: Json
+          status?: string
+          thumbnail_path?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       reports: {
         Row: {
           consultation_id: string | null
