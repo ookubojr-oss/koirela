@@ -10,7 +10,7 @@ jobs:
   static-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: denoland/setup-deno@v2
         with:
@@ -37,13 +37,17 @@ jobs:
           deno check supabase/functions/line-auth-start/index.ts
           deno check supabase/functions/report-error/index.ts
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
 
       - name: Install mobile dependencies
         working-directory: mobile
         run: npm install --ignore-scripts
+
+      - name: Audit production dependencies
+        working-directory: mobile
+        run: npm audit --omit=dev --audit-level=high
 
       - name: Typecheck mobile app
         working-directory: mobile
