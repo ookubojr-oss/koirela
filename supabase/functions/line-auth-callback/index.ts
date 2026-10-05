@@ -21,7 +21,7 @@ Deno.serve(async req=>{
     const clientId=Deno.env.get("LINE_CHANNEL_ID");
     const clientSecret=Deno.env.get("LINE_CHANNEL_SECRET");
     const callbackUrl=Deno.env.get("LINE_CALLBACK_URL");
-    if(!clientId||!callbackUrl)throw new Error("LINE login is not configured");
+    if(!clientId||!clientSecret||!callbackUrl)throw new Error("LINE login is not configured");
 
     const supabase=serviceClient();
     const stateHash=await sha256(state);
@@ -43,7 +43,7 @@ Deno.serve(async req=>{
       redirect_uri:callbackUrl,
       client_id:clientId
     });
-    if(clientSecret)tokenBody.set("client_secret",clientSecret);
+    tokenBody.set("client_secret",clientSecret);
 
     const tokenRes=await fetch("https://api.line.me/oauth2/v2.1/token",{
       method:"POST",
