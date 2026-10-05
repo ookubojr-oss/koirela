@@ -69,8 +69,8 @@ Updated: 2026-10-05
 
 ## External configuration / real-world actions still required
 
-- [ ] Align the Stripe Dashboard account, ChatGPT-connected Stripe account, app publishable key, Supabase `STRIPE_SECRET_KEY`, and webhook signing secret to the same Stripe account
-- [ ] Verify `STRIPE_WEBHOOK_SECRET` is the signing secret for that exact webhook endpoint
+- [x] Align the Stripe Dashboard account, ChatGPT-connected Stripe account, Supabase `STRIPE_SECRET_KEY`, and webhook signing secret to the same Stripe test account (`acct_1UN65vFW3D2XiSVi`). Mobile publishable-key deployment remains part of EAS setup
+- [x] Verify `STRIPE_WEBHOOK_SECRET` is the signing secret for webhook `we_1UN7jSFW3D2XiSViNQv4ihsK`; signed Stripe event returned HTTP 200
 - [ ] Complete Stripe account activation / business verification
 - [ ] Enable/configure Stripe Connect for the actual business model
 - [ ] Set final counselor platform fee, payout schedule and tax process
@@ -107,7 +107,7 @@ Updated: 2026-10-05
 - Security Advisor still reports intentional authenticated SECURITY DEFINER RPC warnings; each current function was reviewed for its admin/ownership guard instead of being blindly converted.
 - Leaked-password protection is still disabled and must be enabled before launch.
 - Database currently has one Auth user/profile, zero admin accounts, zero approved counselors, zero payments, and zero consultations.
-- Stripe webhook infrastructure exists, but payment testing is blocked until Stripe account/secret alignment is verified.
+- Stripe webhook infrastructure is aligned and signature-verified against the KOIRIA sandbox. Full 100-yen consultation E2E still requires two real Supabase Auth sessions (customer + approved counselor).
 - PR #2 remains a draft and must not be merged to `main` until provider configuration and real-device tests pass.
 
 ## Important
