@@ -236,7 +236,7 @@ async function initialize() {
     state.notice="決済状況を確認しています。";
     render();
   }
-  refreshTimer=setInterval(() => { if (state.user) void refreshConsultation().catch(()=>{}); },5000);
+  refreshTimer=setInterval(() => { if (state.user && !state.payment) void refreshConsultation().catch(()=>{}); },5000);
   setInterval(() => { if (state.consultation?.status==="active" && !state.payment) {
     const el=document.querySelector(".pill");
     if (el && state.consultation.ends_at) {
