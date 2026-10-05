@@ -43,7 +43,7 @@ These are anti-abuse defaults, not performance targets. Tune after observing rea
 - LINE OAuth state/nonce verification with a required channel secret
 - server-only OAuth identity/state/rate-limit tables are not accessible to anon/authenticated roles
 - Supabase JS versions are pinned for the mobile app and shared Edge Function imports
-- CI fails on high/critical production dependency advisories
+- CI reports production dependency advisories and blocks on critical severity
 - common secret/private-key patterns are absent from the current PR diff
 
 ## Supabase Security Advisor review
@@ -57,6 +57,7 @@ Do not silence these warnings by blindly granting policies, revoking intended RP
 Outstanding:
 - Supabase Auth leaked-password protection is disabled and should be enabled before launch.
 - Multiple permissive-policy and unused-index advisories are performance observations. Do not remove policies/indexes solely to clear the advisor before representative traffic exists.
+- The current Expo SDK 57 dependency tree reports upstream high-severity advisories in build/tooling dependencies. Current audit metadata offers no safe non-breaking fix for those paths; CI reports them and blocks on critical findings while upstream fixes are tracked.
 
 ## Auth provider controls to configure outside source code
 
