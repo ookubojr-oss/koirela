@@ -53,6 +53,9 @@ import PaymentHistoryScreen from "./src/screens/PaymentHistoryScreen";
 import SuspendedAccountScreen from "./src/screens/SuspendedAccountScreen";
 import AppErrorBoundary from "./src/components/AppErrorBoundary";
 
+const STRIPE_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+const STRIPE_TEST_MODE = !STRIPE_PUBLISHABLE_KEY || STRIPE_PUBLISHABLE_KEY.startsWith("pk_test_");
+
 const COLORS = {
   plum: "#574E66",
   coral: "#F2837B",
@@ -474,7 +477,7 @@ function ChatScreen({ consultation, peerName, onDone }: {
         merchantDisplayName: "KoiRela",
         paymentIntentClientSecret: created.paymentIntentClientSecret,
         applePay: { merchantCountryCode: "JP" },
-        googlePay: { merchantCountryCode: "JP", testEnv: true }
+        googlePay: { merchantCountryCode: "JP", testEnv: STRIPE_TEST_MODE }
       });
       if (initialized.error) throw initialized.error;
       const presented = await presentPaymentSheet();
@@ -1002,7 +1005,7 @@ function Root() {
 }
 
 export default function App() {
-  const publishableKey = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? "pk_test_missing";
+  const publishableKey = STRIPE_PUBLISHABLE_KEY ?? "pk_test_missing";
   return (
     <StripeProvider publishableKey={publishableKey} merchantIdentifier="merchant.jp.koirela.app">
       <AppErrorBoundary>
