@@ -1,0 +1,21 @@
+import React,{useEffect,useState} from "react";
+import {ActivityIndicator,Alert,Pressable,SafeAreaView,ScrollView,StyleSheet,Text,TextInput,View} from "react-native";
+import {listSupportTickets,submitSupportTicket} from "../lib/api";
+
+const C={plum:"#574E66",coral:"#F2837B",bg:"#FCF9FA",text:"#37313F",muted:"#8A8292",line:"#EEE8EF"};
+const cats=[["payment","決済"],["counselor","相談員"],["bug","不具合"],["account","アカウント"],["other","その他"]] as const;
+
+export default function SupportScreen({onBack}:{onBack:()=>void}) {
+  const [category,setCategory]=useState<any>("payment");const [subject,setSubject]=useState("");const [message,setMessage]=useState("");const [items,setItems]=useState<any[]>([]);const [busy,setBusy]=useState(false);
+  useEffect(()=>{void load()},[]);async function load(){try{setItems(await listSupportTickets())}catch{}}
+  async function submit(){if(!subject.trim()||!message.trim())return Alert.alert("件名と内容を入力してください");try{setBusy(true);await submitSupportTicket({category,subject:subject.trim(),message:message.trim()});setSubject("");setMessage("");await load();Alert.alert("お問い合わせを受け付けました")}catch(e:any){Alert.alert("送信できませんでした",e?.message||"もう一度お試しください")}finally{setBusy(false)}}
+  return <SafeAreaView style={styles.root}><ScrollView contentContainerStyle={styles.content}>
+    <Pressable onPress={onBack}><Text style={styles.back}>‹ 設定</Text></Pressable><Text style={styles.title}>お問い合わせ</Text>
+    <View style={styles.card}><Text style={styles.label}>カテゴリ</Text><View style={styles.chips}>{cats.map(([v,l])=><Pressable key={v} style={[styles.chip,category===v&&styles.chipOn]} onPress={()=>setCategory(v)}><Text style={[styles.chipText,category===v&&styles.chipTextOn]}>{l}</Text></Pressable>)}</View><Text style={styles.label}>件名</Text><TextInput style={styles.field} value={subject} onChangeText={setSubject} maxLength={120}/><Text style={styles.label}>内容</Text><TextInput style={[styles.field,styles.area]} value={message} onChangeText={setMessage} maxLength={3000} multiline/><Pressable style={styles.primary} onPress={submit} disabled={busy}>{busy?<ActivityIndicator color="#fff"/>:<Text style={styles.primaryText}>送信する</Text>}</Pressable></View>
+    <Text style={styles.section}>これまでのお問い合わせ</Text>{!items.length?<View style={styles.empty}><Text style={styles.muted}>まだお問い合わせはありません。</Text></View>:items.map(x=><View key={x.id} style={styles.card}><View style={styles.row}><Text style={styles.item}>{x.subject}</Text><Text style={styles.status}>{statusLabel(x.status)}</Text></View><Text style={styles.muted}>{x.message}</Text>{x.admin_reply?<View style={styles.reply}><Text style={styles.replyLabel}>運営からの返信</Text><Text style={styles.replyText}>{x.admin_reply}</Text></View>:null}</View>)}
+  </ScrollView></SafeAreaView>
+}
+function statusLabel(v:string){return v==="answered"?"回答済み":v==="closed"?"完了":v==="in_progress"?"確認中":"受付済み"}
+const styles=StyleSheet.create({
+ root:{flex:1,backgroundColor:C.bg},content:{padding:20,paddingBottom:50,gap:11},back:{fontSize:12,fontWeight:"700",color:C.plum},title:{fontSize:23,fontWeight:"800",color:C.plum},card:{backgroundColor:"#fff",borderRadius:22,padding:16,gap:9},label:{fontSize:10,fontWeight:"800",color:C.muted},chips:{flexDirection:"row",gap:6,flexWrap:"wrap"},chip:{borderWidth:1,borderColor:C.line,borderRadius:999,paddingHorizontal:11,paddingVertical:8},chipOn:{backgroundColor:C.plum,borderColor:C.plum},chipText:{fontSize:9,fontWeight:"700",color:C.muted},chipTextOn:{color:"#fff"},field:{minHeight:48,borderWidth:1,borderColor:C.line,borderRadius:15,paddingHorizontal:12},area:{minHeight:120,textAlignVertical:"top",paddingTop:12},primary:{height:50,borderRadius:999,backgroundColor:C.coral,alignItems:"center",justifyContent:"center"},primaryText:{color:"#fff",fontWeight:"800"},section:{fontSize:13,fontWeight:"800",color:C.plum,marginTop:4},empty:{backgroundColor:"#fff",borderRadius:20,padding:24},muted:{fontSize:10,color:C.muted,lineHeight:17},row:{flexDirection:"row",justifyContent:"space-between",gap:8},item:{fontSize:12,fontWeight:"800",color:C.text},status:{fontSize:9,fontWeight:"800",color:C.coral},reply:{backgroundColor:"#FAF7FA",borderRadius:14,padding:11},replyLabel:{fontSize:9,fontWeight:"800",color:C.plum,marginBottom:4},replyText:{fontSize:10,lineHeight:17,color:C.text}
+});

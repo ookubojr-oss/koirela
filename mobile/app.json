@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "KoiRela",
+    "slug": "koirela",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "koirela",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "jp.koirela.app",
+      "infoPlist": {
+        "CFBundleAllowMixedLocalizations": true,
+        "CFBundleLocalizations": [
+          "ja"
+        ]
+      },
+      "buildNumber": "1"
+    },
+    "android": {
+      "package": "jp.koirela.app",
+      "versionCode": 1
+    },
+    "plugins": [
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.jp.koirela.app",
+          "enableGooglePay": true
+        }
+      ],
+      "expo-notifications",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "プロフィール画像や審査書類を選ぶために写真へのアクセスを使用します。",
+          "cameraPermission": "プロフィール画像や審査書類を撮影するためにカメラを使用します。",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-document-picker",
+        {}
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "e7fe6539-d7e8-4931-b627-2849e615571d"
+      }
+    }
+  }
+}

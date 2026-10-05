@@ -1,0 +1,6 @@
+appId: jp.koirela.app
+---
+# Precondition: a test consultation is already in waiting or active state for the signed-in test account.
+- launchApp
+- assertVisible:
+    text: "相談員を呼び出しています|オンライン"
