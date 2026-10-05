@@ -29,7 +29,7 @@ Do not submit placeholder or generated test screenshots.
 Suggested review note:
 “KoiRela connects a customer and a human counselor in a one-to-one, real-time chat session. The standard session is 15 minutes for JPY 100. A reviewer test account and a counselor test account will be provided in App Review Information. The service includes reporting, blocking, counselor identity review, account deletion, and moderation for off-platform solicitation.”
 
-Before submission, verify the payment method against the current App Store Review Guidelines and the actual service model/configuration.
+Current policy review: Apple App Review Guideline 3.1.3(d) permits non-IAP payment methods for real-time person-to-person services between two individuals. KoiRela is designed around that model: one customer, one human counselor, live 1:1 session, no replayable recording and no paid group session. See `docs/STORE_PAYMENT_POLICY.md` and re-check the live guideline immediately before submission.
 
 ## Account deletion
 
