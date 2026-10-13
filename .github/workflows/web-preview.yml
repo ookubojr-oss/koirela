@@ -1,0 +1,43 @@
+name: KoiRela Web preview build
+
+on:
+  push:
+    branches:
+      - feature/web-consultation
+    paths:
+      - 'web/**'
+      - '.github/workflows/web-preview.yml'
+  pull_request:
+    paths:
+      - 'web/**'
+      - '.github/workflows/web-preview.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - name: Check out reviewed repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Node 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+
+      - name: Install Web dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Check Web source syntax
+        run: node --check src/main.js
+
+      - name: Build Web production bundle
+        run: npm run build
+
+      - name: Assert that production HTML exists
+        run: test -s dist/index.html
