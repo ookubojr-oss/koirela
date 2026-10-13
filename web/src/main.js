@@ -6,7 +6,7 @@ const root = document.querySelector("#app");
 const url = import.meta.env.VITE_SUPABASE_URL;
 const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-const configured = Boolean(url && key && stripeKey);
+const configured = Boolean(url && key);
 const db = configured ? createClient(url, key, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }) : null;
 const stripePromise = stripeKey ? loadStripe(stripeKey) : Promise.resolve(null);
 const state = { user: null, counselors: [], consultation: null, messages: [], screen: "find", selected: null, busy: false, error: "", notice: "", payment: null, countdown: 0 };
@@ -133,6 +133,7 @@ async function mountPayment() {
 async function startPayment(kind, counselorId) {
   setBusy(true);
   try {
+    if (!stripeKey) throw new Error("現在、決済機能は準備中です。設定が完了するまでお支払いできません。");
     if (kind==="initial" && state.consultation) throw new Error("進行中の相談があります。");
     const data = await invoke(kind==="initial"?"create-payment-intent":"create-extension-payment-intent",
       kind==="initial"?{counselorId}:{consultationId:state.consultation.id});
