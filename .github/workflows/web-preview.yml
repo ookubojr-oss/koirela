@@ -36,13 +36,15 @@ jobs:
 
       - name: Check Web source syntax
         run: |
-          node --check src/main.js
-          node --check src/original-bridge.js
+          node --check src/commit98199-bridge.js
+          grep -q 'src/commit98199-bridge.js' index.html
           grep -q 'id="screen-welcome"' index.html
+          grep -q 'id="screen-home"' index.html
           grep -q 'id="screen-find"' index.html
+          grep -q 'id="screen-profile"' index.html
+          grep -q 'id="screen-history"' index.html
           grep -q 'id="screen-chat"' index.html
           grep -q 'id="screen-mypage"' index.html
-          grep -q 'id="screen-settings"' index.html
 
       - name: Build Web production bundle
         run: npm run build
