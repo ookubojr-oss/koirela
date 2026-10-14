@@ -47,6 +47,7 @@ function show(name){
   if(name==="chat"||name==="waiting")renderConsultation();
   if(name==="billing")clearPlaceholderBilling();
   const content=target.querySelector(".content");if(content)content.scrollTop=0;
+  target.querySelectorAll(".motion-reveal").forEach(el=>el.classList.add("is-visible"));
   try{history.replaceState(null,"","#"+name)}catch{}
 }
 window.show=show;
@@ -75,7 +76,7 @@ function prepareAuth(){
   const social=$("screen-auth")?.querySelectorAll(".social-btn,.method-divider");
   social?.forEach(el=>{el.hidden=true;el.style.display="none";});
   const guest=$("screen-auth").querySelector(".text-btn");
-  if(guest){guest.textContent="ログインせずに相談員を見る";guest.setAttribute("onclick","show('find')");}
+  if(guest){guest.textContent="ログインせずに相談員を見る";guest.setAttribute("onclick","show('find')");guest.addEventListener("click",e=>{e.preventDefault();e.stopImmediatePropagation();show("find");},true); }
   form.querySelector("button[type=submit]").textContent="ログイン";
   const toggle=document.createElement("button");toggle.id="auth-mode-toggle";toggle.type="button";toggle.className="text-btn";toggle.textContent="はじめての方はこちら";
   form.after(toggle);
