@@ -1,0 +1,16 @@
+/* Only new, isolated functionality overlays. The seven reference-screen styles remain exact. */
+#koirela-auth-layer[hidden],#koirela-auth-layer [hidden]{display:none!important}
+#koirela-auth-layer{position:absolute;inset:0;z-index:80;background:rgba(47,39,55,.48);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:18px}
+#koirela-auth-layer .auth-panel{position:relative;width:100%;max-width:350px;max-height:calc(100% - 12px);overflow-y:auto;overscroll-behavior:contain;background:#FBEAE8;border-radius:28px;padding:28px 22px 24px;box-shadow:0 25px 80px rgba(38,31,52,.3);text-align:center}
+#koirela-auth-layer .auth-close{position:absolute;right:13px;top:11px;width:36px;height:36px;border:0;border-radius:50%;background:#fff;color:#574E66;font-size:23px}
+#koirela-auth-layer .auth-heart{width:65px;height:65px;display:grid;place-items:center;margin:0 auto 13px;border-radius:24px 24px 24px 9px;background:#574E66;color:#F2837B;font-size:29px}
+#koirela-auth-layer h2{font-size:21px;color:#3A3547;margin:10px 0 7px}
+#koirela-auth-layer p{font-size:12px;line-height:1.8;color:#9A93A6;margin:0 0 17px}
+#koirela-auth-layer label{display:block;text-align:left;color:#574E66;font-weight:700;font-size:12px;margin:14px 0}
+#koirela-auth-layer input{display:block;width:100%;background:#fff;border:1px solid #e8dde8;border-radius:14px;padding:13px 14px;margin-top:7px;color:#3A3547;outline-offset:2px;font-size:16px}
+#koirela-auth-layer .primary{margin-top:10px;min-height:48px}
+#koirela-auth-layer .auth-toggle{margin-top:12px;padding:9px;color:#574E66;font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:4px}
+#koirela-auth-layer p.auth-footnote{font-size:10px;margin:12px 0 0}
+#koirela-notice{position:absolute;z-index:100;bottom:94px;left:14px;right:14px;background:#574E66;color:#fff;padding:12px 17px;border-radius:16px;box-shadow:0 12px 32px rgba(38,31,52,.3);font-size:12px;line-height:1.6;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s ease}
+#koirela-notice.visible{opacity:1;visibility:visible}
+.koirela-placeholder{padding:10px 3px;color:#9A93A6;text-align:center;font-size:12px;line-height:1.9}
