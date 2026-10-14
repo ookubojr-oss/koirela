@@ -12,10 +12,14 @@ Vercelでこのリポジトリを連携し、Root Directory を `web` に設定�
 
 相談者側のログイン・登録、相談員一覧、決済、待機、チャット、延長、終了に対応。相談員側は既存mobileを使用します。実データでの通し試験にはSupabase/Stripeのテスト設定、承認済み相談員と相談員用アカウントが必要です。
 
-## 2026-10-13 公開前のブロッカー
+## 2026-10-14 テスト公開の状況
 
-- Supabase東京プロジェクトが `INACTIVE`。組織の無料枠で稼働プロジェクトが上限（2件）のため、既存の別プロジェクトの停止またはプラン変更なしに復旧できない。
-- Vercel接続のプロジェクト作成操作が `403 forbidden`。GitHubコードのビルド確認は可能だが、Vercelへの公開権限は別途解決が必要。
-- KoiRela用Stripeアカウントとテスト公開キーの接続が未確認。正式な本番課金を無効のまま維持する。
-- 特商法の事業者情報とプライバシーポリシーのドラフトを確定するまで一般公開しない。
-- 相談者・承認済相談員の2アカウントで決済・待機・チャット・延長・キャンセル・返金を検証する。
+- Web URL: https://koirela-web.vercel.app/
+- Vercel: Hobby `koirela-web` プロジェクト、GitHub main / Root Directory `web`、Viteビルド成功、Production・Previewに公開用Supabase接続キーを設定済み。
+- Supabase Tokyo: `mxygxdpzhqsnlewjctgg` は ACTIVE_HEALTHY に復旧、SQL接続成功。バックエンドにあるEdge Functionsの状態はACTIVE。
+- テスト用公開中: Stripe publishable keyは未設定。決済を開始できないようWeb UI・操作を制限している。
+- Webのログイン画面の表示と一般公開URLへのアクセスは確認済み。実際のメール登録・ログイン・2端末チャットは未検証。
+- リリース前: KoiRela専用Stripeの**テストアカウント**を再接続し、決済・15分延長・webhook・取消/返金・相談員応答まで通し確認すること。
+- リリース前: 特商法の事業者情報、プライバシーポリシー等のドラフト・サポート窓口を確定すること。
+- テスト公開ページは `noindex,nofollow` 設定で、検索結果への掲載を抑制する。一般公開時に解除する。
+- Vercel接続のAPIトークンはGit接続済みアカウントと権限が一致しない場合がある。変更は実際に権限を持つVercel UIから行う。
