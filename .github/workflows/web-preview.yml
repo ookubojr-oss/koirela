@@ -35,7 +35,14 @@ jobs:
         run: npm install --no-audit --no-fund
 
       - name: Check Web source syntax
-        run: node --check src/main.js
+        run: |
+          node --check src/main.js
+          node --check src/original-bridge.js
+          grep -q 'id="screen-welcome"' index.html
+          grep -q 'id="screen-find"' index.html
+          grep -q 'id="screen-chat"' index.html
+          grep -q 'id="screen-mypage"' index.html
+          grep -q 'id="screen-settings"' index.html
 
       - name: Build Web production bundle
         run: npm run build
