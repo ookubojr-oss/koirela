@@ -77,6 +77,7 @@ function layout(body) {
   root.innerHTML = `<main class="shell"><header><span class="brand">KoiRela<span class="brand-dot">.</span></span><span class="small">気持ちを、言葉に。</span></header>
   ${state.error ? `<div class="banner error" role="alert">${esc(state.error)}<button data-action="dismiss">×</button></div>` : ""}
   ${state.notice ? `<div class="banner" role="status">${esc(state.notice)}<button data-action="dismiss">×</button></div>` : ""}
+  ${!stripeKey ? '<div class="banner" role="status">テスト公開中：現在、決済は利用できません。</div>' : ""}
   ${body}</main>`;
 }
 function render() {
@@ -105,7 +106,7 @@ function render() {
 function findView() {
   return `<section class="page"><div class="eyebrow">FIND YOUR PERSON</div><h1>相談員を探す</h1><p class="intro">話しやすい人を、ゆっくり選んでください。</p>
   <div class="price"><span>はじめの15分</span><strong>¥100</strong></div>
-  ${state.counselors.length ? state.counselors.map(c => `<article class="card counselor"><div class="avatar">${esc(c.display_name?.slice(0,1)||"♡")}</div><div class="details"><div class="name">${esc(c.display_name)}</div><small>${c.counselor_type==="qualified"?"資格・専門":"経験から相談"} · 受付中</small><p>${esc(c.specialty||c.bio||"あなたの気持ちを聞かせてください。")}</p><button class="secondary" data-action="select" data-id="${esc(c.user_id)}">15分相談する · ¥100</button></div></article>`).join("") : '<div class="empty">現在受付中の相談員はいません。時間をおいてもう一度ご確認ください。</div>'}
+  ${state.counselors.length ? state.counselors.map(c => `<article class="card counselor"><div class="avatar">${esc(c.display_name?.slice(0,1)||"♡")}</div><div class="details"><div class="name">${esc(c.display_name)}</div><small>${c.counselor_type==="qualified"?"資格・専門":"経験から相談"} · 受付中</small><p>${esc(c.specialty||c.bio||"あなたの気持ちを聞かせてください。")}</p><button class="secondary" data-action="select" data-id="${esc(c.user_id)}" ${!stripeKey?'disabled':''}>${stripeKey?'15分相談する · ¥100':'決済準備中'}</button></div></article>`).join("") : '<div class="empty">現在受付中の相談員はいません。時間をおいてもう一度ご確認ください。</div>'}
   <button class="link" data-action="reload">一覧を更新</button></section>`;
 }
 function talkView(c) {
@@ -116,7 +117,7 @@ function talkView(c) {
   ${waiting ? `<div class="waiting"><div class="pulse">♡</div><h2>相談員を待っています</h2><p>決済を確認しました。相談員が受け付けると15分が始まります。</p><button class="link" data-action="refresh">状態を更新</button><button class="link muted" data-action="cancel">相談をキャンセル</button></div>` :
   `<div class="messages" aria-live="polite">${state.messages.length ? state.messages.map(m => `<div class="message ${m.kind==="system"?"system":m.sender_id===state.user.id?"mine":"theirs"}"><span>${esc(m.body)}</span>${m.kind!=="system"?`<small>${time(m.created_at)}</small>`:""}</div>`).join("") : '<p class="hint">ここから相談を始めましょう。</p>'}</div>
   <form id="message-form" class="composer"><input name="body" aria-label="メッセージ" placeholder="メッセージを入力" maxlength="2000" required><button type="submit" ${state.busy?"disabled":""}>送信</button></form>
-  <div class="actions"><button class="secondary" data-action="extend" ${state.busy?"disabled":""}>15分延長 · ¥100</button><button class="link muted" data-action="end">相談を終了</button></div>`}
+  <div class="actions"><button class="secondary" data-action="extend" ${state.busy||!stripeKey?"disabled":""}>15分延長 · ¥100</button><button class="link muted" data-action="end">相談を終了</button></div>`}
   </section>`;
 }
 function paymentView() {
