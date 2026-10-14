@@ -7,7 +7,7 @@ const url=import.meta.env.VITE_SUPABASE_URL;
 const key=import.meta.env.VITE_SUPABASE_ANON_KEY;
 const db=url&&key?createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}):null;
 const $=id=>document.getElementById(id);
-const state={user:null,counselors:[],selected:null,consultation:null,messages:[],authMode:"login",track:"all",channels:[],poll:null,clock:null};
+const state={user:null,counselors:[],selected:null,consultation:null,messages:[],authMode:"login",track:"all",gender:"all",channels:[],poll:null,clock:null};
 const testPayment=true; // No KoiRela test Stripe account is connected to this Web deployment.
 const statusEl=$("app-toast");
 let lastScreen="welcome";
@@ -73,7 +73,7 @@ function prepareTabs(){
 function prepareAuth(){
   const form=$("signin-form");if(!form)return;
   const social=$("screen-auth")?.querySelectorAll(".social-btn,.method-divider");
-  social?.forEach(el=>el.hidden=true);
+  social?.forEach(el=>{el.hidden=true;el.style.display="none";});
   const guest=$("screen-auth").querySelector(".text-btn");
   if(guest){guest.textContent="ログインせずに相談員を見る";guest.setAttribute("onclick","show('find')");}
   form.querySelector("button[type=submit]").textContent="ログイン";
@@ -155,7 +155,7 @@ function renderTalk(){
 async function loadCounselors(){
  if(!db)return;
  const {data,error}=await db.from("counselor_profiles")
- .select("user_id,display_name,counselor_type,specialty,bio,qualification_label,counselor_availability!inner(is_accepting)")
+ .select("user_id,display_name,counselor_type,gender,specialty,bio,qualification_label,counselor_availability!inner(is_accepting)")
  .eq("verification_status","approved").eq("is_suspended",false)
  .eq("counselor_availability.is_accepting",true).order("updated_at",{ascending:false});
  if(error){toast("相談員一覧を読み込めませんでした: "+errorMessage(error));return;}
@@ -169,6 +169,7 @@ function renderCounselors(){
  let count=0;
  for(const c of state.counselors){
    const kind=c.counselor_type==="qualified"?"pro":"exp";
+   if(state.gender!=="all"&&(c.gender||"other")!==state.gender)continue;
    const searchable=[c.display_name,c.specialty,c.bio,c.qualification_label].filter(Boolean).join(" ").toLowerCase();
    if(state.track!=="all"&&state.track!==kind)continue;
    if(q&&!searchable.includes(q))continue;
@@ -284,7 +285,7 @@ Object.assign(window,{
  submitCounselor:notReady,saveCounselorProfile:notReady,savePayout:notReady,
  deleteAccountDemo:notReady,completeRegistration:notReady,markBlocked:notReady,
  reportExternalFromEnd:notReady,allowNotifications:notReady,declineNotifications:notReady,
- finishOnboarding:notReady,applyGenderFilterAndClose:closeSheet,clearGenderFilter:closeSheet,
+ finishOnboarding:notReady,applyGenderFilterAndClose(){state.gender=document.querySelector('input[name="listener-gender-filter"]:checked')?.value||"all";closeSheet();renderCounselors();$("listener-filter-dot").hidden=state.gender==="all";},clearGenderFilter(){state.gender="all";document.querySelector('input[name="listener-gender-filter"][value="all"]')?.click();closeSheet();renderCounselors();$("listener-filter-dot").hidden=true;},
  rate:notReady,resetListenerSearch(){const el=$("listener-search");if(el)el.value="";state.track="all";document.querySelectorAll("#screen-find .chip").forEach(x=>x.classList.toggle("on",x.dataset.track==="all"));renderCounselors();},
  startPaidConsult(){toast("テスト公開中のため決済機能は停止しています。");},
  extendConsult(){toast("テスト公開中のため延長決済は停止しています。");},
@@ -302,12 +303,12 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet();});
 document.addEventListener("click",e=>{
  const button=e.target.closest("button");
  if(!button)return;
- if(button.closest("#screen-edit-profile")?.classList.contains("primary")){e.preventDefault();e.stopImmediatePropagation();void saveProfile();return;}
+ if(button.matches("#screen-edit-profile .primary")){e.preventDefault();e.stopImmediatePropagation();void saveProfile();return;}
  if(button.closest("#screen-settings")&&button.textContent.includes("ログアウト")){e.preventDefault();e.stopImmediatePropagation();void db?.auth.signOut();return;}
  // Prevent tapping static prototype screens to fabricate state changes.
  if(button.closest("#screen-chat")&&button.classList.contains("chat-more")){e.preventDefault();e.stopImmediatePropagation();openSheet("safety-sheet");return;}
 },true);
-prepareTabs();prepareAuth();
+prepareTabs();prepareAuth();renderCounselors();clearPlaceholderBilling();
 if(!db){toast("Supabase Tokyoの接続情報がありません。");show("welcome");}
 else{
  db.auth.onAuthStateChange((event,session)=>{
