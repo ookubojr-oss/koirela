@@ -9,7 +9,9 @@ const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 const configured = Boolean(url && key);
 const db = configured ? createClient(url, key, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }) : null;
 const stripePromise = stripeKey ? loadStripe(stripeKey) : Promise.resolve(null);
-const state = { user: null, counselors: [], consultation: null, messages: [], screen: "find", selected: null, busy: false, error: "", notice: "", payment: null, countdown: 0 };
+
+const seenWelcome = (() => { try { return localStorage.getItem("koirela_seen_welcome") === "1"; } catch { return false; } })();
+const state = { user: null, counselors: [], consultation: null, messages: [], screen: seenWelcome ? "login" : "welcome", filter: "all", query: "", selected: null, busy: false, error: "", notice: "", payment: null, countdown: 0 };
 let channels = [];
 let refreshTimer;
 let paymentElements;
@@ -73,42 +75,80 @@ function subscribe(id) {
   channels = [messageChannel, consultationChannel];
 }
 function scrollChat() { requestAnimationFrame(() => { const el = document.querySelector(".messages"); if (el) el.scrollTop = el.scrollHeight; }); }
+
+const tabIcons = {
+  find: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke-width="1.8"/><path d="m21 21-4.35-4.35" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  talk: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5.5h16v11H9l-5 3v-14Z" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+  mypage: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="4" stroke-width="1.8"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" stroke-width="1.8" stroke-linecap="round"/></svg>'
+};
 function layout(body) {
-  root.innerHTML = `<main class="shell"><header><span class="brand">KoiRela<span class="brand-dot">.</span></span><span class="small">気持ちを、言葉に。</span></header>
-  ${state.error ? `<div class="banner error" role="alert">${esc(state.error)}<button data-action="dismiss">×</button></div>` : ""}
-  ${state.notice ? `<div class="banner" role="status">${esc(state.notice)}<button data-action="dismiss">×</button></div>` : ""}
-  ${!stripeKey ? '<div class="banner" role="status">テスト公開中：現在、決済は利用できません。</div>' : ""}
+  const welcome = !state.user && state.screen === "welcome";
+  const sectionTitle = !state.user ? "ログイン" : state.payment ? "お支払い" : state.screen === "find" ? "相談相手をさがす" : state.screen === "talk" ? "トーク" : "マイページ";
+  root.innerHTML = `<main class="shell ${welcome ? "welcome-shell" : ""}">
+  ${welcome ? "" : `<header class="topbar"><div class="topbar-title">${sectionTitle}</div><span class="header-brand">KoiRela</span></header>`}
+  ${state.error ? `<div class="banner error" role="alert">${esc(state.error)}<button data-action="dismiss" aria-label="閉じる">×</button></div>` : ""}
+  ${state.notice ? `<div class="banner" role="status">${esc(state.notice)}<button data-action="dismiss" aria-label="閉じる">×</button></div>` : ""}
+  ${!stripeKey && !welcome ? '<div class="banner preview-banner" role="status">テスト公開中：現在、決済は利用できません。</div>' : ""}
   ${body}</main>`;
 }
 function render() {
   if (!configured) { layout('<section class="empty">Web版の接続設定が必要です。Vercelの環境変数を設定してください。</section>'); return; }
   if (!state.user) {
-    layout(`<section class="auth"><div class="eyebrow">WELCOME TO KOIRELA</div><h1>話すことで、<br>少し軽くなる。</h1><p>恋愛の悩みを、あなたのペースで。</p>
-    <form id="auth-form"><label>メールアドレス<input name="email" type="email" autocomplete="email" required></label>
-    <label>パスワード<input name="password" type="password" autocomplete="current-password" minlength="6" required></label>
-    ${state.screen === "signup" ? '<label>ニックネーム<input name="nickname" autocomplete="nickname" required maxlength="40"></label>' : ""}
-    <button class="primary" type="submit" ${state.busy?"disabled":""}>${state.screen === "signup" ? "アカウントを作る" : "ログイン"}</button></form>
-    <button class="link" data-action="toggle-auth">${state.screen === "signup" ? "ログインはこちら" : "はじめての方はこちら"}</button></section>`);
+    if (state.screen === "welcome") {
+      layout(`<section class="welcome">
+        <div class="welcome-logo">KoiRela</div><div class="welcome-sub">恋愛相談</div>
+        <div class="welcome-visual" aria-hidden="true"><svg viewBox="0 0 230 170" fill="none">
+          <rect x="8" y="18" width="128" height="82" rx="24" fill="#fff"/>
+          <path d="M40 98l-8 26 30-24" fill="#fff"/>
+          <path d="M72 44c-4.5-6.5-13.5-7-18-1.7-4 4.7-3 11.7 1.6 16L72 74l16.4-15.7c4.6-4.3 5.6-11.3 1.6-16-4.5-5.3-13.5-4.8-18 1.7Z" fill="#F2837B"/>
+          <rect x="104" y="66" width="118" height="72" rx="22" fill="#F2837B"/>
+          <path d="M196 136l6 24-26-20" fill="#F2837B"/>
+          <circle cx="140" cy="102" r="6" fill="#fff"/><circle cx="163" cy="102" r="6" fill="#ffffffb3"/><circle cx="186" cy="102" r="6" fill="#ffffff70"/>
+          <circle cx="210" cy="30" r="4" fill="#F9D9D5"/><path d="M24 132l3 8 8 3-8 3-3 8-3-8-8-3 8-3 3-8Z" fill="#F9D9D5"/>
+        </svg></div>
+        <div class="welcome-copy"><h1>恋の悩みを、<br>話せる相手がいる。</h1><p>匿名で、気軽に。<br>経験者や資格を持つ相談員に<br>チャットで相談できます。</p></div>
+        <div class="welcome-actions"><button class="primary" data-action="start-auth">はじめる <span aria-hidden="true">→</span></button><button class="welcome-login" data-action="already-auth">すでにアカウントをお持ちの方</button></div>
+      </section>`);
+      return;
+    }
+    layout(`<section class="auth"><div class="auth-mark" aria-hidden="true">♡</div><h1>KoiRelaへようこそ</h1><p>恋愛の悩みを、あなたのペースで。<br>相談履歴を安全に引き継げます。</p>
+      <form id="auth-form"><label>メールアドレス<input name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+      <label>パスワード<input name="password" type="password" autocomplete="${state.screen==="signup"?"new-password":"current-password"}" minlength="6" placeholder="6文字以上" required></label>
+      ${state.screen === "signup" ? '<label>ニックネーム<input name="nickname" autocomplete="nickname" required maxlength="40"></label>' : ""}
+      <button class="primary" type="submit" ${state.busy ? "disabled" : ""}>${state.screen === "signup" ? "アカウントを作る" : "ログイン"}</button></form>
+      <button class="link auth-toggle" data-action="toggle-auth">${state.screen === "signup" ? "ログインはこちら" : "はじめての方はこちら"}</button></section>`);
     return;
   }
   const c = state.consultation;
-  const active = c && ["waiting","active"].includes(c.status);
+  const active = c && ["waiting", "active"].includes(c.status);
   let body = "";
   if (state.payment) body = paymentView();
   else if (active) body = talkView(c);
-  else if (state.screen === "mypage") body = `<section class="page"><div class="eyebrow">ACCOUNT</div><h1>マイページ</h1><div class="card"><p>${esc(state.user.email)}</p><button class="secondary" data-action="logout">ログアウト</button></div></section>`;
+  else if (state.screen === "mypage") {
+    const nickname = esc(state.user.user_metadata?.nickname || state.user.email?.split("@")[0] || "ゲスト");
+    body = `<section class="page mypage"><div class="card user-card"><div class="avatar mypage-avatar">${esc(nickname.slice(0,1))}</div><div class="user-info"><strong>${nickname}</strong><small>匿名で利用中</small></div></div>
+      <div class="menu"><button class="menu-row" data-action="tab-talk"><span class="menu-icon">${tabIcons.talk}</span><span>相談・トーク</span><span class="chevron">›</span></button>
+      <button class="menu-row" data-action="logout"><span class="menu-icon">↪</span><span>ログアウト</span><span class="chevron">›</span></button></div>
+      <div class="account-email">${esc(state.user.email)}</div></section>`;
+  }
   else if (state.screen === "talk") body = `<section class="page"><h1>トーク</h1><div class="empty">相談を始めると、ここに表示されます。</div></section>`;
   else body = findView();
-  layout(body + `<nav class="tabs" aria-label="メイン"><button data-action="tab-find" class="${state.screen==="find"&&!active?"current":""}">探す</button><button data-action="tab-talk" class="${active||state.screen==="talk"?"current":""}">トーク</button><button data-action="tab-mypage" class="${state.screen==="mypage"&&!active?"current":""}">マイページ</button></nav>`);
+  layout(body + `<nav class="tabs" aria-label="メイン"><button data-action="tab-find" class="${state.screen==="find"&&!active?"current":""}">${tabIcons.find}<span>探す</span></button><button data-action="tab-talk" class="${active||state.screen==="talk"?"current":""}">${tabIcons.talk}<span>トーク</span></button><button data-action="tab-mypage" class="${state.screen==="mypage"&&!active?"current":""}">${tabIcons.mypage}<span>マイページ</span></button></nav>`);
   if (state.payment) void mountPayment();
   if (active) scrollChat();
 }
 function findView() {
-  return `<section class="page"><div class="eyebrow">FIND YOUR PERSON</div><h1>相談員を探す</h1><p class="intro">話しやすい人を、ゆっくり選んでください。</p>
-  <div class="price"><span>はじめの15分</span><strong>¥100</strong></div>
-  ${state.counselors.length ? state.counselors.map(c => `<article class="card counselor"><div class="avatar">${esc(c.display_name?.slice(0,1)||"♡")}</div><div class="details"><div class="name">${esc(c.display_name)}</div><small>${c.counselor_type==="qualified"?"資格・専門":"経験から相談"} · 受付中</small><p>${esc(c.specialty||c.bio||"あなたの気持ちを聞かせてください。")}</p><button class="secondary" data-action="select" data-id="${esc(c.user_id)}" ${!stripeKey?'disabled':''}>${stripeKey?'15分相談する · ¥100':'決済準備中'}</button></div></article>`).join("") : '<div class="empty">現在受付中の相談員はいません。時間をおいてもう一度ご確認ください。</div>'}
-  <button class="link" data-action="reload">一覧を更新</button></section>`;
+  const visible = state.counselors.filter(c => (state.filter === "all" || (state.filter === "pro" ? c.counselor_type === "qualified" : c.counselor_type !== "qualified")) &&
+    (!state.query || [c.display_name,c.specialty,c.bio,c.qualification_label].filter(Boolean).join(" ").toLowerCase().includes(state.query.toLowerCase())));
+  return `<section class="page find-page"><div class="search-box"><span class="search-symbol" aria-hidden="true">⌕</span><input id="listener-search" type="search" placeholder="名前・相談内容で検索" aria-label="相談員を検索" value="${esc(state.query)}"></div>
+  <div class="filters" aria-label="相談員の種類"><button class="chip ${state.filter==="all"?"on":""}" data-action="filter-all">すべて</button><button class="chip ${state.filter==="exp"?"on":""}" data-action="filter-exp">経験者</button><button class="chip ${state.filter==="pro"?"on":""}" data-action="filter-pro">資格者</button></div>
+  <div class="price-summary"><span>15分相談</span><strong>100円</strong><small>延長15分も100円</small></div>
+  ${visible.length ? visible.map(c => `<article class="card counselor" data-search="${esc([c.display_name,c.specialty,c.bio,c.qualification_label].filter(Boolean).join(" ").toLowerCase())}"><div class="counselor-top"><div class="avatar">${esc(c.display_name?.slice(0,1)||"♡")}<span class="online-dot"></span></div><div class="details"><div class="name">${esc(c.display_name)} <span class="kind-badge ${c.counselor_type==="qualified"?"pro":"exp"}">${c.counselor_type==="qualified"?"資格者":"経験者"}</span></div><small>● 受付中</small></div></div>
+  <p class="counselor-bio">${esc(c.specialty||c.bio||"あなたの気持ちを聞かせてください。")}</p>
+  <div class="counselor-foot"><div class="counselor-price">15分相談 <strong>100円</strong></div><button class="small-primary" data-action="select" data-id="${esc(c.user_id)}" ${!stripeKey?'disabled':''}>${stripeKey?'相談する':'決済準備中'}</button></div></article>`).join("") : '<div class="empty">条件に合う受付中の相談員はいません。</div>'}
+  <button class="link reload" data-action="reload">一覧を更新 ↻</button></section>`;
 }
+
 function talkView(c) {
   const waiting = c.status === "waiting";
   const remaining = c.ends_at ? Math.max(0, Math.ceil((new Date(c.ends_at).getTime()-Date.now())/1000)) : 0;
@@ -193,7 +233,9 @@ root.addEventListener("click", async event => {
   if (!button || state.busy) return;
   const action=button.dataset.action;
   if (action==="dismiss") { state.error=""; state.notice=""; render(); return; }
+  if (action==="start-auth" || action==="already-auth") { try { localStorage.setItem("koirela_seen_welcome","1"); } catch {} state.screen="login"; render(); return; }
   if (action==="toggle-auth") { state.screen=state.screen==="signup"?"login":"signup"; render(); return; }
+  if (action.startsWith("filter-")) { state.filter=action.slice(7); render(); return; }
   if (action.startsWith("tab-")) { if (state.consultation && action!=="tab-mypage") state.screen="talk"; else state.screen=action.slice(4); render(); return; }
   if (action==="payment-back") {
     if (state.payment?.kind==="initial") {
