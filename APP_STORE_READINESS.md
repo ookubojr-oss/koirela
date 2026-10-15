@@ -1,0 +1,192 @@
+# KoiRela App Store公開準備チェックリスト
+
+## このブランチで実装済みのUI
+- 3タブ構成（ホーム / さがす / マイページ）
+- 初回導線 / Appleで続ける / Googleで続ける / LINEで続ける
+- 相談員一覧 / 絞り込み
+- 相談員プロフィール
+- 15分100円の相談開始確認
+- 支払い方法確認
+- 決済エラー / 再試行
+- 相談員呼び出し待機 / キャンセル
+- 支払い履歴 / 利用明細
+- 15分タイマー付きチャット
+- 相談終了 / 15分延長 / 星評価
+- 相談履歴
+- プロフィール編集
+- お問い合わせ
+- 設定
+- 利用規約掲載画面
+- プライバシーポリシー掲載画面
+- 通報理由選択 / 通報完了
+- ブロック / ブロック解除 / ブロック一覧
+- ログアウト
+- アカウント削除導線
+- 安心・安全ガイド
+- 料金・キャンセル・返金案内
+- 運営情報
+- 相談員モード
+  - 受付ON/OFF
+  - 相談リクエスト
+  - 当日の相談件数
+  - 報酬表示
+  - 相談員登録4ステップ
+  - 本人確認書類アップロード導線
+  - 資格証アップロード導線
+  - 審査待ち
+  - 相談員プロフィール編集
+  - 報酬・振込先
+  - 過去相談
+- KoiRela共通モーションデザイン
+  - ふわっ / ぽよん / 浮遊 / タップ反応 / スクロール反応
+
+## App Storeへ実際に提出する前に必要な実装
+### iOSアプリ本体
+- Capacitorで既存Web UIをiOSアプリ化（設定ファイル追加済み）
+- Bundle ID / App ID
+- iOS署名・証明書・Provisioning
+- 実機ビルド
+- TestFlight配布
+
+### バックエンド
+- ユーザー認証
+- Apple Sign in実接続
+- データベース
+- リアルタイムチャット
+- 相談開始・終了時刻のサーバー管理
+- 15分延長
+- 支払い処理
+- 相談履歴
+- 評価
+- 通報 / ブロック
+- お問い合わせ送信
+- アカウント削除の実処理
+- 相談員の受付状態
+- 報酬 / 振込データ
+
+### 運営管理
+- 相談員審査
+- 資格確認
+- 通報対応
+- ユーザー / 相談員停止
+- 返金対応
+- 問い合わせ管理
+- 不正利用対策
+
+### 法務・公開情報
+- 正式な利用規約
+- 正式なプライバシーポリシー
+- 特商法・事業者情報（必要な形を確認）
+- 料金 / キャンセル / 返金ルール
+- 相談員向け規約
+- 安全ガイドライン
+- 個人情報の保存期間・削除方針
+
+### App Store Connect
+- Apple Developer Program
+- App Store Connectでアプリ登録
+- アプリ名
+- サブタイトル
+- 説明文
+- キーワード
+- カテゴリ
+- 年齢レーティング
+- App Privacy回答
+- サポートURL
+- プライバシーポリシーURL
+- アプリアイコン
+- iPhoneスクリーンショット
+- 審査用連絡先
+- 審査用デモアカウント
+- ビルド選択
+- App Reviewへ提出
+
+## 重要
+現在のindex.htmlは操作確認用プロトタイプです。
+画面と導線はApp Store公開を見据えて揃えていますが、このHTMLだけをそのままApp Storeへ提出できる状態ではありません。
+
+
+## UI監査（2026-09-20）
+- 現在のプロトタイプ: 29画面 + 17ボトムシート
+- 画面内の show() 遷移先に未定義画面なし
+- openSheet() の参照先に未定義シートなし
+- ユーザー側の主要正常系・失敗系・安全系・法務導線をカバー
+- 相談員側の登録・審査・受付・プロフィール・報酬・履歴をカバー
+- 認証は Apple / Google / LINE の3方式を想定
+- 実際のOAuth、本人確認、決済、バックエンド、法務文書は未接続
+
+
+## UX / アクセシビリティ改善監査（2026-09-20）
+適用済み:
+- ネイティブ form のメール/パスワードログイン
+- email autocomplete="username"
+- password autocomplete="current-password"
+- Enterでログイン送信
+- パスワード表示/非表示ボタン
+- Google / Apple / LINE のソーシャルログイン
+- ログイン方法の or 区切り
+- 相談開始フローの3段階Steps（確認 / Payment / 開始）
+- checkout stepは単一のzero-based indexから completed/current/upcoming を描画
+- current stepに aria-current="step"
+- 支払い方法と相談員種別にネイティブ radio
+- 通知にネイティブ checkbox role="switch"
+- 独立設定にネイティブ checkbox
+- 生年月日にcivil date文字列を使うカレンダーポップオーバー
+- カレンダーの矢印キー / PageUp / PageDown / Escape操作
+- input / textarea の caret-color
+- 利用規約 / プライバシーポリシーにScrollspy
+- Scrollspyに aria-current="location" とIntersectionObserver/rootMargin
+- 画面遷移先・シート参照先・duplicate id・JavaScript構文を監査
+
+見送り:
+- Masonry: 相談員一覧は比較しやすい縦並びの方が適切で、Pinterest型は順序と読みやすさを悪化させるため不採用
+- macOS NSAlert: KoiRelaはiOS/Web向けのため直接適用しない。確認UIは既存のアクセシブルなdialog/bottom sheet方式を継続
+
+
+## Production-state UX追加（2026-09-20）
+- 相談員検索のテキスト検索 / 0件状態 / 条件リセット
+- オフライン検知バナー / 再接続通知
+- チャット送信失敗 / 再送
+- 相談員入力中インジケータ
+- チャット接続状態表示
+- 相談終了1分前トースト
+- 通知許可前の説明シート
+- 初回3ステップのミニオンボーディング
+- Google / Apple / LINE のアカウント連携管理
+- 支払い利用明細
+- メンテナンス画面
+- 強制アップデート画面
+- alert()を廃止し、KoiRela共通ダイアログへ統一
+- ボトムシートのフォーカス移動 / Escapeで閉じる / 元のフォーカスへ復帰
+- 現在 29画面 + 17ボトムシート
+- JavaScript構文 / 未定義画面遷移 / 未定義シート / duplicate id を再監査し問題なし
+
+
+## 本番基盤の実装状況（2026-09-20）
+追加済み:
+- Viteビルド設定（app / admin / LP）
+- Capacitor iOSシェル設定
+- Supabase Auth / DB / Realtimeクライアントアダプター
+- users / counselors / consultations / messages / payments / ratings / reports / moderation / audit / push token のDBスキーマ
+- RLS（本人・相談参加者・管理者の権限制御）
+- 相談員プロフィール画像 / 本人確認書類用Storage policy
+- サーバー側の相談作成
+- 決済成功後の server-authoritative 15分タイマー
+- 15分延長のサーバー処理
+- 終了時刻超過相談の完了処理
+- Stripe PaymentIntent作成 / Webhook署名検証の土台
+- DBトリガーによる相談員の外部連絡先メッセージ送信ブロック
+- 相談員1回目警告 / 2回目停止 / 検索非表示 / 報酬保留のDB反映
+- 運営管理用バックエンドアダプター
+- Push token登録用Capacitorアダプター
+- 残り1分通知のnotification queue
+- LPを現行の15分100円 / KoiRelaデザインへ更新
+
+外部アカウント・Secretが必要:
+- Supabaseプロジェクト作成とMigration適用
+- Google / Apple OAuth設定
+- LINE OAuthアプリ設定
+- Stripe本番/テストキーとWebhook設定
+- Apple Developer / APNs / Bundle ID / 署名
+- TestFlight / App Store Connect
+- 正式な法務文書

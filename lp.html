@@ -1,231 +1,71 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=1280">
-  <title>KoiRela | 恋愛セラピスト チャット相談</title>
-  <meta property="og:title" content="KoiRela | 恋愛セラピスト チャット相談">
-  <meta property="og:description" content="恋の悩みは、話せた分だけ、軽くなる。匿名OK・1通100円〜のチャット相談。">
-  <meta property="og:image" content="https://ikillkun.github.io/koirela/ogp.png">
-  <meta property="og:url" content="https://ikillkun.github.io/koirela/lp.html">
-  <meta property="og:type" content="website">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="theme-color" content="#4C5B45">
-  </head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KoiRela | 恋愛の悩みを15分だけ話そう</title>
+<meta name="description" content="匿名で、恋愛の悩みを相談員に1対1チャット。15分100円。">
+<meta name="theme-color" content="#574E66">
+<style>
+:root{--plum:#574E66;--coral:#F2837B;--pink:#FBEAE8;--ink:#332E3D;--muted:#847C8E;--line:#EEE8EF;--white:#fff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:#FFFDFC;color:var(--ink)}a{text-decoration:none;color:inherit}button{font:inherit}
+.wrap{width:min(1120px,calc(100% - 36px));margin:auto}
+header{position:sticky;top:0;z-index:10;background:rgba(255,253,252,.88);backdrop-filter:blur(18px);border-bottom:1px solid rgba(87,78,102,.06)}
+.nav{height:72px;display:flex;align-items:center;justify-content:space-between}.logo{display:flex;align-items:center;gap:10px;font-weight:800}.logo-mark{width:35px;height:35px;border-radius:14px 14px 14px 5px;background:var(--plum);color:var(--coral);display:grid;place-items:center}.nav-links{display:flex;gap:24px;align-items:center;font-size:12px;color:var(--muted)}
+.cta{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 22px;border-radius:999px;background:var(--coral);color:#fff;font-weight:800;font-size:13px;box-shadow:0 10px 24px rgba(242,131,123,.22);transition:.22s}.cta:hover{transform:translateY(-2px) scale(1.01)}
+.hero{position:relative;overflow:hidden;background:linear-gradient(180deg,#FFFDFC 0%,#FFF7F6 100%)}.hero:before,.hero:after{content:"";position:absolute;border-radius:50%;filter:blur(.2px);pointer-events:none}.hero:before{width:330px;height:330px;background:rgba(251,234,232,.9);right:-100px;top:50px}.hero:after{width:180px;height:180px;background:rgba(87,78,102,.06);left:-80px;bottom:20px}
+.hero-inner{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;min-height:660px;padding:70px 0}
+.eyebrow{display:inline-flex;gap:8px;align-items:center;font-size:12px;color:var(--coral);font-weight:800}.eyebrow:before{content:"♡";font-size:18px}
+h1{font-size:clamp(42px,6vw,72px);line-height:1.08;letter-spacing:-.05em;margin:18px 0 20px;color:var(--plum)}.lead{font-size:16px;line-height:1.9;color:#6E6678;max-width:560px}.price-note{display:flex;gap:18px;align-items:center;margin:26px 0 30px;font-size:12px;color:var(--muted)}.price-note b{font-size:22px;color:var(--coral)}
+.phone{width:min(380px,100%);margin:auto;background:var(--plum);border-radius:44px;padding:12px;box-shadow:0 32px 70px rgba(87,78,102,.2);transform:rotate(2deg)}.phone-in{background:#FFFDFC;border-radius:34px;overflow:hidden}.phone-top{background:var(--plum);padding:24px 20px 20px;color:#fff}.phone-top small{opacity:.6}.phone-top h3{margin:5px 0 0;font-size:20px}.mini{padding:16px}.mini-card{background:#fff;border:1px solid var(--line);border-radius:22px 22px 22px 8px;padding:15px;margin-bottom:10px;box-shadow:0 8px 22px rgba(87,78,102,.055)}.mini-user{display:flex;align-items:center;gap:10px}.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#F7D9D6;color:var(--plum);font-weight:800}.mini-card b{font-size:12px}.mini-card p{font-size:10px;color:var(--muted);line-height:1.6}.mini-btn{background:var(--coral);color:#fff;border-radius:999px;padding:9px 13px;display:inline-block;font-size:10px;font-weight:800}
+section{padding:90px 0}.section-head{text-align:center;max-width:620px;margin:0 auto 40px}.section-head small{color:var(--coral);font-weight:800}.section-head h2{font-size:34px;color:var(--plum);margin:10px 0}.section-head p{color:var(--muted);line-height:1.8;font-size:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.feature{border:1px solid var(--line);border-radius:26px 26px 26px 10px;padding:28px;background:#fff;box-shadow:0 10px 28px rgba(87,78,102,.045)}.num{width:40px;height:40px;border-radius:16px 16px 16px 6px;background:var(--pink);display:grid;place-items:center;color:var(--coral);font-weight:900}.feature h3{color:var(--plum);font-size:16px;margin:16px 0 8px}.feature p{font-size:12px;color:var(--muted);line-height:1.8}
+.safety{background:var(--plum);color:#fff}.safety .section-head h2{color:#fff}.safety .section-head p{color:rgba(255,255,255,.65)}.safety-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.safe{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.09);border-radius:24px;padding:24px}.safe h3{font-size:15px}.safe p{font-size:11px;line-height:1.8;color:rgba(255,255,255,.66)}
+.final{text-align:center;background:var(--pink)}.final h2{font-size:38px;color:var(--plum);margin:0 0 12px}.final p{color:var(--muted);margin-bottom:28px}.final .cta{min-height:54px;padding:0 30px}
+footer{padding:32px 0;border-top:1px solid var(--line);font-size:10px;color:var(--muted)}.foot{display:flex;justify-content:space-between;gap:20px}
+@media(max-width:760px){.nav-links a:not(.cta){display:none}.hero-inner{grid-template-columns:1fr;min-height:auto;padding:64px 0 70px}.phone{max-width:330px}.grid3,.safety-grid{grid-template-columns:1fr}section{padding:66px 0}.section-head h2{font-size:28px}.final h2{font-size:30px}.foot{flex-direction:column}.hero-copy{text-align:left}}
+</style>
+</head>
 <body>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
-  <style>
-    body { margin: 0; background: #F6F4EE; color: #26261F; font-family: 'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', sans-serif; }
-    a { color: #4C5B45; text-decoration: none; }
-    a:hover { color: #37432F; }
-    ::selection { background: #DDE2D2; }
-  </style>
-<div style="width: 1280px; background: #F6F4EE">
+<header><div class="wrap nav"><a class="logo" href="#"><span class="logo-mark">K</span><span>KoiRela</span></a><nav class="nav-links"><a href="#how">使い方</a><a href="#safety">安心設計</a><a class="cta" href="index.html#find">相談相手をさがす</a></nav></div></header>
 
-  <!-- Header -->
-  <div style="display: flex; align-items: center; justify-content: space-between; height: 96px; padding: 0 64px; box-sizing: border-box; border-bottom: 1px solid #E7E4D8">
-    <div style="display: flex; flex-direction: column; gap: 2px">
-      <div style="font-family: 'Shippori Mincho B1', serif; font-size: 21px; font-weight: 600; letter-spacing: 0.16em; color: #26261F">恋愛セラピスト</div>
-      <div style="font-size: 9px; letter-spacing: 0.26em; color: #A3A192">ANONYMOUS CHAT COUNSELING</div>
-    </div>
-    <div style="display: flex; align-items: center; gap: 36px">
-      <div style="font-size: 13px; letter-spacing: 0.08em; color: #57564B">サービスについて</div>
-      <div style="font-size: 13px; letter-spacing: 0.08em; color: #57564B">料金</div>
-      <div style="font-size: 13px; letter-spacing: 0.08em; color: #57564B">よくある質問</div>
-      <div style="background: #4C5B45; color: #F6F4EE; font-size: 13px; letter-spacing: 0.1em; padding: 13px 26px; border-radius: 999px">チャットをはじめる</div>
-    </div>
+<main>
+<div class="hero"><div class="wrap hero-inner">
+  <div class="hero-copy">
+    <div class="eyebrow">恋愛のこと、15分だけ話そう</div>
+    <h1>ひとりで<br>考えすぎる前に。</h1>
+    <p class="lead">KoiRelaは、恋愛の悩みを相談員と匿名で話せる1対1チャットサービス。まとまっていなくても、そのまま話して大丈夫です。</p>
+    <div class="price-note"><span><b>15分 100円</b></span><span>匿名OK</span><span>1対1</span></div>
+    <a class="cta" href="index.html#find">相談相手をさがす →</a>
   </div>
+  <div class="phone"><div class="phone-in"><div class="phone-top"><small>相談相手をさがす</small><h3>いま話せる人</h3></div><div class="mini">
+    <div class="mini-card"><div class="mini-user"><span class="avatar">あ</span><div><b>あいり　経験者</b><p>復縁・片思いの相談をよく受けています。</p><span class="mini-btn">プロフィール</span></div></div></div>
+    <div class="mini-card"><div class="mini-user"><span class="avatar" style="background:#E5DFF3">ゆ</span><div><b>ゆい　資格者</b><p>恋愛と自己肯定感の相談が得意です。</p><span class="mini-btn">プロフィール</span></div></div></div>
+    <div class="mini-card"><div class="mini-user"><span class="avatar" style="background:#F5E4CB">け</span><div><b>けんた　経験者</b><p>男性目線で状況を一緒に整理します。</p><span class="mini-btn">プロフィール</span></div></div></div>
+  </div></div></div>
+</div></div>
 
-  <!-- Hero -->
-  <div style="display: flex; align-items: center; gap: 56px; padding: 84px 64px 104px; box-sizing: border-box">
-    <div style="display: flex; flex-direction: column; gap: 34px; flex-grow: 1; max-width: 580px">
-      <div style="font-family: 'Shippori Mincho B1', serif; font-size: 13px; letter-spacing: 0.32em; color: #4C5B45">ひとりで、抱えこまなくていい。</div>
-      <div style="font-family: 'Shippori Mincho B1', serif; font-size: 54px; font-weight: 500; line-height: 1.7; letter-spacing: 0.1em; color: #26261F">恋の悩みは、<br>話せた分だけ、<br>軽くなる。</div>
-      <div style="font-size: 15px; line-height: 2.2; letter-spacing: 0.05em; color: #6B6A5C; max-width: 460px">恋愛セラピストとの、匿名1対1チャット。<br>登録は1分、相談は1通からはじめられます。</div>
-      <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 6px">
-        <div style="display: flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1px solid #E3E0D3; border-radius: 999px; padding: 9px 10px 9px 28px; box-sizing: border-box; box-shadow: 0 12px 40px rgba(38, 38, 31, 0.06)">
-          <div style="flex-grow: 1; min-width: 0; font-size: 14px; letter-spacing: 0.03em; color: #A3A192">いま、気になっていることをひとことで──</div>
-          <div style="display: flex; flex-shrink: 0; align-items: center; gap: 10px; background: #4C5B45; color: #F6F4EE; font-size: 13.5px; font-weight: 500; letter-spacing: 0.08em; padding: 15px 26px; border-radius: 999px">無料でチャットをはじめる
-            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" stroke="#F6F4EE" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-          </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 20px; font-size: 12px; letter-spacing: 0.06em; color: #8A887A">
-          <div>匿名OK・実名登録不要</div>
-          <div style="width: 3px; height: 3px; border-radius: 999px; background: #C9C6B8"></div>
-          <div>チャット1通 100円〜</div>
-          <div style="width: 3px; height: 3px; border-radius: 999px; background: #C9C6B8"></div>
-          <div>24時間いつでも</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Chat preview card -->
-    <div style="position: relative; width: 420px; flex-shrink: 0">
-      <div style="position: absolute; top: 24px; left: 24px; right: -24px; bottom: -24px; border: 1px solid #CBD0BF; border-radius: 10px"></div>
-      <div style="position: relative; display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #E7E4D8; border-radius: 10px; overflow: hidden; box-shadow: 0 28px 70px rgba(38, 38, 31, 0.09)">
-        <div style="display: flex; align-items: center; gap: 12px; padding: 16px 22px; border-bottom: 1px solid #EDEAE0">
-          <div style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 999px; background: #DDE2D2; font-family: 'Shippori Mincho B1', serif; font-size: 14px; color: #4C5B45">あ</div>
-          <div style="display: flex; flex-direction: column; gap: 3px">
-            <div style="display: flex; align-items: center; gap: 8px">
-              <div style="font-family: 'Shippori Mincho B1', serif; font-size: 14.5px; font-weight: 600; letter-spacing: 0.08em; color: #26261F">あいり</div>
-              <div style="font-size: 9.5px; letter-spacing: 0.08em; color: #4C5B45; border: 1px solid #CBD0BF; border-radius: 999px; padding: 2px 8px">恋愛アドバイザー</div>
-            </div>
-            <div style="display: flex; align-items: center; gap: 6px">
-              <div style="width: 5px; height: 5px; border-radius: 999px; background: #7A9068"></div>
-              <div style="font-size: 10.5px; letter-spacing: 0.06em; color: #8A887A">オンライン</div>
-            </div>
-          </div>
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 14px; padding: 22px">
-          <div style="align-self: flex-start; max-width: 290px; background: #F3F1E9; border-radius: 16px 16px 16px 4px; padding: 13px 17px; font-size: 12.5px; line-height: 1.9; letter-spacing: 0.03em; color: #26261F">はじめまして、あいりです。ここは匿名なので、どうぞ気楽に。</div>
-          <div style="align-self: flex-end; max-width: 270px; background: #DDE2D2; border-radius: 16px 16px 4px 16px; padding: 13px 17px; font-size: 12.5px; line-height: 1.9; letter-spacing: 0.03em; color: #26261F">3年付き合っている彼のことで、少し。</div>
-          <div style="display: flex; align-items: center; gap: 5px; align-self: flex-start; background: #F3F1E9; border-radius: 16px 16px 16px 4px; padding: 15px 18px">
-            <div style="width: 5px; height: 5px; border-radius: 999px; background: #A3A192"></div>
-            <div style="width: 5px; height: 5px; border-radius: 999px; background: #C0BDAD"></div>
-            <div style="width: 5px; height: 5px; border-radius: 999px; background: #D6D3C4"></div>
-          </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 10px; padding: 14px 22px 18px">
-          <div style="flex-grow: 1; background: #F6F4EE; border: 1px solid #EDEAE0; border-radius: 999px; padding: 11px 18px; font-size: 12px; letter-spacing: 0.03em; color: #A3A192">メッセージを書く…</div>
-          <div style="display: flex; flex-shrink: 0; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 999px; background: #4C5B45">
-            <svg width="15" height="15" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 9h11M10 4.5 14.5 9 10 13.5" stroke="#F6F4EE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div style="align-self: center; flex-shrink: 0; writing-mode: vertical-rl; font-family: 'Shippori Mincho B1', serif; font-size: 12px; letter-spacing: 0.5em; color: #A3A192; margin-left: 8px">あなたの恋に、寄り添う。</div>
+<section id="how"><div class="wrap">
+  <div class="section-head"><small>HOW IT WORKS</small><h2>3ステップで相談開始</h2><p>画面を増やしすぎず、相談までをできるだけ短く。</p></div>
+  <div class="grid3">
+    <div class="feature"><div class="num">1</div><h3>相手をさがす</h3><p>名前・相談内容・経験者/資格者・性別で絞り込みできます。</p></div>
+    <div class="feature"><div class="num">2</div><h3>15分100円で開始</h3><p>料金と相手を確認してから相談をスタートします。</p></div>
+    <div class="feature"><div class="num">3</div><h3>匿名でチャット</h3><p>15分で自動終了。もっと話したい時だけ延長できます。</p></div>
   </div>
+</div></section>
 
-  <!-- Steps -->
-  <div style="display: flex; flex-direction: column; gap: 64px; padding: 104px 64px; box-sizing: border-box; border-top: 1px solid #E7E4D8">
-    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 40px">
-      <div style="display: flex; flex-direction: column; gap: 18px">
-        <div style="font-size: 11px; letter-spacing: 0.34em; color: #8A887A">HOW IT WORKS</div>
-        <div style="font-family: 'Shippori Mincho B1', serif; font-size: 32px; font-weight: 500; letter-spacing: 0.12em; color: #26261F">はじめかたは、シンプルに。</div>
-      </div>
-      <div style="font-size: 13px; line-height: 2; letter-spacing: 0.05em; color: #8A887A; max-width: 340px">会員登録からはじめの1通まで、およそ1分。<br>アプリのインストールは不要です。</div>
-    </div>
-    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 48px">
-      <div style="display: flex; flex-direction: column; gap: 14px; border-top: 1px solid #E7E4D8; padding-top: 28px">
-        <div style="font-family: 'Shippori Mincho B1', serif; font-size: 44px; font-weight: 400; color: #D9D6C7; line-height: 1">01</div>
-        <div style="font-family: 'Shippori Mincho B1', serif; font-size: 20px; font-weight: 500; letter-spacing: 0.1em; color: #26261F; margin-top: 8px">悩みを、そのまま書く</div>
-        <div style="font-size: 13.5px; line-height: 2; letter-spacing: 0.04em; color: #6B6A5C">会員登録は無料。<br>うまくまとまっていなくても、大丈夫です。</div>
-      </div>
-      <div style="display: flex; flex-direction: column; gap: 14px; border-top: 1px solid #E7E4D8; padding-top: 28px">
-        <div style="font-family: 'Shippori Mincho B1', serif; font-size: 44px; font-weight: 400; color: #D9D6C7; line-height: 1">02</div>
-        <div style="font-family: 'Shippori Mincho B1', serif; font-size: 20px; font-weight: 500; letter-spacing: 0.1em; color: #26261F; margin-top: 8px">聞き手から、返信が届く</div>
-        <div style="font-size: 13.5px; line-height: 2; letter-spacing: 0.04em; color: #6B6A5C">あなたの悩みに合う聞き手が、<br>ていねいに言葉を返します。</div>
-      </div>
-      <div style="display: flex; flex-direction: column; gap: 14px; border-top: 1px solid #E7E4D8; padding-top: 28px">
-        <div style="font-family: 'Shippori Mincho B1', serif; font-size: 44px; font-weight: 400; color: #D9D6C7; line-height: 1">03</div>
-        <div style="font-family: 'Shippori Mincho B1', serif; font-size: 20px; font-weight: 500; letter-spacing: 0.1em; color: #26261F; margin-top: 8px">1通ずつ、話を続ける</div>
-        <div style="font-size: 13.5px; line-height: 2; letter-spacing: 0.04em; color: #6B6A5C">料金は1通単位。<br>合わないと感じたら、いつでもやめられます。</div>
-      </div>
-    </div>
+<section id="safety" class="safety"><div class="wrap">
+  <div class="section-head"><small>SAFETY</small><h2>KoiRelaの中で、安心して話す。</h2><p>個人的な連絡先交換や外部SNSへの誘導を防ぎ、必要な時は運営へ通報できます。</p></div>
+  <div class="safety-grid">
+    <div class="safe"><h3>外部誘導をブロック</h3><p>相談員のLINE・Instagram・電話番号・メール・URLなどを検知。1回目は警告、2回目は相談員アカウント停止の設計です。</p></div>
+    <div class="safe"><h3>通報・ブロック</h3><p>チャット中も相談終了後も、違和感があればすぐ運営へ報告できます。</p></div>
+    <div class="safe"><h3>相談員の審査</h3><p>本人確認や資格確認を行える運営フローを用意し、停止中の相談員は検索から非表示にします。</p></div>
   </div>
+</div></section>
 
-  <!-- Tracks -->
-  <div style="display: flex; flex-direction: column; gap: 64px; padding: 104px 64px; box-sizing: border-box; background: #EFECE0">
-    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 40px">
-      <div style="display: flex; flex-direction: column; gap: 18px">
-        <div style="font-size: 11px; letter-spacing: 0.34em; color: #8A887A">THERAPISTS</div>
-        <div style="font-family: 'Shippori Mincho B1', serif; font-size: 32px; font-weight: 500; letter-spacing: 0.12em; color: #26261F">ふたつのタイプの、聞き手がいます。</div>
-      </div>
-      <div style="font-size: 13px; line-height: 2; letter-spacing: 0.05em; color: #8A887A; max-width: 340px">今日の気分と、悩みの深さで。<br>途中で切り替えることもできます。</div>
-    </div>
-    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px">
-      <div style="display: flex; flex-direction: column; gap: 20px; background: #FFFFFF; border: 1px solid #E7E4D8; border-radius: 6px; padding: 46px 46px 40px; box-sizing: border-box">
-        <div style="align-self: flex-start; font-size: 11px; letter-spacing: 0.14em; color: #4C5B45; border: 1px solid #CBD0BF; border-radius: 999px; padding: 6px 14px">気軽に話したい日に</div>
-        <div style="font-family: 'Shippori Mincho B1', serif; font-size: 25px; font-weight: 500; letter-spacing: 0.12em; color: #26261F; margin-top: 6px">恋愛アドバイザー</div>
-        <div style="font-size: 13.5px; line-height: 2.1; letter-spacing: 0.04em; color: #6B6A5C">恋愛経験と傾聴力をもとに寄り添う、経験者の聞き手。愚痴も、まとまらない話も、そのままどうぞ。</div>
-        <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #EDEAE0; padding-top: 24px; margin-top: 10px">
-          <div style="display: flex; align-items: baseline; gap: 8px">
-            <div style="font-size: 12px; letter-spacing: 0.08em; color: #8A887A">チャット1通</div>
-            <div style="font-family: 'Shippori Mincho B1', serif; font-size: 22px; font-weight: 500; color: #26261F">100円〜</div>
-          </div>
-          <div style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; letter-spacing: 0.08em; color: #4C5B45">聞き手を見る
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" stroke="#4C5B45" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-          </div>
-        </div>
-      </div>
-      <div style="display: flex; flex-direction: column; gap: 20px; background: #FFFFFF; border: 1px solid #E7E4D8; border-radius: 6px; padding: 46px 46px 40px; box-sizing: border-box">
-        <div style="align-self: flex-start; font-size: 11px; letter-spacing: 0.14em; color: #F6F4EE; background: #4C5B45; border: 1px solid #4C5B45; border-radius: 999px; padding: 6px 14px">じっくり向き合いたい日に</div>
-        <div style="font-family: 'Shippori Mincho B1', serif; font-size: 25px; font-weight: 500; letter-spacing: 0.12em; color: #26261F; margin-top: 6px">認定セラピスト</div>
-        <div style="font-size: 13.5px; line-height: 2.1; letter-spacing: 0.04em; color: #6B6A5C">資格・実績を審査のうえ認定した、専門性の高い聞き手。深い悩みや、繰り返してしまうパターンの相談に。</div>
-        <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #EDEAE0; padding-top: 24px; margin-top: 10px">
-          <div style="display: flex; align-items: baseline; gap: 8px">
-            <div style="font-size: 12px; letter-spacing: 0.08em; color: #8A887A">チャット1通</div>
-            <div style="font-family: 'Shippori Mincho B1', serif; font-size: 22px; font-weight: 500; color: #26261F">300円〜</div>
-          </div>
-          <div style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; letter-spacing: 0.08em; color: #4C5B45">聞き手を見る
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" stroke="#4C5B45" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<section class="final"><div class="wrap"><h2>今の気持ちを、15分だけ。</h2><p>話す相手は、自分で選べます。</p><a class="cta" href="index.html#find">KoiRelaを試す →</a></div></section>
+</main>
 
-  <!-- Trust -->
-  <div style="display: flex; flex-direction: column; gap: 56px; padding: 104px 64px; box-sizing: border-box">
-    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 40px">
-      <div style="display: flex; flex-direction: column; gap: 18px">
-        <div style="font-size: 11px; letter-spacing: 0.34em; color: #8A887A">SAFETY</div>
-        <div style="font-family: 'Shippori Mincho B1', serif; font-size: 32px; font-weight: 500; letter-spacing: 0.12em; color: #26261F">安心して話せるために。</div>
-      </div>
-      <div style="font-size: 13px; line-height: 2; letter-spacing: 0.05em; color: #8A887A; max-width: 340px">お金・プライバシー・気持ち。<br>繊細な相談だからこそ、仕組みで守ります。</div>
-    </div>
-    <div style="display: flex; flex-direction: column">
-      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; padding: 32px 8px; border-top: 1px solid #E7E4D8">
-        <div style="font-family: 'Shippori Mincho B1', serif; font-size: 19px; font-weight: 500; letter-spacing: 0.1em; color: #26261F">匿名のまま、相談できます</div>
-        <div style="font-size: 13.5px; line-height: 2; letter-spacing: 0.04em; color: #6B6A5C">本名や写真の登録は不要。ニックネームだけで始められます。</div>
-      </div>
-      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; padding: 32px 8px; border-top: 1px solid #E7E4D8">
-        <div style="font-family: 'Shippori Mincho B1', serif; font-size: 19px; font-weight: 500; letter-spacing: 0.1em; color: #26261F">支払いは、相談が終わってから</div>
-        <div style="font-size: 13.5px; line-height: 2; letter-spacing: 0.04em; color: #6B6A5C">エスクロー方式を採用。相談が完了するまで、決済は確定しません。</div>
-      </div>
-      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; padding: 32px 8px; border-top: 1px solid #E7E4D8">
-        <div style="font-family: 'Shippori Mincho B1', serif; font-size: 19px; font-weight: 500; letter-spacing: 0.1em; color: #26261F">連絡先の交換は、仕組みで防ぎます</div>
-        <div style="font-size: 13.5px; line-height: 2; letter-spacing: 0.04em; color: #6B6A5C">個人情報のやり取りを検知し、サービスの外への誘導をブロックします。</div>
-      </div>
-      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; padding: 32px 8px; border-top: 1px solid #E7E4D8; border-bottom: 1px solid #E7E4D8">
-        <div style="font-family: 'Shippori Mincho B1', serif; font-size: 19px; font-weight: 500; letter-spacing: 0.1em; color: #26261F">困ったときは、運営に直接</div>
-        <div style="font-size: 13.5px; line-height: 2; letter-spacing: 0.04em; color: #6B6A5C">通報ボタンと有人サポート窓口を、いつでも使えます。</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Final CTA -->
-  <div style="display: flex; flex-direction: column; align-items: center; gap: 34px; padding: 120px 64px 130px; box-sizing: border-box; background: #EFECE0">
-    <div style="font-family: 'Shippori Mincho B1', serif; font-size: 13px; letter-spacing: 0.32em; color: #4C5B45">START TONIGHT</div>
-    <div style="font-family: 'Shippori Mincho B1', serif; font-size: 42px; font-weight: 500; letter-spacing: 0.14em; text-align: center; color: #26261F; line-height: 1.8">今夜、話してみませんか。</div>
-    <div style="display: flex; align-items: center; gap: 10px; background: #4C5B45; color: #F6F4EE; font-size: 15px; font-weight: 500; letter-spacing: 0.12em; padding: 20px 44px; border-radius: 999px">無料でチャットをはじめる
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" stroke="#F6F4EE" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-    </div>
-    <div style="font-size: 12px; letter-spacing: 0.1em; color: #8A887A">登録無料・所要1分・いつでも退会できます</div>
-  </div>
-
-  <!-- Footer -->
-  <div style="display: flex; align-items: center; justify-content: space-between; padding: 40px 64px; box-sizing: border-box; border-top: 1px solid #E7E4D8">
-    <div style="font-family: 'Shippori Mincho B1', serif; font-size: 15px; font-weight: 600; letter-spacing: 0.16em; color: #26261F">恋愛セラピスト</div>
-    <div style="display: flex; align-items: center; gap: 32px; font-size: 12px; letter-spacing: 0.06em; color: #8A887A">
-      <div>利用規約</div>
-      <div>プライバシーポリシー</div>
-      <div>特定商取引法に基づく表記</div>
-      <div>お問い合わせ</div>
-    </div>
-  </div>
-
-</div>
-<script>
-document.querySelectorAll('div').forEach(function (el) {
-  var t = el.textContent.trim();
-  if ((t === 'チャットをはじめる' || t === '無料でチャットをはじめる') && el.childElementCount <= 1) {
-    el.style.cursor = 'pointer';
-    el.addEventListener('click', function () { location.href = 'index.html'; });
-  }
-});
-</script>
+<footer><div class="wrap foot"><span>© KoiRela</span><span>利用規約・プライバシーポリシー・料金/返金条件は正式公開前に確定します。</span></div></footer>
 </body>
 </html>
-

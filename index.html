@@ -2,647 +2,2396 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>KoiRela | 恋愛セラピスト チャット相談</title>
-<meta name="description" content="恋の悩みを、話せる相手がいる。匿名OK、1通からはじめられる恋愛セラピストとのチャット相談。">
-<meta property="og:title" content="KoiRela | 恋愛セラピスト チャット相談">
-<meta property="og:description" content="恋の悩みを、話せる相手がいる。匿名OK・1通100円〜・24時間のチャット相談。">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>KoiRela | 恋愛相談</title>
+<meta name="description" content="恋の悩みを、話せる相手がいる。匿名で使える恋愛相談サービス。">
+<meta property="og:title" content="KoiRela | 恋愛相談">
+<meta property="og:description" content="恋の悩みを、話せる相手がいる。匿名で使える恋愛相談サービス。">
 <meta property="og:image" content="https://ikillkun.github.io/koirela/ogp.png">
 <meta property="og:url" content="https://ikillkun.github.io/koirela/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#F2837B">
+<meta name="theme-color" content="#574E66">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&family=Zen+Maru+Gothic:wght@400;500;700&display=swap">
 <style>
-  :root {
-    --plum: #574E66;
-    --plum2: #635A73;
-    --plum-deep: #4A4258;
-    --coral: #F2837B;
-    --coral-deep: #E96F66;
-    --pink-bg: #FBEAE8;
-    --sheet: #FDF4F2;
-    --ink: #3A3547;
-    --muted: #9A93A6;
-    --muted2: #B9AEB9;
-    --line: #F1EFF4;
-    --green: #7BC493;
-    --pastel-pink: #F9D9D5;
-    --pastel-purple: #DCD6F0;
-    --pastel-peach: #F6E3C5;
-    --pastel-mint: #D5E8DC;
-    --pastel-rose: #F5D0DC;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; }
-  body {
-    font-family: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', sans-serif;
-    background: #EFE6EE;
-    color: var(--ink);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100dvh;
-  }
-  .phone {
-    position: relative;
-    width: 100%;
-    max-width: 390px;
-    height: 100dvh;
-    max-height: 844px;
-    background: var(--plum);
-    overflow: hidden;
-  }
-  @media (min-width: 480px) {
-    .phone { border-radius: 36px; box-shadow: 0 40px 90px rgba(74, 66, 88, 0.4); }
-  }
-  .screen {
-    position: absolute;
-    inset: 0;
-    display: none;
-    flex-direction: column;
-    opacity: 0;
-    transition: opacity 0.25s ease;
-  }
-  .screen.active { display: flex; opacity: 1; }
-  button { font: inherit; border: none; background: none; padding: 0; cursor: pointer; color: inherit; -webkit-tap-highlight-color: transparent; }
+:root{
+  --plum:#574E66;--plum2:#635A73;--coral:#F2837B;--coral2:#E96F66;
+  --pink:#FBEAE8;--sheet:#FDF4F2;--ink:#3A3547;--muted:#9A93A6;
+  --line:#F1EFF4;--green:#7BC493;--white:#fff;
+  --radius-card:26px 26px 26px 11px;--radius-soft:22px 22px 22px 9px;
+  --radius-sheet:30px 30px 24px 24px;--shadow-soft:0 12px 30px rgba(87,78,102,.08);
+  --shadow-lift:0 20px 42px rgba(87,78,102,.14);--spring:cubic-bezier(.2,1.15,.3,1);
+  --motion-fast:.22s;--motion-mid:.42s;--motion-slow:7s;
+}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}
+body{
+  font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN',sans-serif;
+  background:#EFE6EE;color:var(--ink);display:flex;align-items:center;justify-content:center;min-height:100dvh
+}
+button,input{font:inherit}button{border:0;background:none;padding:0;color:inherit;cursor:pointer}
+.phone{
+  position:relative;width:100%;max-width:390px;height:100dvh;max-height:844px;
+  background:var(--pink);overflow:hidden
+}
+@media(min-width:480px){.phone{border-radius:36px;box-shadow:0 40px 90px rgba(74,66,88,.28)}}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;background:var(--pink)}
+.screen.active{display:flex}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 12px}
+.logo{font-family:'Pacifico',cursive;font-size:28px;color:var(--plum)}
+.title{font-size:17px;font-weight:700;letter-spacing:.05em}
+.iconbtn{width:42px;height:42px;border-radius:999px;background:#fff;display:flex;align-items:center;justify-content:center}
+.content{flex:1;min-height:0;overflow-y:auto;padding:8px 20px 22px}
+.tabbar{
+  display:flex;align-items:center;justify-content:space-around;background:#fff;border-top:1px solid var(--line);
+  padding:10px 8px calc(14px + env(safe-area-inset-bottom,0px))
+}
+.tab{min-width:78px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 0;font-size:10px;color:#B9B3C4}
+.tab svg{stroke:#B9B3C4}.tab.on{color:var(--coral);font-weight:700}.tab.on svg{stroke:var(--coral)}
+.card{background:#fff;border-radius:24px;padding:18px;box-shadow:0 10px 26px rgba(87,78,102,.07)}
+.section{margin-bottom:18px}.section-head{display:flex;align-items:center;justify-content:space-between;margin:0 2px 10px}
+.section-title{font-size:14px;font-weight:700}.link{font-size:11.5px;color:var(--coral);font-weight:700}
+.avatar{width:56px;height:56px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:#F9D9D5;color:var(--plum);font-size:20px;font-weight:700;position:relative;flex-shrink:0}
+.dot{position:absolute;right:0;bottom:1px;width:12px;height:12px;border-radius:999px;background:var(--green);border:2px solid #fff}
+.badge{display:inline-flex;align-items:center;border-radius:999px;padding:3px 8px;font-size:9px;font-weight:700}
+.badge.exp{background:#FDEDEB;color:var(--coral)}.badge.pro{background:var(--plum);color:#fff}
+.primary{width:100%;height:54px;border-radius:999px;background:var(--coral);color:#fff;font-size:14px;font-weight:700;letter-spacing:.04em;box-shadow:0 10px 22px rgba(242,131,123,.24)}
+.primary:active{background:var(--coral2);transform:scale(.98)}
+.small-primary{height:40px;padding:0 18px;border-radius:999px;background:var(--coral);color:#fff;font-size:11.5px;font-weight:700}
+.outline{height:40px;padding:0 16px;border-radius:999px;border:1.5px solid var(--coral);color:var(--coral);font-size:11.5px;font-weight:700}
+.muted{color:var(--muted)}
+/* welcome */
+.welcome{background:var(--plum);color:#fff;align-items:center;justify-content:center;padding:34px 30px}
+.welcome-logo{font-family:'Pacifico',cursive;font-size:50px;line-height:1.1}
+.welcome-sub{font-size:11px;letter-spacing:.3em;opacity:.65;margin-top:6px}
+.welcome-visual{position:relative;width:220px;height:165px;margin:52px 0 34px}
+.bubble1,.bubble2{position:absolute;border-radius:24px}.bubble1{left:0;top:10px;width:128px;height:82px;background:#fff}
+.bubble1:after{content:"";position:absolute;left:24px;bottom:-18px;border-width:20px 18px 0 0;border-style:solid;border-color:#fff transparent transparent transparent}
+.bubble2{right:0;bottom:7px;width:120px;height:74px;background:var(--coral)}
+.bubble2:after{content:"";position:absolute;right:20px;bottom:-16px;border-width:18px 0 0 16px;border-style:solid;border-color:var(--coral) transparent transparent transparent}
+.heart{position:absolute;left:46px;top:35px;color:var(--coral);font-size:34px}.dots{position:absolute;right:28px;bottom:36px;font-size:18px;letter-spacing:5px}
+.welcome h1{font-size:21px;line-height:1.8;text-align:center;margin:0 0 10px}.welcome p{font-size:12px;line-height:2;text-align:center;opacity:.68;margin:0 0 34px}
+.welcome .primary{box-shadow:0 14px 30px rgba(0,0,0,.22)}
+/* home */
+.hero{background:var(--plum);color:#fff;border-radius:26px;padding:20px;margin-bottom:20px}
+.hero small{font-size:11px;opacity:.6}.hero h2{font-size:21px;line-height:1.6;margin:6px 0 8px}.hero p{font-size:11.5px;line-height:1.8;opacity:.68;margin:0 0 16px}.hero .primary{box-shadow:none}
+.consult-row{display:flex;align-items:center;gap:13px;width:100%;text-align:left}.consult-main{flex:1;min-width:0}
+.consult-name{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:700}.consult-preview{display:block;font-size:11.5px;color:var(--muted);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.consult-meta{display:block;font-size:10px;color:var(--muted);margin-top:4px}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.quick-card{background:#fff;border-radius:20px;padding:16px;text-align:left;box-shadow:0 8px 20px rgba(87,78,102,.06)}
+.quick-icon{font-size:20px;margin-bottom:8px}.quick-title{font-size:13px;font-weight:700}.quick-sub{font-size:10.5px;line-height:1.6;color:var(--muted);margin-top:4px}
+/* find */
+.filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none}.filters::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;height:38px;padding:0 15px;border-radius:999px;background:#fff;color:#6E6880;font-size:11.5px}.chip.on{background:var(--plum);color:#fff;font-weight:700}
+.listener{margin-bottom:13px}.listener-top{display:flex;align-items:center;gap:13px}.listener-info{flex:1;min-width:0}
+.listener-name{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:700;flex-wrap:wrap}.rating{font-size:11px;color:#6E6880;margin-top:5px}
+.listener-bio{margin-top:13px;background:#FBF7F6;border-radius:14px;padding:11px 13px;font-size:11.5px;line-height:1.8;color:#6E6880}
+.listener-foot{display:flex;align-items:center;justify-content:space-between;margin-top:13px}.price{font-size:10.5px;color:var(--muted)}.price b{font-size:16px;color:var(--coral)}
+/* profile */
+.profile{text-align:center}.profile .avatar{width:82px;height:82px;font-size:28px;margin:6px auto 12px}.profile-name{font-size:19px;font-weight:700}.profile-role{margin-top:7px}
+.profile-copy{font-size:12px;line-height:1.9;color:#6E6880;margin:18px 0}.tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}.tag{font-size:10.5px;background:#FBF7F6;border-radius:999px;padding:7px 10px;color:#6E6880}
+/* mypage */
+.user-card{display:flex;align-items:center;gap:13px}.user-info{flex:1}.user-name{font-size:15px;font-weight:700}.user-sub{font-size:10.5px;color:var(--muted);margin-top:4px}
+.menu{background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 10px 26px rgba(87,78,102,.07)}.menu-row{width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:16px 18px;border-bottom:1px solid var(--line);font-size:13px}.menu-row:last-child{border-bottom:0}.grow{flex:1}.menu-icon{width:28px;text-align:center}
+/* history */
+.history-row{padding:15px 0;border-bottom:1px solid var(--line)}.history-row:last-child{border-bottom:0}.history-top{display:flex;justify-content:space-between;align-items:center}.history-name{font-size:13px;font-weight:700}.history-date{font-size:10px;color:var(--muted)}.history-text{font-size:11px;color:#6E6880;margin-top:6px;line-height:1.6}
+/* chat */
+.chat{background:var(--plum)}.chat-head{display:flex;align-items:center;gap:10px;padding:16px;color:#fff}.chat-head .avatar{width:44px;height:44px;font-size:16px}.chat-head-main{flex:1}.chat-head-name{font-size:14px;font-weight:700}.chat-head-sub{font-size:10px;opacity:.65;margin-top:2px}
+.chat-sheet{flex:1;min-height:0;background:var(--sheet);border-radius:28px 28px 0 0;display:flex;flex-direction:column;padding:18px 14px 0}
+.msgs{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-bottom:12px}.sys{align-self:center;background:#fff;border-radius:999px;padding:6px 12px;font-size:10px;color:var(--muted)}
+.msg-l,.msg-r{max-width:82%;font-size:12.5px;line-height:1.8;padding:11px 14px}.msg-l{align-self:flex-start;background:#fff;border-radius:17px 17px 17px 4px}.msg-r{align-self:flex-end;background:var(--coral);color:#fff;border-radius:17px 17px 4px 17px}
+.composer{padding:10px 0 calc(12px + env(safe-area-inset-bottom,0px))}.composer-row{display:flex;gap:9px}.composer input{flex:1;min-width:0;border:0;outline:0;background:#fff;border-radius:999px;padding:13px 16px;color:var(--ink)}
+.send{width:46px;height:46px;border-radius:999px;background:var(--coral);color:#fff;font-weight:700}.fee{text-align:center;font-size:9.5px;color:var(--muted);margin-top:6px}
 
-  /* ---------- Welcome ---------- */
-  .welcome { background: var(--plum); align-items: center; overflow: hidden; }
-  .welcome-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .welcome-logo { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 88px; }
-  .brand { font-family: 'Pacifico', cursive; font-size: 46px; color: #fff; line-height: 1.2; }
-  .brand-sub { font-size: 11px; letter-spacing: 0.34em; color: rgba(255, 255, 255, 0.65); padding-left: 0.34em; }
-  .welcome-illust { position: relative; margin-top: 56px; }
-  .welcome-copy { position: relative; display: flex; flex-direction: column; align-items: center; gap: 18px; margin-top: 48px; padding: 0 40px; }
-  .welcome-title { font-size: 20px; font-weight: 700; letter-spacing: 0.08em; color: #fff; text-align: center; line-height: 1.9; }
-  .welcome-body { font-size: 12.5px; line-height: 2; letter-spacing: 0.05em; color: rgba(255, 255, 255, 0.65); text-align: center; }
-  .welcome-cta { position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: auto; margin-bottom: max(40px, env(safe-area-inset-bottom, 0px) + 28px); width: 100%; padding: 0 32px; }
-  .btn-primary {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    width: 100%; height: 56px; background: var(--coral); border-radius: 999px;
-    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
-    font-size: 15px; font-weight: 700; letter-spacing: 0.08em; color: #fff;
-    transition: transform 0.15s ease, background 0.15s ease;
+/* motion system */
+.phone{--scroll-shift:0px}
+.screen{z-index:2;overflow:hidden}
+.screen.active{animation:screenIn .48s cubic-bezier(.2,.9,.2,1)}
+@keyframes screenIn{
+  0%{opacity:0;transform:translateY(16px) scale(.985)}
+  60%{opacity:1;transform:translateY(-2px) scale(1.003)}
+  100%{opacity:1;transform:none}
+}
+.ambient{
+  position:absolute;z-index:1;pointer-events:none;user-select:none;
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(242,131,123,.16);font-weight:700;
+  will-change:transform;
+}
+.ambient-a{width:120px;height:120px;left:-48px;top:12%;font-size:66px;animation:ambientFloatA 8s ease-in-out infinite}
+.ambient-b{width:150px;height:150px;right:-72px;top:42%;font-size:110px;color:rgba(87,78,102,.07);animation:ambientFloatB 10s ease-in-out infinite}
+.ambient-c{width:90px;height:90px;left:58%;bottom:12%;font-size:36px;color:rgba(242,131,123,.12);animation:ambientSpin 12s linear infinite}
+@keyframes ambientFloatA{0%,100%{transform:translate3d(0,var(--scroll-shift),0) rotate(-8deg)}50%{transform:translate3d(18px,calc(var(--scroll-shift) - 20px),0) rotate(8deg)}}
+@keyframes ambientFloatB{0%,100%{transform:translate3d(0,calc(var(--scroll-shift)*-.6),0) scale(1)}50%{transform:translate3d(-18px,calc(var(--scroll-shift)*-.6 + 18px),0) scale(1.08)}}
+@keyframes ambientSpin{to{transform:rotate(360deg)}}
+
+.welcome-logo{animation:logoFloat 3.8s ease-in-out infinite}
+@keyframes logoFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-7px) rotate(1deg)}}
+.bubble1{animation:bubbleFloat1 3.4s ease-in-out infinite}
+.bubble2{animation:bubbleFloat2 3.1s ease-in-out infinite .2s}
+.heart{animation:heartBeat 1.45s ease-in-out infinite}
+.dots{animation:dotsBob 1.8s ease-in-out infinite}
+@keyframes bubbleFloat1{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+@keyframes bubbleFloat2{0%,100%{transform:translateY(0) rotate(2deg)}50%{transform:translateY(10px) rotate(-2deg)}}
+@keyframes heartBeat{0%,100%{transform:scale(1) rotate(-4deg)}35%{transform:scale(1.18) rotate(4deg)}55%{transform:scale(.96) rotate(-2deg)}}
+@keyframes dotsBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+.logo{animation:logoWiggle 5s ease-in-out infinite}
+@keyframes logoWiggle{0%,92%,100%{transform:rotate(0)}94%{transform:rotate(-4deg)}97%{transform:rotate(4deg)}}
+
+.card,.quick-card,.menu,.hero,.profile{
+  transform-style:preserve-3d;
+  transition:transform .3s cubic-bezier(.2,.9,.2,1),box-shadow .3s ease,filter .3s ease;
+  will-change:transform;
+}
+@media(hover:hover) and (pointer:fine){
+  .card:hover,.quick-card:hover,.menu:hover{
+    box-shadow:0 18px 36px rgba(87,78,102,.13);
   }
-  .btn-primary:active { transform: scale(0.97); background: var(--coral-deep); }
-  .welcome-login { font-size: 12px; letter-spacing: 0.06em; color: rgba(255, 255, 255, 0.6); }
-  .welcome-login span { color: #F9B9B2; font-weight: 700; }
+}
+.tap-pop{animation:tapPop .42s cubic-bezier(.2,1.3,.3,1)}
+@keyframes tapPop{0%{transform:scale(1)}45%{transform:scale(.955) rotate(-.6deg)}75%{transform:scale(1.025) rotate(.4deg)}100%{transform:scale(1)}}
 
-  /* ---------- Shared: sheet + tab bar ---------- */
-  .sheet {
-    display: flex; flex-direction: column; flex: 1; min-height: 0;
-    background: #fff; border-radius: 28px 28px 0 0;
+.primary,.small-primary,.outline,.chip,.iconbtn,.tab,.send,.menu-row,.consult-row{
+  transition:transform .22s cubic-bezier(.2,1.2,.3,1),background .22s ease,box-shadow .22s ease;
+}
+.primary,.small-primary{position:relative;overflow:hidden}
+.primary::after,.small-primary::after{
+  content:"";position:absolute;inset:-50% auto -50% -40%;
+  width:34%;transform:rotate(18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);
+  animation:buttonShine 4.2s ease-in-out infinite;
+}
+@keyframes buttonShine{0%,72%{left:-45%}88%,100%{left:120%}}
+.primary:active,.small-primary:active,.outline:active,.iconbtn:active,.send:active{transform:scale(.91) rotate(-1deg)}
+.chip.on{animation:chipBounce .4s cubic-bezier(.2,1.4,.3,1)}
+@keyframes chipBounce{0%{transform:scale(.85)}65%{transform:scale(1.08)}100%{transform:scale(1)}}
+.tab.on svg{animation:tabBounce .7s cubic-bezier(.2,1.4,.3,1)}
+@keyframes tabBounce{0%{transform:translateY(4px) scale(.75)}45%{transform:translateY(-5px) scale(1.16)}75%{transform:translateY(1px) scale(.96)}100%{transform:none}}
+
+.avatar{animation:avatarBob 3.6s ease-in-out infinite}
+.listener:nth-of-type(2) .avatar{animation-delay:.35s}
+.listener:nth-of-type(3) .avatar{animation-delay:.7s}
+@keyframes avatarBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.dot{animation:onlinePulse 1.8s ease-out infinite}
+@keyframes onlinePulse{0%,100%{box-shadow:0 0 0 0 rgba(123,196,147,.45)}50%{box-shadow:0 0 0 6px rgba(123,196,147,0)}}
+
+.hero{position:relative;overflow:hidden}
+.hero::before{
+  content:"";position:absolute;width:140px;height:140px;border-radius:42% 58% 63% 37% / 46% 38% 62% 54%;
+  right:-55px;top:-58px;background:rgba(255,255,255,.07);animation:morphBlob 7s ease-in-out infinite;
+}
+.hero::after{
+  content:"♥";position:absolute;right:22px;bottom:12px;font-size:42px;color:rgba(255,255,255,.055);
+  animation:heroHeart 4.5s ease-in-out infinite;
+}
+@keyframes morphBlob{0%,100%{transform:rotate(0) scale(1);border-radius:42% 58% 63% 37% / 46% 38% 62% 54%}50%{transform:rotate(22deg) scale(1.12);border-radius:63% 37% 42% 58% / 38% 62% 46% 54%}}
+@keyframes heroHeart{0%,100%{transform:translateY(0) rotate(-10deg)}50%{transform:translateY(-12px) rotate(10deg)}}
+
+.quick-icon{display:inline-block;animation:iconWobble 3s ease-in-out infinite}
+.quick-card:nth-child(2) .quick-icon{animation-delay:.5s}
+@keyframes iconWobble{0%,80%,100%{transform:rotate(0) scale(1)}86%{transform:rotate(-12deg) scale(1.12)}92%{transform:rotate(10deg) scale(1.08)}}
+
+.menu-row:active{transform:translateX(7px)}
+.listener{position:relative;overflow:hidden}
+.listener::after{
+  content:"";position:absolute;width:70px;height:70px;border-radius:999px;right:-28px;top:-30px;
+  background:rgba(242,131,123,.07);transition:transform .45s cubic-bezier(.2,1,.3,1);
+}
+.listener:hover::after{transform:scale(1.8)}
+
+.profile .avatar{animation:profileFloat 2.8s ease-in-out infinite}
+@keyframes profileFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+
+.msg-l,.msg-r{animation:messagePop .38s cubic-bezier(.2,1.25,.3,1)}
+@keyframes messagePop{0%{opacity:0;transform:translateY(12px) scale(.92)}100%{opacity:1;transform:none}}
+.send{animation:sendPulse 2.4s ease-in-out infinite}
+@keyframes sendPulse{0%,100%{box-shadow:0 0 0 0 rgba(242,131,123,.28)}50%{box-shadow:0 0 0 8px rgba(242,131,123,0)}}
+
+.timer-pill{
+  min-width:60px;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.14);
+  color:#fff;font-size:12px;font-weight:700;text-align:center;letter-spacing:.04em;
+  animation:timerBreathe 2s ease-in-out infinite;
+}
+@keyframes timerBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+.timer-pill.warning{background:#F2837B;animation:timerWarning .8s ease-in-out infinite}
+@keyframes timerWarning{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+
+.reveal-item{opacity:0;transform:translateY(18px) scale(.985)}
+.screen.active .reveal-item{animation:revealUp .55s cubic-bezier(.2,.9,.2,1) forwards}
+@keyframes revealUp{to{opacity:1;transform:none}}
+
+.spark{
+  position:absolute;z-index:20;width:8px;height:8px;border-radius:999px;pointer-events:none;
+  background:var(--coral);animation:sparkFly .58s ease-out forwards;
+}
+@keyframes sparkFly{
+  0%{opacity:1;transform:translate(-50%,-50%) scale(.4)}
+  100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.3)}
+}
+
+
+/* app-store ready flows */
+.auth-content{text-align:center;padding-top:54px}.auth-mark{width:76px;height:76px;border-radius:28px 28px 28px 10px;background:var(--plum);color:var(--coral);display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 22px;animation:heartBeat 1.8s ease-in-out infinite}
+.auth-title{font-size:22px;margin:0 0 10px}.auth-copy{font-size:12px;color:var(--muted);line-height:1.8;margin:0 auto 26px;max-width:290px}
+.apple-btn{width:100%;height:54px;border-radius:999px;background:#111;color:#fff;font-size:14px;font-weight:700;margin-bottom:10px}.text-btn{color:var(--plum);font-size:12px;font-weight:700;padding:16px}.legal-note{font-size:9.5px;line-height:1.7;color:var(--muted);margin-top:10px}
+.form-card{display:flex;flex-direction:column;gap:10px}.profile-edit-avatar{margin:0 auto 8px}.field-label{font-size:11px;font-weight:700;margin:4px 2px 0}.field{width:100%;border:1px solid var(--line);background:#FBF8FA;border-radius:16px;padding:13px 14px;outline:none;color:var(--ink);font:inherit;font-size:13px}.field:focus{border-color:var(--coral);box-shadow:0 0 0 3px rgba(242,131,123,.12)}.textarea{min-height:86px;resize:vertical}.textarea.tall{min-height:130px}.form-status{font-size:11px;color:var(--green);text-align:center;min-height:18px}
+.support-item{display:flex;justify-content:space-between;padding:15px 2px;border-bottom:1px solid var(--line);font-size:12px}.support-item:last-child{border-bottom:0}
+.switch{width:42px;height:24px;border-radius:99px;background:#ddd;position:relative}.switch:after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;box-shadow:0 2px 5px rgba(0,0,0,.15)}.switch.on{background:var(--coral)}.switch.on:after{left:21px}.danger{color:#C85858}.legal-card{font-size:12px;line-height:1.9}.legal-card h3{margin-top:0}.legal-card p{color:#6E6880}
+.counselor-hero{background:var(--plum);color:#fff;border-radius:26px;padding:20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.counselor-hero small{opacity:.6;font-size:10px}.counselor-hero h2{margin:4px 0 0}.availability{width:62px;height:34px;border-radius:999px;background:#fff;color:var(--plum);font-weight:700}.availability.on{background:var(--green);color:#fff}.big-num{font-size:16px;font-weight:700;margin-top:6px}.request-card{display:flex;align-items:center;justify-content:space-between;gap:12px}.request-copy{font-size:10.5px;margin-top:4px}.chat-more{color:#fff;font-size:16px;letter-spacing:1px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.12)}
+.sheet-backdrop{position:absolute;inset:0;background:rgba(45,39,55,.38);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:.28s ease;z-index:40}.sheet-backdrop.on{opacity:1;pointer-events:auto}
+.bottom-sheet{position:absolute;left:10px;right:10px;top:auto!important;bottom:max(10px,env(safe-area-inset-bottom,0px));z-index:50;background:#fff;border-radius:30px 30px 24px 24px;padding:12px 20px 20px;max-height:calc(100% - 24px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;transform:translateY(calc(100% + 30px));opacity:0;pointer-events:none;transition:transform .38s cubic-bezier(.2,1,.3,1),opacity .25s ease;box-shadow:0 24px 70px rgba(51,43,66,.24)}.bottom-sheet::-webkit-scrollbar{display:none}.bottom-sheet.on{transform:translateY(0);opacity:1;pointer-events:auto}.sheet-handle{width:42px;height:5px;border-radius:999px;background:#E7E3EA;margin:0 auto 16px}.bottom-sheet h3{text-align:center;font-size:18px;margin:4px 0 10px}.bottom-sheet>p{text-align:center;font-size:11.5px;color:#746D80;line-height:1.7}.sheet-icon{width:54px;height:54px;border-radius:22px 22px 22px 8px;background:var(--pink);color:var(--coral);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 8px;animation:heartBeat 1.8s ease-in-out infinite}.danger-icon{background:#FFF0F0;color:#C85858}.price-panel{display:grid;grid-template-columns:1fr auto;gap:11px;padding:14px 16px;background:#FBF7F6;border-radius:18px;margin:14px 0;font-size:12px}.price-panel b{color:var(--coral)}.sheet-note{font-size:10.5px!important}.sheet-cancel{width:100%;padding:14px;color:var(--muted);font-size:12px;font-weight:700}.pay-option{width:100%;display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);border-radius:17px;margin-bottom:9px;text-align:left}.pay-option.selected{border-color:var(--coral);background:#FFF8F7}.pay-brand{width:44px;font-weight:700}.payment-total{display:flex;justify-content:space-between;padding:16px 2px;font-size:13px}.payment-total b{font-size:18px;color:var(--coral)}.sheet-menu{width:100%;text-align:left;padding:15px;border-bottom:1px solid var(--line);font-size:13px}.stars{display:flex;justify-content:center;gap:5px;margin:14px 0 20px}.stars button{font-size:30px;color:#E3DEE7;transition:.2s}.stars button.on{color:#F3B34B;transform:scale(1.12)}.danger-btn{width:100%;height:52px;border-radius:999px;background:#C85858;color:#fff;font-weight:700}
+
+
+.social-btn{width:100%;height:54px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:12px;font-size:14px;font-weight:700;margin-bottom:10px;border:1px solid var(--line);box-shadow:0 7px 16px rgba(87,78,102,.05);transition:.2s}.social-btn:active{transform:scale(.97)}.social-btn.apple{background:#111;color:#fff;border-color:#111}.social-btn.google{background:#fff;color:#3c4043}.social-btn.line{background:#06C755;color:#fff;border-color:#06C755}.social-mark{font-size:20px;min-width:28px}.google-mark{font-family:Arial,sans-serif;font-weight:700}.line-mark{font-size:10px;border:1.5px solid currentColor;border-radius:6px;padding:3px 2px}
+.waiting-content{text-align:center;padding-top:34px}.waiting-content h2{font-size:20px;margin:24px 0 8px}.waiting-content>p{font-size:12px;color:var(--muted);line-height:1.8}.waiting-orbit{width:130px;height:130px;border-radius:50%;margin:10px auto;position:relative;border:1px dashed rgba(242,131,123,.35);animation:ambientSpin 8s linear infinite}.waiting-heart{position:absolute;inset:31px;border-radius:30px 30px 30px 10px;background:var(--plum);color:var(--coral);display:flex;align-items:center;justify-content:center;font-size:30px;animation:heartBeat 1.4s infinite}.waiting-orbit span{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--coral)}.waiting-orbit span:nth-child(2){left:5px;top:54px}.waiting-orbit span:nth-child(3){right:18px;top:15px}.waiting-orbit span:nth-child(4){right:13px;bottom:17px;background:var(--plum)}.waiting-card{display:flex;align-items:center;gap:14px;text-align:left;background:#fff;padding:15px;border-radius:22px;margin:24px 0 14px;box-shadow:0 10px 26px rgba(87,78,102,.07)}.wide-outline{width:100%;height:48px}
+.summary-card{background:var(--plum);color:#fff;border-radius:26px;padding:20px;margin-bottom:14px;display:flex;flex-direction:column;gap:5px}.summary-card small{opacity:.65}.summary-card strong{font-size:28px}.summary-card span{font-size:10px;opacity:.65}.bill-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}.bill-row:last-child{border-bottom:0}.bill-row div{display:flex;flex-direction:column;gap:4px}.bill-row b{font-size:12px}.bill-row small{font-size:9.5px;color:var(--muted)}.bill-row strong{font-size:13px;color:var(--coral)}
+.blocked-empty{text-align:center;padding:26px 8px}.empty-icon{font-size:34px;color:var(--coral);margin-bottom:10px}.blocked-empty b{font-size:13px}.blocked-empty p{font-size:10.5px;color:var(--muted);line-height:1.7}
+.step-head{margin-bottom:12px}.step-head span{font-size:10px;font-weight:700;color:var(--muted)}.step-bar{height:6px;background:#F1E7EA;border-radius:999px;margin-top:7px;overflow:hidden}.step-bar i{display:block;height:100%;width:25%;background:var(--coral);border-radius:999px;transition:width .35s cubic-bezier(.2,1,.3,1)}.counselor-step{display:none}.counselor-step.on{display:flex;animation:screenIn .4s cubic-bezier(.2,.9,.2,1)}.counselor-step h3{margin:0 0 4px}.choice-card{width:100%;text-align:left;border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:4px}.choice-card span{font-size:10.5px;color:var(--muted)}.choice-card.selected{border-color:var(--coral);background:#FFF8F7}.upload-box{height:76px;border:1.5px dashed #D8D1DD;border-radius:18px;color:var(--muted);background:#FCFAFB}.upload-box.done{border-color:var(--green);color:#4C9E68;background:#F4FBF6}.review-box{display:grid;grid-template-columns:1fr auto;gap:12px;background:#FBF7F6;border-radius:18px;padding:15px;font-size:11px}.review-box b{color:var(--plum)}.pending-card{text-align:center}.pending-orb{width:70px;height:70px;border-radius:28px 28px 28px 10px;background:var(--pink);color:var(--coral);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px;animation:heartBeat 1.8s infinite}.pending-card p{font-size:11px;color:var(--muted);line-height:1.8}
+.reason-option{width:100%;text-align:left;padding:13px 14px;border:1px solid var(--line);border-radius:15px;margin-bottom:8px;font-size:12px}.reason-option.selected{border-color:var(--coral);background:#FFF8F7}.bottom-sheet .primary:disabled{opacity:.4;cursor:not-allowed}
+
+
+/* semantic UX improvements */
+input,textarea{caret-color:var(--coral)}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.method-divider{display:flex;align-items:center;gap:10px;margin:10px 0;color:var(--muted);font-size:10px}.method-divider::before,.method-divider::after{content:"";height:1px;background:var(--line);flex:1}.method-divider span{padding:0 4px}
+.signin-form{display:flex;flex-direction:column;gap:11px;text-align:left}.field-group{display:flex;flex-direction:column;gap:6px}.password-wrap{position:relative}.password-field{padding-right:68px}.password-toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);height:34px;padding:0 10px;border-radius:999px;background:#fff;color:var(--plum);font-size:10px;font-weight:700}
+.setting-control-row{display:flex;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid var(--line);font-size:13px;background:#fff}.setting-control-row.compact{font-size:11.5px}.native-switch{appearance:none;-webkit-appearance:none;width:44px;height:26px;border-radius:999px;background:#D9D4DE;position:relative;flex:0 0 auto;transition:.2s;cursor:pointer}.native-switch::after{content:"";position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;left:3px;top:3px;box-shadow:0 2px 6px rgba(0,0,0,.16);transition:.2s}.native-switch:checked{background:var(--coral)}.native-switch:checked::after{transform:translateX(18px)}.native-check{width:20px;height:20px;accent-color:var(--coral)}
+.choice-card{cursor:pointer;flex-direction:row;align-items:flex-start;gap:10px}.choice-card input{margin-top:3px;accent-color:var(--coral)}.choice-card span{display:flex;flex-direction:column;gap:3px}.choice-card small{font-size:10.5px;color:var(--muted)}
+.checkout-steps{display:grid;grid-template-columns:repeat(3,1fr);list-style:none;padding:0;margin:0 0 18px;position:relative}.checkout-steps::before{content:"";position:absolute;left:17%;right:17%;top:15px;height:2px;background:var(--line);z-index:0}.checkout-steps li{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:9.5px;color:var(--muted);position:relative;z-index:1}.step-circle{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#F2EEF3;color:#A39CAA;font-weight:700;border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}.checkout-steps li.completed .step-circle{background:var(--plum);color:#fff}.checkout-steps li.current{color:var(--plum);font-weight:700}.checkout-steps li.current .step-circle{background:var(--coral);color:#fff;box-shadow:0 0 0 4px rgba(242,131,123,.13)}
+.pay-fieldset{border:0;padding:0;margin:0}.pay-option input{accent-color:var(--coral);width:18px;height:18px}.radio-check{color:var(--coral);font-weight:700}
+.legal-layout{display:grid;grid-template-columns:88px minmax(0,1fr);gap:12px;align-items:start}.legal-rail{position:sticky;top:0;display:flex;flex-direction:column;padding:8px 0}.legal-rail a{position:relative;text-decoration:none;color:var(--muted);font-size:9.5px;line-height:1.35;padding:9px 7px 9px 10px;border-left:3px solid transparent}.legal-rail a[aria-current="location"]{color:var(--plum);font-weight:700;border-left-color:var(--coral);background:rgba(242,131,123,.07);border-radius:0 9px 9px 0}.legal-article{padding:18px 16px}.spy-section{scroll-margin-top:76px;padding:3px 0 22px}.spy-section+ .spy-section{border-top:1px solid var(--line);padding-top:20px}.spy-section h3{font-size:13px;margin:0 0 8px}.spy-section p{margin:0;color:#6E6880;font-size:11px;line-height:1.9}
+.date-picker{position:relative}.date-picker>.field{padding-right:48px}.date-button{position:absolute;right:7px;top:7px;width:36px;height:36px;border-radius:12px;background:#fff;color:var(--plum);font-size:18px}.calendar-popover{position:absolute;z-index:70;left:0;right:0;top:54px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:12px;box-shadow:0 18px 42px rgba(87,78,102,.2)}.calendar-head{display:grid;grid-template-columns:38px 1fr 38px;align-items:center;text-align:center;margin-bottom:8px}.calendar-head button{height:36px;border-radius:11px;background:#FBF7F6}.calendar-head strong{font-size:12px}.calendar-weekdays,.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.calendar-weekdays span{text-align:center;font-size:9px;color:var(--muted);padding:4px 0}.calendar-grid button{aspect-ratio:1;border-radius:10px;font-size:10px;background:#fff}.calendar-grid button:hover,.calendar-grid button:focus{background:var(--pink);outline:2px solid rgba(242,131,123,.25)}.calendar-grid button.selected{background:var(--coral);color:#fff}.calendar-grid .outside{opacity:.25}
+@media(max-width:340px){.legal-layout{grid-template-columns:1fr}.legal-rail{top:0;z-index:3;flex-direction:row;overflow-x:auto;background:var(--pink);padding:4px 0}.legal-rail a{white-space:nowrap;border-left:0;border-bottom:3px solid transparent}.legal-rail a[aria-current="location"]{border-left:0;border-bottom-color:var(--coral);border-radius:8px 8px 0 0}}
+
+
+/* production state UX */
+.network-banner{position:absolute;z-index:90;top:10px;left:50%;transform:translateX(-50%);max-width:calc(100% - 30px);background:#3F394A;color:#fff;border-radius:999px;padding:9px 13px;display:flex;align-items:center;gap:8px;font-size:10px;font-weight:700;box-shadow:0 8px 24px rgba(40,34,50,.2);animation:bannerIn .35s cubic-bezier(.2,1,.3,1)}.network-banner[hidden]{display:none}.network-dot{width:8px;height:8px;border-radius:50%;background:#F4B85A;animation:onlinePulse 1.6s infinite}@keyframes bannerIn{from{opacity:0;transform:translate(-50%,-10px)}to{opacity:1;transform:translate(-50%,0)}}
+.app-toast{position:absolute;z-index:100;left:50%;bottom:92px;transform:translate(-50%,18px);width:max-content;max-width:calc(100% - 36px);background:var(--plum);color:#fff;border-radius:16px;padding:10px 14px;font-size:10.5px;line-height:1.5;opacity:0;pointer-events:none;transition:.25s;box-shadow:0 10px 30px rgba(87,78,102,.24)}.app-toast.on{opacity:1;transform:translate(-50%,0)}
+.search-box{height:46px;background:#fff;border-radius:18px;display:flex;align-items:center;gap:9px;padding:0 13px;margin-bottom:10px;box-shadow:0 7px 20px rgba(87,78,102,.05)}.search-box>span{font-size:20px;color:var(--muted)}.search-box input{flex:1;min-width:0;border:0;outline:0;background:transparent;font-size:12px;color:var(--ink)}.search-box button{width:30px;height:30px;border-radius:50%;background:#F6F1F4;color:var(--muted)}
+.empty-state{text-align:center;background:#fff;border-radius:26px;padding:30px 22px;margin-top:8px;box-shadow:0 10px 26px rgba(87,78,102,.07)}.empty-state[hidden]{display:none}.empty-bubble{width:72px;height:72px;border-radius:28px 28px 28px 10px;background:var(--pink);color:var(--coral);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 15px;animation:profileFloat 2.8s ease-in-out infinite}.empty-state h3{font-size:15px;margin:0 0 8px}.empty-state p{font-size:10.5px;color:var(--muted);line-height:1.8;margin:0 0 18px}
+.typing-indicator{align-self:flex-start;display:flex;align-items:center;gap:4px;background:#fff;border-radius:17px 17px 17px 4px;padding:10px 12px}.typing-indicator[hidden]{display:none}.typing-indicator span{width:6px;height:6px;border-radius:50%;background:#B9B3C4;animation:typingDot 1.1s infinite}.typing-indicator span:nth-child(2){animation-delay:.15s}.typing-indicator span:nth-child(3){animation-delay:.3s}.typing-indicator em{font-size:9px;color:var(--muted);font-style:normal;margin-left:3px}@keyframes typingDot{0%,60%,100%{transform:translateY(0);opacity:.45}30%{transform:translateY(-4px);opacity:1}}
+.msg-status{display:block;font-size:8.5px;margin-top:4px;opacity:.8;text-align:right}.msg-r.failed{background:#B86D6D}.retry-msg{display:inline-flex;margin-top:5px;border:1px solid rgba(255,255,255,.55);border-radius:999px;padding:4px 8px;color:#fff;font-size:8.5px}
+.settings-lead,.helper-copy{font-size:10.5px;line-height:1.8;color:var(--muted)}.settings-lead{margin:0 0 8px}.helper-copy{text-align:center;padding:4px 14px}.connection-row{display:flex;align-items:center;gap:11px;padding:14px 0;border-bottom:1px solid var(--line)}.connection-row:last-child{border-bottom:0}.connection-brand{width:38px;height:38px;border-radius:13px;background:#F6F2F7;display:flex;align-items:center;justify-content:center;font-weight:700}.line-brand{font-size:8px;background:#06C755;color:#fff}.connection-row .grow{display:flex;flex-direction:column;gap:2px}.connection-row b{font-size:12px}.connection-row small{font-size:9px;color:var(--muted)}.connected-badge{font-size:9px;font-weight:700;color:#4C9E68;background:#EEF9F1;border-radius:999px;padding:6px 8px}
+.receipt-card{background:#fff;border-radius:28px;padding:24px 19px;text-align:center;box-shadow:0 10px 26px rgba(87,78,102,.07)}.receipt-check{width:58px;height:58px;border-radius:50%;background:#EEF9F1;color:#4C9E68;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;margin:0 auto 10px;animation:chipBounce .55s cubic-bezier(.2,1.4,.3,1)}.receipt-card h2{font-size:16px;margin:4px 0}.receipt-amount{font-size:30px;color:var(--plum);display:block;margin:4px 0 20px}.receipt-list{margin:0 0 18px}.receipt-list div{display:flex;justify-content:space-between;gap:15px;padding:11px 0;border-bottom:1px solid var(--line);font-size:10.5px;text-align:left}.receipt-list dt{color:var(--muted)}.receipt-list dd{margin:0;font-weight:700;text-align:right}.bill-button{width:100%;background:none;border:0;text-align:left}
+.system-screen{background:var(--pink);align-items:center;justify-content:center;padding:26px}.system-content{text-align:center;width:100%;max-width:310px}.system-content h1{font-size:21px;margin:18px 0 8px}.system-content p{font-size:11px;line-height:1.9;color:var(--muted);margin:0 0 25px}.system-orbit,.update-icon{width:96px;height:96px;margin:0 auto;border-radius:38px 38px 38px 14px;background:var(--plum);color:var(--coral);display:flex;align-items:center;justify-content:center;font-size:38px}.system-orbit span{animation:heartBeat 1.7s infinite}.update-icon{animation:updateSpin 3.5s ease-in-out infinite}@keyframes updateSpin{0%,100%{transform:rotate(0)}50%{transform:rotate(180deg)}}
+.notification-points{display:flex;flex-direction:column;gap:8px;margin:14px 0 18px}.notification-points>div{display:flex;align-items:center;gap:11px;background:#FBF7F6;border-radius:16px;padding:11px;text-align:left}.notification-points>div>span{font-size:18px}.notification-points p{display:flex;flex-direction:column;margin:0}.notification-points b{font-size:11px}.notification-points small{font-size:9px;color:var(--muted);margin-top:2px}
+.mini-onboarding{list-style:none;padding:0;margin:14px 0 20px;display:flex;flex-direction:column;gap:9px}.mini-onboarding li{display:flex;align-items:center;gap:11px;background:#FBF7F6;border-radius:17px;padding:12px;text-align:left}.mini-onboarding li>span{width:32px;height:32px;border-radius:50%;background:var(--coral);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}.mini-onboarding li div{display:flex;flex-direction:column;gap:2px}.mini-onboarding b{font-size:11px}.mini-onboarding small{font-size:9px;color:var(--muted)}
+
+
+/* KoiRela signature visual language */
+.screen:not(.welcome):not(.chat){isolation:isolate}
+.screen:not(.welcome):not(.chat)::before,
+.screen:not(.welcome):not(.chat)::after{
+  content:"";position:absolute;z-index:0;pointer-events:none;will-change:transform;
+}
+.screen:not(.welcome):not(.chat)::before{
+  width:220px;height:220px;right:-118px;top:78px;
+  border-radius:38% 62% 48% 52% / 58% 42% 58% 42%;
+  background:rgba(242,131,123,.075);
+  transform:translate3d(0,calc(var(--scroll-shift)*-.45),0) rotate(12deg);
+  animation:screenBlobA 12s ease-in-out infinite;
+}
+.screen:not(.welcome):not(.chat)::after{
+  width:170px;height:170px;left:-98px;bottom:88px;
+  border-radius:61% 39% 68% 32% / 42% 54% 46% 58%;
+  border:20px solid rgba(87,78,102,.035);
+  transform:translate3d(0,calc(var(--scroll-shift)*.35),0) rotate(-14deg);
+  animation:screenBlobB 14s ease-in-out infinite;
+}
+.screen:not(.welcome):not(.chat)>.topbar,
+.screen:not(.welcome):not(.chat)>.content,
+.screen:not(.welcome):not(.chat)>.tabbar{position:relative;z-index:1}
+@keyframes screenBlobA{
+  0%,100%{border-radius:38% 62% 48% 52% / 58% 42% 58% 42%;transform:translate3d(0,calc(var(--scroll-shift)*-.45),0) rotate(12deg)}
+  50%{border-radius:59% 41% 64% 36% / 39% 63% 37% 61%;transform:translate3d(-15px,calc(var(--scroll-shift)*-.45 - 10px),0) rotate(28deg)}
+}
+@keyframes screenBlobB{
+  0%,100%{transform:translate3d(0,calc(var(--scroll-shift)*.35),0) rotate(-14deg)}
+  50%{transform:translate3d(15px,calc(var(--scroll-shift)*.35 - 12px),0) rotate(4deg)}
+}
+
+/* speech-bubble family */
+.card,.quick-card,.menu,.search-box,.waiting-card,.summary-card,.receipt-card,.counselor-hero{
+  border-radius:var(--radius-card);
+}
+.listener-bio,.tag,.choice-card,.notification-points>div,.mini-onboarding li{
+  border-radius:var(--radius-soft);
+}
+.bottom-sheet{border-radius:var(--radius-sheet)}
+.card,.quick-card,.menu{
+  box-shadow:var(--shadow-soft);
+  border:1px solid rgba(255,255,255,.72);
+}
+.card,.quick-card,.menu,.listener,.user-card{
+  position:relative;
+}
+.card::before,.quick-card::before,.menu::before{
+  content:"";position:absolute;pointer-events:none;opacity:0;
+  width:40px;height:40px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,rgba(242,131,123,.18),rgba(242,131,123,0) 70%);
+  right:-8px;top:-8px;transform:scale(.6);transition:opacity .28s ease,transform .38s var(--spring);
+}
+@media(hover:hover) and (pointer:fine){
+  .card:hover,.quick-card:hover,.menu:hover{
+    transform:translateY(-5px) rotate(.15deg);
+    box-shadow:var(--shadow-lift);
   }
-  .tabbar {
-    display: flex; align-items: center; justify-content: space-around;
-    background: #fff; border-top: 1px solid var(--line);
-    padding: 10px 8px calc(14px + env(safe-area-inset-bottom, 0px));
+  .card:hover::before,.quick-card:hover::before,.menu:hover::before{opacity:1;transform:scale(1.5)}
+}
+
+/* signature buttons: pill + soft droplet at the end */
+.primary,.small-primary{
+  border-radius:999px 999px 999px 24px;
+  isolation:isolate;
+}
+.primary::before,.small-primary::before{
+  content:"";position:absolute;z-index:-1;right:-18px;top:50%;
+  width:58px;height:58px;border-radius:52% 48% 43% 57% / 61% 44% 56% 39%;
+  background:rgba(255,255,255,.10);transform:translateY(-50%) rotate(8deg);
+  transition:transform .4s var(--spring),opacity .3s ease;
+}
+.primary:hover::before,.small-primary:hover::before{transform:translateY(-50%) rotate(28deg) scale(1.22)}
+.primary:active::before,.small-primary:active::before{transform:translateY(-50%) scale(.82)}
+.outline{border-radius:999px 999px 999px 18px}
+
+/* top bar and tabs */
+.iconbtn{box-shadow:0 7px 18px rgba(87,78,102,.07);transition:transform .3s var(--spring),box-shadow .3s ease}
+.iconbtn:hover{transform:translateY(-3px) rotate(4deg);box-shadow:0 12px 24px rgba(87,78,102,.12)}
+.tab{position:relative;border-radius:16px;transition:transform .3s var(--spring),background .3s ease,color .3s ease}
+.tab::before{
+  content:"";position:absolute;z-index:-1;width:44px;height:28px;top:0;left:50%;
+  border-radius:18px 18px 18px 7px;background:rgba(242,131,123,.10);
+  opacity:0;transform:translateX(-50%) scale(.6) rotate(-6deg);transition:.32s var(--spring);
+}
+.tab.on::before{opacity:1;transform:translateX(-50%) scale(1) rotate(0)}
+.tab:active{transform:scale(.9)}
+.tabbar{position:relative}
+.tabbar::before{
+  content:"";position:absolute;left:50%;top:-1px;transform:translateX(-50%);
+  width:54px;height:7px;border-radius:0 0 999px 999px;background:rgba(242,131,123,.13);
+}
+
+/* home hero: more alive, still subtle */
+.hero{
+  border-radius:34px 34px 34px 13px;
+  box-shadow:0 18px 38px rgba(87,78,102,.18);
+  transition:transform .45s var(--spring),box-shadow .45s ease;
+}
+.hero:hover{transform:translateY(-3px);box-shadow:0 24px 50px rgba(87,78,102,.22)}
+.hero-motifs{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:inherit}
+.hero-motif{position:absolute;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.12);will-change:transform}
+.hero-motif-heart{right:36px;top:24px;font-size:17px;animation:motifHeartOrbit 5.5s ease-in-out infinite}
+.hero-motif-chat{right:14px;bottom:62px;width:50px;height:34px;border-radius:17px 17px 17px 6px;background:rgba(255,255,255,.07);font-size:12px;letter-spacing:2px;animation:motifChatFloat 6.5s ease-in-out infinite}
+.hero-motif-dot{left:18px;bottom:22px;width:12px;height:12px;border:3px solid rgba(255,255,255,.11);border-radius:50%;animation:motifDot 7s linear infinite}
+@keyframes motifHeartOrbit{0%,100%{transform:translate(0,0) rotate(-10deg) scale(1)}50%{transform:translate(-16px,14px) rotate(14deg) scale(1.18)}}
+@keyframes motifChatFloat{0%,100%{transform:translateY(0) rotate(2deg)}50%{transform:translateY(-13px) rotate(-4deg)}}
+@keyframes motifDot{to{transform:translate(18px,-9px) rotate(360deg)}}
+
+.hero .primary{position:relative;z-index:2}
+.hero .primary:hover{transform:translateY(-2px) scale(1.01)}
+.hero h2,.hero p,.hero small{position:relative;z-index:2}
+
+/* home cards feel touchable */
+#screen-home .card{overflow:hidden}
+#screen-home .consult-row::after{
+  content:"♥";position:absolute;right:18px;top:50%;transform:translateY(-50%) scale(.7) rotate(-8deg);
+  color:rgba(242,131,123,.08);font-size:42px;pointer-events:none;transition:.35s var(--spring)
+}
+#screen-home .consult-row:hover::after{transform:translateY(-50%) scale(1) rotate(7deg);color:rgba(242,131,123,.13)}
+.quick-card{overflow:hidden}
+.quick-card .quick-icon{
+  width:38px;height:38px;border-radius:16px 16px 16px 6px;background:var(--pink);
+  display:flex;align-items:center;justify-content:center;margin-bottom:9px;
+}
+.quick-card:nth-child(2) .quick-icon{background:#F3EFF7}
+.quick-card:active .quick-icon{animation:quickIconPop .42s var(--spring)}
+@keyframes quickIconPop{40%{transform:scale(.78) rotate(-10deg)}75%{transform:scale(1.14) rotate(8deg)}}
+
+/* badges/tags gently react */
+.badge,.tag{transition:transform .25s var(--spring),background .25s ease}
+.badge:hover,.tag:hover{transform:translateY(-2px) rotate(-1deg)}
+
+/* listener/profile visual family */
+.listener{border-radius:var(--radius-card)}
+.listener::before{
+  content:"";position:absolute;left:-18px;bottom:-20px;width:62px;height:62px;border-radius:50%;
+  border:10px solid rgba(242,131,123,.055);pointer-events:none;transition:transform .45s var(--spring)
+}
+.listener:hover::before{transform:translate(8px,-7px) rotate(20deg) scale(1.12)}
+.profile{border-radius:32px 32px 32px 13px}
+.profile::before{
+  content:"♥";position:absolute;left:18px;top:18px;color:rgba(242,131,123,.10);font-size:24px;
+  animation:profileMotif 5.5s ease-in-out infinite
+}
+@keyframes profileMotif{50%{transform:translate(8px,-6px) rotate(12deg)}}
+
+/* sheets enter with the same soft spring */
+.bottom-sheet.on{animation:koirelaSheetIn .46s var(--spring)}
+@keyframes koirelaSheetIn{0%{transform:translateY(105%) scale(.985);opacity:.6}70%{transform:translateY(-5px) scale(1.005);opacity:1}100%{transform:translateY(0) scale(1)}}
+.sheet-handle{position:relative;overflow:visible}
+.sheet-handle::after{
+  content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:var(--coral);
+  right:-13px;top:-1px;opacity:.42;animation:handleDot 3s ease-in-out infinite
+}
+@keyframes handleDot{50%{transform:translateX(5px);opacity:.7}}
+
+/* true scroll reveal */
+.reveal-item.motion-reveal{
+  opacity:0!important;transform:translateY(22px) scale(.975)!important;
+  animation:none!important;transition:opacity .55s ease,transform .62s var(--spring)!important;
+}
+.reveal-item.motion-reveal.is-visible{
+  opacity:1!important;transform:none!important;
+}
+.reveal-item.motion-reveal:nth-child(2){transition-delay:.04s!important}
+.reveal-item.motion-reveal:nth-child(3){transition-delay:.08s!important}
+
+/* subtle scroll-linked foreground movement */
+.section-title,.section-head{transition:transform .18s linear}
+.phone.is-scrolling .section-title,.phone.is-scrolling .section-head{transform:translateX(2px)}
+
+/* cursor-like tactile hover only for precise pointers */
+@media(hover:hover) and (pointer:fine){
+  .primary,.small-primary,.outline,.quick-card,.listener,.menu-row,.tab,.iconbtn{will-change:transform}
+}
+
+
+/* stronger motion, same simple UI */
+.screen.active{animation:screenInStrong .56s cubic-bezier(.18,1,.25,1)}
+@keyframes screenInStrong{
+  0%{opacity:0;transform:translateY(28px) scale(.965)}
+  62%{opacity:1;transform:translateY(-4px) scale(1.008)}
+  100%{opacity:1;transform:none}
+}
+.hero{animation:heroBreath 5.2s ease-in-out infinite}
+@keyframes heroBreath{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-4px) scale(1.012)}
+}
+.hero::before{animation-duration:5.2s}
+.hero::after{animation-duration:3.6s}
+
+.primary,.small-primary,.outline,.iconbtn,.tab{
+  transition:transform .28s cubic-bezier(.16,1.35,.3,1),box-shadow .28s ease,background .22s ease
+}
+.primary:active,.small-primary:active,.outline:active,.iconbtn:active,.send:active{
+  transform:scale(.87) rotate(-1.5deg)
+}
+.primary:hover,.small-primary:hover{
+  transform:translateY(-3px) scale(1.025);
+  box-shadow:0 16px 30px rgba(242,131,123,.3)
+}
+.iconbtn:hover{transform:translateY(-5px) rotate(7deg) scale(1.04)}
+
+.card,.quick-card,.menu{
+  transition:transform .34s cubic-bezier(.16,1.25,.3,1),box-shadow .34s ease
+}
+@media(hover:hover) and (pointer:fine){
+  .card:hover,.quick-card:hover,.menu:hover{
+    transform:translateY(-8px) scale(1.015) rotate(.25deg);
+    box-shadow:0 24px 48px rgba(87,78,102,.16)
   }
-  .tab { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 72px; padding: 4px 0; font-size: 10px; color: #B9B3C4; }
-  .tab svg { stroke: #B9B3C4; }
-  .tab.on { color: var(--coral); font-weight: 700; }
-  .tab.on svg { stroke: var(--coral); }
+}
+.tap-pop{animation:tapPopStrong .46s cubic-bezier(.15,1.4,.3,1)}
+@keyframes tapPopStrong{
+  0%{transform:scale(1)}
+  35%{transform:scale(.91) rotate(-1.2deg)}
+  68%{transform:scale(1.045) rotate(.7deg)}
+  100%{transform:scale(1)}
+}
+.tab.on svg{animation:tabBounceStrong .78s cubic-bezier(.15,1.45,.3,1)}
+@keyframes tabBounceStrong{
+  0%{transform:translateY(6px) scale(.68) rotate(-8deg)}
+  45%{transform:translateY(-8px) scale(1.22) rotate(6deg)}
+  72%{transform:translateY(2px) scale(.94) rotate(-2deg)}
+  100%{transform:none}
+}
+.quick-icon{animation-duration:2.2s}
+.avatar{animation-duration:2.8s}
+.logo{animation-duration:4s}
 
-  /* ---------- Home ---------- */
-  .home { background: var(--plum); }
-  .home-head { display: flex; flex-direction: column; gap: 18px; padding: 22px 24px; }
-  .home-top { display: flex; align-items: center; justify-content: space-between; }
-  .icon-btn { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 999px; background: rgba(255, 255, 255, 0.12); }
-  .seg { display: flex; align-items: center; gap: 10px; }
-  .seg-pill { display: flex; align-items: center; justify-content: center; height: 44px; padding: 0 24px; border-radius: 999px; font-size: 13px; letter-spacing: 0.06em; color: rgba(255, 255, 255, 0.6); }
-  .seg-pill.on { background: var(--coral); font-weight: 700; color: #fff; }
-  .home-sheet { gap: 22px; padding: 26px 24px 0; overflow: hidden; }
-  .sec-head { display: flex; align-items: center; justify-content: space-between; }
-  .sec-title { font-size: 14px; font-weight: 700; letter-spacing: 0.06em; color: var(--ink); }
-  .sec-link { font-size: 11.5px; font-weight: 500; letter-spacing: 0.06em; color: var(--coral); }
-  .reco-row { display: flex; align-items: flex-start; gap: 16px; margin-top: 14px; overflow-x: auto; scrollbar-width: none; }
-  .reco-row::-webkit-scrollbar { display: none; }
-  .reco { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; }
-  .reco-name { font-size: 11px; color: var(--ink); }
-  .avatar { position: relative; display: flex; align-items: center; justify-content: center; border-radius: 999px; font-weight: 700; color: var(--plum); flex-shrink: 0; }
-  .avatar .dot { position: absolute; right: 1px; bottom: 1px; width: 12px; height: 12px; border-radius: 999px; background: var(--green); border: 2px solid #fff; }
-  .chats { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; }
-  .chat-row { display: flex; align-items: center; gap: 14px; padding: 13px 4px; width: 100%; text-align: left; border-bottom: 1px solid var(--line); }
-  .chat-row:last-of-type { border-bottom: none; }
-  .chat-mid { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 0; }
-  .chat-name-row { display: flex; align-items: center; gap: 8px; }
-  .chat-name { font-size: 14px; font-weight: 700; color: var(--ink); }
-  .badge { font-size: 9px; font-weight: 500; border-radius: 999px; padding: 3px 8px; white-space: nowrap; }
-  .badge.casual { color: var(--coral); background: #FDEDEB; }
-  .badge.pro { color: #fff; background: var(--plum); }
-  .chat-preview { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .chat-side { display: flex; flex-direction: column; align-items: flex-end; gap: 7px; flex-shrink: 0; }
-  .chat-time { font-size: 10.5px; color: var(--muted); }
-  .unread { display: flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 999px; background: var(--coral); font-size: 10px; font-weight: 700; color: #fff; }
-  .fab {
-    position: absolute; right: 20px; bottom: 92px;
-    display: flex; align-items: center; justify-content: center;
-    width: 56px; height: 56px; border-radius: 20px; background: var(--coral);
-    box-shadow: 0 12px 24px rgba(242, 131, 123, 0.4);
-    transition: transform 0.15s ease;
-  }
-  .fab:active { transform: scale(0.94); }
+.reveal-item.motion-reveal{
+  opacity:0!important;
+  transform:translateY(34px) scale(.95)!important;
+  transition:opacity .56s ease,transform .7s cubic-bezier(.16,1.18,.3,1)!important
+}
+.reveal-item.motion-reveal.is-visible{
+  opacity:1!important;transform:none!important
+}
+.bottom-sheet.on{animation:koirelaSheetInStrong .52s cubic-bezier(.16,1.25,.3,1)}
+@keyframes koirelaSheetInStrong{
+  0%{transform:translateY(112%) scale(.96);opacity:.45}
+  66%{transform:translateY(-10px) scale(1.012);opacity:1}
+  100%{transform:translateY(0) scale(1)}
+}
 
-  /* ---------- Find ---------- */
-  .find { background: var(--pink-bg); }
-  .find-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 14px; }
-  .find-title { font-size: 16px; font-weight: 700; letter-spacing: 0.08em; color: var(--ink); }
-  .icon-btn.light { background: #fff; }
-  .chips { display: flex; align-items: center; gap: 8px; padding: 2px 20px 14px; overflow-x: auto; scrollbar-width: none; }
-  .chips::-webkit-scrollbar { display: none; }
-  .chip { display: flex; align-items: center; justify-content: center; height: 40px; padding: 0 16px; background: #fff; border-radius: 999px; font-size: 11.5px; color: #6E6880; white-space: nowrap; flex-shrink: 0; }
-  .chip.on { background: var(--plum); font-weight: 700; color: #fff; padding: 0 18px; }
-  .cards { display: flex; flex-direction: column; gap: 14px; flex: 1; min-height: 0; padding: 2px 20px 16px; overflow-y: auto; }
-  .t-card { display: flex; flex-direction: column; gap: 14px; background: #fff; border-radius: 24px; padding: 18px; box-shadow: 0 10px 26px rgba(87, 78, 102, 0.07); flex-shrink: 0; }
-  .t-top { display: flex; align-items: center; gap: 14px; }
-  .t-info { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
-  .t-name-row { display: flex; align-items: center; gap: 8px; }
-  .t-name { font-size: 15px; font-weight: 700; color: var(--ink); }
-  .rating { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: var(--ink); }
-  .rating small { font-size: 11px; font-weight: 400; color: var(--muted); }
-  .t-bio { font-size: 12px; line-height: 1.9; color: #6E6880; background: #FBF7F6; border-radius: 14px; padding: 12px 16px; }
-  .t-foot { display: flex; align-items: center; justify-content: space-between; }
-  .price { display: flex; align-items: baseline; gap: 5px; font-size: 11px; color: var(--muted); }
-  .price b { font-size: 17px; font-weight: 700; color: var(--coral); }
-  .btn-small { display: flex; align-items: center; justify-content: center; height: 44px; padding: 0 26px; background: var(--coral); border-radius: 999px; font-size: 12.5px; font-weight: 700; letter-spacing: 0.06em; color: #fff; transition: transform 0.15s ease, background 0.15s ease; }
-  .btn-small:active { transform: scale(0.96); background: var(--coral-deep); }
+.hero-motif-heart{animation-duration:3.8s}
+.hero-motif-chat{animation-duration:4.6s}
+.hero-motif-dot{animation-duration:4.8s}
+.screen:not(.welcome):not(.chat)::before{animation-duration:8s}
+.screen:not(.welcome):not(.chat)::after{animation-duration:9.5s}
 
-  /* ---------- MyPage ---------- */
-  .mypage { background: var(--pink-bg); }
-  .mp-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 14px; }
-  .mp-body { display: flex; flex-direction: column; gap: 14px; flex: 1; min-height: 0; overflow-y: auto; padding: 2px 20px 16px; }
-  .profile-card { display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 24px; padding: 18px; box-shadow: 0 10px 26px rgba(87, 78, 102, 0.07); flex-shrink: 0; }
-  .profile-info { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 0; }
-  .profile-name { font-size: 15px; font-weight: 700; color: var(--ink); }
-  .profile-sub { display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: var(--muted); }
-  .btn-ghost { display: flex; align-items: center; justify-content: center; height: 38px; padding: 0 16px; border: 1.5px solid var(--coral); border-radius: 999px; font-size: 12px; font-weight: 700; color: var(--coral); flex-shrink: 0; }
-  .stats { display: flex; background: #fff; border-radius: 24px; padding: 16px 8px; box-shadow: 0 10px 26px rgba(87, 78, 102, 0.07); flex-shrink: 0; }
-  .stat { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
-  .stat + .stat { border-left: 1px solid var(--line); }
-  .stat b { font-size: 17px; font-weight: 700; color: var(--plum); }
-  .stat span { font-size: 10.5px; color: var(--muted); }
-  .plan-card { display: flex; align-items: center; gap: 14px; background: var(--plum); border-radius: 24px; padding: 18px; flex-shrink: 0; }
-  .plan-info { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 0; }
-  .plan-name { font-size: 14px; font-weight: 700; color: #fff; }
-  .plan-sub { font-size: 10.5px; line-height: 1.7; color: rgba(255, 255, 255, 0.6); }
-  .btn-mini { display: flex; align-items: center; justify-content: center; height: 38px; padding: 0 16px; background: var(--coral); border-radius: 999px; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; transition: transform 0.15s ease; }
-  .btn-mini:active { transform: scale(0.95); }
-  .menu { display: flex; flex-direction: column; background: #fff; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 26px rgba(87, 78, 102, 0.07); flex-shrink: 0; }
-  .menu-row { display: flex; align-items: center; gap: 12px; padding: 15px 18px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink); width: 100%; text-align: left; }
-  .menu-row:last-child { border-bottom: none; }
-  .menu-row svg { flex-shrink: 0; }
-  .menu-row .grow { flex: 1; min-width: 0; }
-  .menu-row.danger { color: var(--coral); }
 
-  /* ---------- Chat ---------- */
-  .chat { background: var(--plum); }
-  .chat-head { display: flex; align-items: center; gap: 12px; padding: 18px 20px; }
-  .chat-head-info { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
-  .chat-head-name { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; color: #fff; }
-  .badge.head { color: #fff; background: rgba(255, 255, 255, 0.16); }
-  .chat-head-status { font-size: 11px; color: rgba(255, 255, 255, 0.6); }
-  .chat-sheet { background: var(--sheet); padding: 20px 16px 0; gap: 0; }
-  .msgs { display: flex; flex-direction: column; gap: 14px; flex: 1; min-height: 0; overflow-y: auto; padding-bottom: 12px; }
-  .sys-chip { align-self: center; font-size: 10.5px; color: var(--muted2); background: #fff; border-radius: 999px; padding: 5px 14px; flex-shrink: 0; }
-  .sys-chip.lock { display: flex; align-items: center; gap: 6px; color: #A08F9E; background: #F7E6E3; padding: 6px 14px; }
-  .msg-l { display: flex; align-items: flex-end; gap: 8px; align-self: flex-start; max-width: 82%; }
-  .msg-l .avatar { margin-bottom: 20px; }
-  .msg-l-col { display: flex; flex-direction: column; gap: 5px; }
-  .bubble-l { background: #fff; border-radius: 18px 18px 18px 4px; padding: 13px 16px; font-size: 13px; line-height: 1.9; color: var(--ink); box-shadow: 0 4px 14px rgba(87, 78, 102, 0.05); }
-  .msg-r { display: flex; flex-direction: column; gap: 5px; align-self: flex-end; align-items: flex-end; max-width: 78%; }
-  .bubble-r { background: var(--coral); border-radius: 18px 18px 4px 18px; padding: 13px 16px; font-size: 13px; line-height: 1.9; color: #fff; box-shadow: 0 6px 16px rgba(242, 131, 123, 0.28); }
-  .msg-time { font-size: 9.5px; color: var(--muted2); padding: 0 6px; }
-  .typing { display: flex; align-items: center; gap: 8px; align-self: flex-start; }
-  .typing-bubble { display: flex; align-items: center; gap: 5px; background: #fff; border-radius: 18px 18px 18px 4px; padding: 14px 16px; box-shadow: 0 4px 14px rgba(87, 78, 102, 0.05); }
-  .typing-bubble i { width: 6px; height: 6px; border-radius: 999px; background: var(--muted2); animation: blink 1.2s infinite; }
-  .typing-bubble i:nth-child(2) { animation-delay: 0.2s; }
-  .typing-bubble i:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes blink { 0%, 60%, 100% { opacity: 0.25; } 30% { opacity: 1; } }
-  .composer { display: flex; flex-direction: column; gap: 7px; padding: 10px 0 calc(12px + env(safe-area-inset-bottom, 0px)); flex-shrink: 0; }
-  .composer-row { display: flex; align-items: center; gap: 10px; }
-  .input-pill { display: flex; align-items: center; gap: 10px; flex: 1; background: #fff; border-radius: 999px; padding: 6px 16px; box-shadow: 0 6px 18px rgba(87, 78, 102, 0.06); }
-  .input-pill input { flex: 1; min-width: 0; border: none; outline: none; font: inherit; font-size: 13px; color: var(--ink); background: transparent; padding: 8px 0; }
-  .input-pill input::placeholder { color: var(--muted2); }
-  .send-btn { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 999px; background: var(--coral); box-shadow: 0 8px 20px rgba(242, 131, 123, 0.4); flex-shrink: 0; transition: transform 0.15s ease, background 0.15s ease; }
-  .send-btn:active { transform: scale(0.94); background: var(--coral-deep); }
-  .escrow-note { align-self: center; font-size: 10px; color: var(--muted2); text-align: center; }
+/* profile image registration */
+.avatar-photo-button{border:0;cursor:pointer;overflow:visible;position:relative;box-shadow:0 10px 24px rgba(87,78,102,.10)}
+.avatar-photo-button:hover{transform:translateY(-4px) scale(1.025)}
+.avatar-camera{
+  position:absolute;right:-3px;bottom:-3px;width:28px;height:28px;border-radius:50%;
+  background:var(--coral);color:#fff;border:3px solid #fff;display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;box-shadow:0 6px 14px rgba(242,131,123,.26)
+}
+.avatar.has-photo,.photo-sheet-preview.has-photo{background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;color:transparent}
+.avatar.has-photo>.avatar-initial,.photo-sheet-preview.has-photo>.avatar-initial{opacity:0}
+.photo-register-row{
+  width:100%;display:flex;align-items:center;gap:12px;padding:12px 13px;border:1px solid var(--line);
+  background:#FBF8FA;border-radius:18px;text-align:left
+}
+.photo-register-row>.avatar{width:48px;height:48px;font-size:16px}
+.photo-register-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+.photo-register-copy b{font-size:12px}.photo-register-copy small{font-size:9.5px;color:var(--muted)}
+.photo-sheet-preview-wrap{display:flex;justify-content:center;margin-bottom:6px}
+.photo-sheet-preview{width:82px;height:82px;font-size:28px;box-shadow:0 12px 26px rgba(87,78,102,.10)}
+.photo-action{
+  width:100%;display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:10px;
+  text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);transition:transform .2s var(--spring),background .2s ease
+}
+.photo-action:active{transform:scale(.98);background:#FFF8F7}
+.photo-action-icon{
+  width:38px;height:38px;border-radius:15px 15px 15px 6px;background:var(--pink);color:var(--plum);
+  display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700
+}
+.photo-action>span:nth-child(2){display:flex;flex-direction:column;gap:2px}
+.photo-action b{font-size:12px}.photo-action small{font-size:9.5px;color:var(--muted)}
+.photo-chevron{color:#B9B3C4;font-size:20px}.photo-action.danger{color:#C85858}.photo-action.danger .photo-action-icon{background:#FFF0F0;color:#C85858}
 
-  .av-pink { background: var(--pastel-pink); }
-  .av-purple { background: var(--pastel-purple); }
-  .av-peach { background: var(--pastel-peach); }
-  .av-mint { background: var(--pastel-mint); }
-  .av-rose { background: var(--pastel-rose); }
+
+/* counselor-only external contact moderation */
+.policy-mini-card{
+  margin-top:12px;padding:13px 15px;background:rgba(255,255,255,.82);border:1px solid rgba(87,78,102,.06);
+  border-radius:18px 18px 18px 7px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  box-shadow:0 8px 20px rgba(87,78,102,.05)
+}
+.policy-mini-card>div{display:flex;flex-direction:column;gap:2px}.policy-mini-card small{font-size:9px;color:var(--muted)}
+.policy-mini-card b{font-size:12px}.policy-mini-card>span{font-size:9px;color:#C85858;text-align:right;max-width:145px;line-height:1.45}
+.policy-mini-card.suspended{background:#FFF2F2;border-color:#F3CACA}.policy-mini-card.suspended b,.policy-mini-card.suspended span{color:#C85858}
+.strike-meter{display:flex;gap:8px;justify-content:center;margin:16px 0 18px}
+.strike-meter span{width:54px;height:8px;border-radius:999px;background:#ECE8EF}
+.strike-meter span.on{background:#C85858}
+.suspension-note{padding:12px 14px;border-radius:16px;background:#FFF4F4;color:#9D4B4B;font-size:10.5px;line-height:1.7;margin:12px 0 14px}
+.composer.is-suspended{opacity:.55;pointer-events:none;filter:grayscale(.3)}
+
+
+/* moderation / suspension polish */
+.profile-policy-note,.identity-note{
+  font-size:10px;line-height:1.7;color:#7A7181;background:#FFF8F7;border:1px solid #F5DEDB;
+  border-radius:15px;padding:10px 12px
+}
+.identity-note{margin:0;color:var(--muted);background:#FAF8FB;border-color:var(--line)}
+.suspension-screen-content{padding-top:12px}
+.suspension-hero{background:#6B5360;color:#fff;border-radius:30px 30px 30px 12px;padding:24px;margin-bottom:14px;box-shadow:0 18px 38px rgba(87,78,102,.16)}
+.suspension-hero small{opacity:.65;font-size:10px}.suspension-hero h2{font-size:22px;margin:5px 0 9px}.suspension-hero p{font-size:11px;line-height:1.8;opacity:.78;margin:0}
+.suspension-mark{width:52px;height:52px;border-radius:21px 21px 21px 8px;background:#FFF0F0;color:#C85858;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;margin-bottom:14px}
+.suspension-row{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);font-size:11px}.suspension-row:last-child{border-bottom:0}.suspension-row span{color:var(--muted)}.suspension-row b{text-align:right}
+.summary-card.hold{background:#765E68}.summary-card.hold #payout-note{color:#FFE7E3;opacity:1}
+.primary:disabled,.availability:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+
+
+/* listener gender filter */
+.iconbtn{position:relative}.filter-dot{position:absolute;right:7px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--coral);box-shadow:0 0 0 2px #fff}
+.gender-filter-options{border:0;padding:0;margin:12px 0 15px;display:grid;gap:8px}
+.gender-filter-option{display:grid;grid-template-columns:20px 1fr 24px;align-items:center;gap:10px;padding:12px 13px;border:1px solid var(--line);border-radius:17px;background:#fff;cursor:pointer}
+.gender-filter-option.selected{border-color:var(--coral);background:#FFF8F7}
+.gender-filter-option input{accent-color:var(--coral);width:17px;height:17px}
+.gender-filter-option span{display:flex;flex-direction:column;gap:2px}.gender-filter-option b{font-size:12px}.gender-filter-option small{font-size:9.5px;color:var(--muted)}
+.gender-filter-option i{font-style:normal;color:var(--coral);font-weight:800;text-align:center}
+.gender-help{font-size:9.5px!important;color:var(--muted);line-height:1.65;margin:-4px 0 3px!important}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}
+}
+
 </style>
 </head>
 <body>
 <div class="phone">
+<div class="ambient ambient-a" aria-hidden="true">♥</div>
+<div class="ambient ambient-b" aria-hidden="true">●</div>
+<div class="ambient ambient-c" aria-hidden="true">✦</div>
+<div id="network-banner" class="network-banner" role="status" aria-live="polite" hidden>
+  <span class="network-dot"></span><span id="network-text">オフラインです。再接続を待っています…</span>
+</div>
+<div id="app-toast" class="app-toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-  <!-- ========== Welcome ========== -->
-  <section id="screen-welcome" class="screen welcome active">
-    <svg class="welcome-bg" viewBox="0 0 390 844" fill="none" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-      <path d="M390 0H180c40 90 130 70 160 150 24 64 50 80 50 80V0Z" fill="#635A73"/>
-      <circle cx="40" cy="120" r="70" fill="#635A73"/>
-      <circle cx="352" cy="330" r="10" fill="#F2837B" opacity="0.55"/>
-      <circle cx="30" cy="420" r="6" fill="#F9D9D5" opacity="0.5"/>
-      <path d="M0 844h390V700c-90-50-150 30-240 10S30 660 0 700v144Z" fill="#4A4258"/>
-      <circle cx="330" cy="640" r="5" fill="#F9D9D5" opacity="0.45"/>
-    </svg>
-    <div class="welcome-logo">
-      <div class="brand">KoiRela</div>
-      <div class="brand-sub">恋愛セラピスト</div>
-    </div>
-    <div class="welcome-illust">
-      <svg width="230" height="170" viewBox="0 0 230 170" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="8" y="18" width="128" height="82" rx="24" fill="#FFFFFF"/>
-        <path d="M40 98l-8 26 30-24" fill="#FFFFFF"/>
-        <path d="M72 44c-4.5-6.5-13.5-7-18-1.7-4 4.7-3 11.7 1.6 16L72 74l16.4-15.7c4.6-4.3 5.6-11.3 1.6-16-4.5-5.3-13.5-4.8-18 1.7Z" fill="#F2837B"/>
-        <rect x="104" y="66" width="118" height="72" rx="22" fill="#F2837B"/>
-        <path d="M196 136l6 24-26-20" fill="#F2837B"/>
-        <circle cx="140" cy="102" r="6" fill="#FFFFFF"/>
-        <circle cx="163" cy="102" r="6" fill="rgba(255,255,255,0.7)"/>
-        <circle cx="186" cy="102" r="6" fill="rgba(255,255,255,0.4)"/>
-        <circle cx="210" cy="30" r="4" fill="#F9D9D5"/>
-        <path d="M24 132l3 8 8 3-8 3-3 8-3-8-8-3 8-3 3-8Z" fill="#F9D9D5"/>
-      </svg>
-    </div>
-    <div class="welcome-copy">
-      <div class="welcome-title">恋の悩みを、<br>話せる相手がいる。</div>
-      <div class="welcome-body">匿名OK。恋愛セラピストと、<br>1通からはじめられるチャット相談。</div>
-    </div>
-    <div class="welcome-cta">
-      <button class="btn-primary" onclick="show('home')">無料でチャットをはじめる
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="welcome-login">アカウントをお持ちの方は <span>ログイン</span></div>
-    </div>
-  </section>
+<section id="screen-welcome" class="screen welcome active">
+  <div class="welcome-logo">KoiRela</div>
+  <div class="welcome-sub">恋愛相談</div>
+  <div class="welcome-visual">
+    <div class="bubble1"></div><div class="heart">♥</div>
+    <div class="bubble2"></div><div class="dots">•••</div>
+  </div>
+  <h1>恋の悩みを、<br>話せる相手がいる。</h1>
+  <p>匿名で、気軽に。<br>経験者や資格を持つ相談員にチャットで相談できます。</p>
+  <button class="primary" onclick="show('auth')">はじめる</button>
+</section>
 
-  <!-- ========== Home ========== -->
-  <section id="screen-home" class="screen home">
-    <div class="home-head">
-      <div class="home-top">
-        <div class="brand" style="font-size: 24px">KoiRela</div>
-        <button class="icon-btn" aria-label="通知">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9Z" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.7 21a2 2 0 0 1-3.4 0" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round"/></svg>
-        </button>
+
+<section id="screen-auth" class="screen">
+  <div class="topbar">
+    <button class="iconbtn" onclick="show('welcome')" aria-label="戻る">‹</button>
+    <div class="title">ログイン</div>
+    <div style="width:42px"></div>
+  </div>
+  <div class="content auth-content">
+    <div class="auth-mark">♥</div>
+    <h2 class="auth-title">KoiRelaへようこそ</h2>
+    <p class="auth-copy">相談履歴や支払い情報を安全に引き継げます。</p>
+
+    <button type="button" class="social-btn google" onclick="socialLogin('google')"><span class="social-mark google-mark">G</span><span>Continue with Google</span></button>
+    <button type="button" class="social-btn apple" onclick="socialLogin('apple')"><span class="social-mark"></span><span>Continue with Apple</span></button>
+    <button type="button" class="social-btn line" onclick="socialLogin('line')"><span class="social-mark line-mark">LINE</span><span>LINEで続ける</span></button>
+
+    <div class="method-divider" aria-hidden="true"><span>or</span></div>
+
+    <form id="signin-form" class="signin-form" novalidate>
+      <div class="field-group">
+        <label for="signin-email" class="field-label">メールアドレス</label>
+        <input id="signin-email" name="email" class="field" type="email" autocomplete="username" inputmode="email" required placeholder="you@example.com">
       </div>
-      <div class="seg">
-        <button class="seg-pill on">相談中</button>
-        <button class="seg-pill" onclick="show('find')">聞き手をさがす</button>
-      </div>
-    </div>
-    <div class="sheet home-sheet">
-      <div>
-        <div class="sec-head">
-          <div class="sec-title">おすすめの聞き手</div>
-          <button class="sec-link" onclick="show('find')">すべて見る</button>
-        </div>
-        <div class="reco-row">
-          <button class="reco" onclick="show('chat')"><span class="avatar av-pink" style="width:56px;height:56px;font-size:20px">あ<span class="dot"></span></span><span class="reco-name">あいり</span></button>
-          <button class="reco" onclick="show('find')"><span class="avatar av-purple" style="width:56px;height:56px;font-size:20px">ゆ<span class="dot"></span></span><span class="reco-name">ゆい</span></button>
-          <button class="reco" onclick="show('find')"><span class="avatar av-peach" style="width:56px;height:56px;font-size:20px">け</span><span class="reco-name">けんた</span></button>
-          <button class="reco" onclick="show('find')"><span class="avatar av-mint" style="width:56px;height:56px;font-size:20px">み<span class="dot"></span></span><span class="reco-name">みほ</span></button>
-          <button class="reco" onclick="show('find')"><span class="avatar av-rose" style="width:56px;height:56px;font-size:20px">た</span><span class="reco-name">たくや</span></button>
+      <div class="field-group">
+        <label for="signin-password" class="field-label">パスワード</label>
+        <div class="password-wrap">
+          <input id="signin-password" name="password" class="field password-field" type="password" autocomplete="current-password" required minlength="8" placeholder="8文字以上">
+          <button id="password-toggle" class="password-toggle" type="button" aria-label="Show password">表示</button>
         </div>
       </div>
-      <div class="chats">
-        <div class="sec-head" style="margin-bottom: 6px">
-          <div class="sec-title">相談中のチャット</div>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#B9B3C4" stroke-width="1.6"/><path d="m21 21-4.35-4.35" stroke="#B9B3C4" stroke-width="1.6" stroke-linecap="round"/></svg>
-        </div>
-        <button class="chat-row" onclick="show('chat')">
-          <span class="avatar av-pink" style="width:52px;height:52px;font-size:19px">あ</span>
-          <span class="chat-mid">
-            <span class="chat-name-row"><span class="chat-name">あいり</span><span class="badge casual">恋愛アドバイザー</span></span>
-            <span class="chat-preview">その後、彼から連絡はありましたか？</span>
-          </span>
-          <span class="chat-side"><span class="chat-time">22:41</span><span class="unread">1</span></span>
-        </button>
-        <button class="chat-row" onclick="show('chat')">
-          <span class="avatar av-purple" style="width:52px;height:52px;font-size:19px">ゆ</span>
-          <span class="chat-mid">
-            <span class="chat-name-row"><span class="chat-name">ゆい</span><span class="badge pro">認定セラピスト</span></span>
-            <span class="chat-preview">前回の続き、いつでもどうぞ。</span>
-          </span>
-          <span class="chat-side"><span class="chat-time">昨日</span></span>
-        </button>
-        <button class="chat-row" onclick="show('chat')">
-          <span class="avatar av-rose" style="width:52px;height:52px;font-size:19px">た</span>
-          <span class="chat-mid">
-            <span class="chat-name-row"><span class="chat-name">たくや</span><span class="badge casual">恋愛アドバイザー</span></span>
-            <span class="chat-preview">それは、しんどかったですね。</span>
-          </span>
-          <span class="chat-side"><span class="chat-time">月曜</span></span>
-        </button>
-      </div>
-      <div class="tabbar">
-        <button class="tab on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5V21h-6v-6h-6v6H3V10.5Z" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>ホーム</button>
-        <button class="tab" onclick="show('find')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke-width="1.8"/><path d="m21 21-4.35-4.35" stroke-width="1.8" stroke-linecap="round"/></svg>さがす</button>
-        <button class="tab" onclick="show('mypage')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke-width="1.8"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" stroke-width="1.8" stroke-linecap="round"/></svg>マイページ</button>
-      </div>
-    </div>
-    <button class="fab" onclick="show('find')" aria-label="新しい相談">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10Z" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8v6M9 11h6" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round"/></svg>
-    </button>
-  </section>
+      <button type="submit" class="primary">Sign in</button>
+      <div id="signin-status" class="form-status" aria-live="polite"></div>
+    </form>
 
-  <!-- ========== Find ========== -->
-  <section id="screen-find" class="screen find">
-    <div class="find-head">
-      <button class="icon-btn light" onclick="show('home')" aria-label="戻る">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 18 9 12l6-6" stroke="#574E66" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="find-title">聞き手をさがす</div>
-      <button class="icon-btn light" aria-label="絞り込み">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M7 12h10M10 18h4" stroke="#574E66" stroke-width="1.8" stroke-linecap="round"/></svg>
-      </button>
+    <button type="button" class="text-btn" onclick="show('home')">ログインせずに見る</button>
+    <p class="legal-note">続けることで、利用規約とプライバシーポリシーに同意したものとみなされます。</p>
+  </div>
+</section>
+
+<section id="screen-home" class="screen">
+  <div class="topbar">
+    <div class="logo">KoiRela</div>
+    <button class="iconbtn" onclick="show('mypage')" aria-label="マイページ">👤</button>
+  </div>
+  <div class="content">
+    <div class="hero reveal-item">
+      <small>新しい相談</small>
+      <h2>いまの気持ちを、<br>話せる相手を見つけよう。</h2>
+      <p>恋愛経験のある人、資格を持つ人から選べます。</p>
+      <div class="hero-motifs" aria-hidden="true">
+        <span class="hero-motif hero-motif-heart">♥</span>
+        <span class="hero-motif hero-motif-chat">•••</span>
+        <span class="hero-motif hero-motif-dot"></span>
+      </div>
+      <button class="primary" onclick="show('find')">相談相手を探す</button>
     </div>
-    <div class="chips">
+
+    <div class="section reveal-item">
+      <div class="section-head">
+        <div class="section-title">相談中</div>
+        <button class="link" onclick="show('history')">履歴を見る</button>
+      </div>
+      <div class="card">
+        <button class="consult-row" onclick="show('chat')">
+          <span class="avatar">あ<span class="dot"></span></span>
+          <span class="consult-main">
+            <span class="consult-name">あいり <span class="badge exp">経験者</span></span>
+            <span class="consult-preview">無理に答えを出さなくても大丈夫ですよ。</span>
+            <span class="consult-meta">今日 09:42</span>
+          </span>
+          <span style="color:#B9B3C4">›</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="section reveal-item">
+      <div class="section-head"><div class="section-title">すぐできること</div></div>
+      <div class="quick-grid">
+        <button class="quick-card" onclick="show('find')">
+          <div class="quick-icon">🔎</div><div class="quick-title">相手を探す</div><div class="quick-sub">経験者・資格者から選ぶ</div>
+        </button>
+        <button class="quick-card" onclick="show('history')">
+          <div class="quick-icon">🕘</div><div class="quick-title">相談履歴</div><div class="quick-sub">過去の相談を確認する</div>
+        </button>
+      </div>
+    </div>
+  </div>
+  <nav class="tabbar">
+    <button class="tab on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5V21h-6v-6h-6v6H3V10.5Z" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>ホーム</button>
+    <button class="tab" onclick="show('find')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke-width="1.8"/><path d="m21 21-4.35-4.35" stroke-width="1.8" stroke-linecap="round"/></svg>さがす</button>
+    <button class="tab" onclick="show('mypage')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke-width="1.8"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" stroke-width="1.8" stroke-linecap="round"/></svg>マイページ</button>
+  </nav>
+</section>
+
+<section id="screen-find" class="screen">
+  <div class="topbar">
+    <div class="title">相談相手をさがす</div>
+    <button id="listener-filter-button" class="iconbtn" type="button" onclick="openSheet('gender-filter-sheet')" aria-label="絞り込み">☰<span id="listener-filter-dot" class="filter-dot" hidden></span></button>
+  </div>
+  <div class="content">
+    <div class="search-box reveal-item">
+      <span aria-hidden="true">⌕</span>
+      <label class="sr-only" for="listener-search">相談員を検索</label>
+      <input id="listener-search" type="search" placeholder="名前・相談内容で検索" autocomplete="off">
+      <button id="clear-listener-search" type="button" aria-label="検索をクリア" hidden>×</button>
+    </div>
+    <div class="filters">
       <button class="chip on" data-track="all">すべて</button>
-      <button class="chip" data-track="casual">恋愛アドバイザー</button>
-      <button class="chip" data-track="pro">認定セラピスト</button>
+      <button class="chip" data-track="exp">経験者</button>
+      <button class="chip" data-track="pro">資格者</button>
     </div>
-    <div class="cards" id="cards">
-      <div class="t-card" data-track="casual">
-        <div class="t-top">
-          <span class="avatar av-pink" style="width:60px;height:60px;font-size:22px">あ<span class="dot" style="width:13px;height:13px"></span></span>
-          <div class="t-info">
-            <div class="t-name-row"><span class="t-name">あいり</span><span class="badge casual">恋愛アドバイザー</span></div>
-            <div class="rating"><svg width="13" height="13" viewBox="0 0 24 24" fill="#F2B84B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2Z"/></svg>4.9 <small>(124件)</small></div>
-          </div>
-        </div>
-        <div class="t-bio">恋愛は、ひとりで抱えなくて大丈夫。まとまっていない話のまま、聞かせてください。</div>
-        <div class="t-foot">
-          <div class="price">チャット1通 <b>100円〜</b></div>
-          <button class="btn-small" onclick="show('chat')">相談する</button>
-        </div>
-      </div>
-      <div class="t-card" data-track="pro">
-        <div class="t-top">
-          <span class="avatar av-purple" style="width:60px;height:60px;font-size:22px">ゆ<span class="dot" style="width:13px;height:13px"></span></span>
-          <div class="t-info">
-            <div class="t-name-row"><span class="t-name">ゆい</span><span class="badge pro">認定セラピスト</span></div>
-            <div class="rating"><svg width="13" height="13" viewBox="0 0 24 24" fill="#F2B84B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2Z"/></svg>4.8 <small>(102件)</small></div>
-          </div>
-        </div>
-        <div class="t-bio">繰り返してしまう恋のパターン、根っこから一緒に見つめます。資格を持つ聞き手です。</div>
-        <div class="t-foot">
-          <div class="price">チャット1通 <b>300円〜</b></div>
-          <button class="btn-small" onclick="show('chat')">相談する</button>
-        </div>
-      </div>
-      <div class="t-card" data-track="casual">
-        <div class="t-top">
-          <span class="avatar av-peach" style="width:60px;height:60px;font-size:22px">け</span>
-          <div class="t-info">
-            <div class="t-name-row"><span class="t-name">けんた</span><span class="badge casual">恋愛アドバイザー</span></div>
-            <div class="rating"><svg width="13" height="13" viewBox="0 0 24 24" fill="#F2B84B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2Z"/></svg>4.9 <small>(76件)</small></div>
-          </div>
-        </div>
-        <div class="t-bio">誰かに話すだけで、心は軽くなります。男性目線の意見も、そっとお伝えします。</div>
-        <div class="t-foot">
-          <div class="price">チャット1通 <b>100円〜</b></div>
-          <button class="btn-small" onclick="show('chat')">相談する</button>
-        </div>
-      </div>
-      <div class="t-card" data-track="pro">
-        <div class="t-top">
-          <span class="avatar av-mint" style="width:60px;height:60px;font-size:22px">み<span class="dot" style="width:13px;height:13px"></span></span>
-          <div class="t-info">
-            <div class="t-name-row"><span class="t-name">みほ</span><span class="badge pro">認定セラピスト</span></div>
-            <div class="rating"><svg width="13" height="13" viewBox="0 0 24 24" fill="#F2B84B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2Z"/></svg>4.9 <small>(88件)</small></div>
-          </div>
-        </div>
-        <div class="t-bio">心理カウンセラーとして10年。恋愛と自己肯定感のご相談が得意です。</div>
-        <div class="t-foot">
-          <div class="price">チャット1通 <b>300円〜</b></div>
-          <button class="btn-small" onclick="show('chat')">相談する</button>
-        </div>
-      </div>
-    </div>
-    <div class="tabbar">
-      <button class="tab" onclick="show('home')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5V21h-6v-6h-6v6H3V10.5Z" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>ホーム</button>
-      <button class="tab on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke-width="1.8"/><path d="m21 21-4.35-4.35" stroke-width="1.8" stroke-linecap="round"/></svg>さがす</button>
-      <button class="tab" onclick="show('mypage')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke-width="1.8"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" stroke-width="1.8" stroke-linecap="round"/></svg>マイページ</button>
-    </div>
-  </section>
 
-  <!-- ========== Chat ========== -->
-  <section id="screen-chat" class="screen chat">
-    <div class="chat-head">
-      <button onclick="show('home')" aria-label="戻る" style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin-left:-10px">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M15 18 9 12l6-6" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <span class="avatar av-pink" style="width:44px;height:44px;font-size:17px">あ<span class="dot" style="border-color:#574E66"></span></span>
-      <div class="chat-head-info">
-        <div class="chat-head-name">あいり <span class="badge head">恋愛アドバイザー</span></div>
-        <div class="chat-head-status">オンライン・すぐに返信できます</div>
-      </div>
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="4.5" r="1.4" fill="#FFFFFF"/><circle cx="10" cy="10" r="1.4" fill="#FFFFFF"/><circle cx="10" cy="15.5" r="1.4" fill="#FFFFFF"/></svg>
-    </div>
-    <div class="sheet chat-sheet">
-      <div class="msgs" id="msgs">
-        <div class="sys-chip" id="date-chip">今日</div>
-        <div class="sys-chip lock">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><rect x="4" y="10" width="16" height="11" rx="3" stroke="#A08F9E" stroke-width="1.8"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="#A08F9E" stroke-width="1.8" stroke-linecap="round"/></svg>
-          匿名で相談をはじめました
+    <div class="card listener reveal-item" data-track="exp" data-gender="female" data-counselor-id="demo-airi">
+      <div class="listener-top">
+        <span class="avatar">あ<span class="dot"></span></span>
+        <div class="listener-info">
+          <div class="listener-name">あいり <span class="badge exp">経験者</span></div>
+          <div class="rating">★ 4.9 ・ 124件</div>
         </div>
       </div>
-      <div class="composer">
-        <div class="composer-row">
-          <div class="input-pill">
-            <input id="chat-input" type="text" placeholder="メッセージを書く…" autocomplete="off" enterkeyhint="send">
-          </div>
-          <button class="send-btn" id="send-btn" aria-label="送信">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9h11M10 4.5 14.5 9 10 13.5" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </div>
-        <div class="escrow-note">次の1通：100円(相談が完了するまで決済は確定しません)</div>
+      <div class="listener-bio">復縁や片思いの相談をよく受けています。まとまっていなくても、そのまま話してください。</div>
+      <div class="listener-foot">
+        <div class="price">15分相談 <b>100円</b></div>
+        <button class="small-primary" onclick="openProfile('airi')">プロフィール</button>
       </div>
     </div>
-  </section>
 
-  <!-- ========== MyPage ========== -->
-  <section id="screen-mypage" class="screen mypage">
-    <div class="mp-head">
-      <button class="icon-btn light" onclick="show('home')" aria-label="戻る">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 18 9 12l6-6" stroke="#574E66" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="find-title">マイページ</div>
-      <button class="icon-btn light" aria-label="設定">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M7 12h10M10 18h4" stroke="#574E66" stroke-width="1.8" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-    <div class="mp-body">
-      <div class="profile-card">
-        <span class="avatar av-rose" style="width:60px;height:60px;font-size:22px">も</span>
-        <div class="profile-info">
-          <div class="profile-name">ももか</div>
-          <div class="profile-sub">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><rect x="4" y="10" width="16" height="11" rx="3" stroke="#9A93A6" stroke-width="1.8"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="#9A93A6" stroke-width="1.8" stroke-linecap="round"/></svg>
-            匿名で利用中・本名は未登録
-          </div>
+    <div class="card listener reveal-item" data-track="pro" data-gender="female">
+      <div class="listener-top">
+        <span class="avatar" style="background:#DCD6F0">ゆ<span class="dot"></span></span>
+        <div class="listener-info">
+          <div class="listener-name">ゆい <span class="badge pro">資格者</span></div>
+          <div class="rating">★ 4.8 ・ 102件</div>
         </div>
-        <button class="btn-ghost">編集</button>
       </div>
-      <div class="stats">
-        <div class="stat"><b>3</b><span>相談中</span></div>
-        <div class="stat"><b>12</b><span>相談回数</span></div>
-        <div class="stat"><b>2</b><span>お気に入り</span></div>
-      </div>
-      <div class="plan-card">
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7.2-4.8-10.3-9C-0.3 8.3 1 3.9 4.8 2.9c2.2-.6 4.3.3 5.5 2.1h3.4c1.2-1.8 3.3-2.7 5.5-2.1 3.8 1 5.1 5.4 3.1 9.1C19.2 16.2 12 21 12 21Z" fill="#F2837B"/></svg>
-        <div class="plan-info">
-          <div class="plan-name">お守りプラン</div>
-          <div class="plan-sub">月額で毎月の無料チャット枠と<br>優先予約がつきます</div>
-        </div>
-        <button class="btn-mini">詳しく見る</button>
-      </div>
-      <div class="menu">
-        <button class="menu-row">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="3" stroke="#574E66" stroke-width="1.7"/><path d="M2 10h20" stroke="#574E66" stroke-width="1.7"/></svg>
-          <span class="grow">支払い方法</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="#B9B3C4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <button class="menu-row">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9Z" stroke="#574E66" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.7 21a2 2 0 0 1-3.4 0" stroke="#574E66" stroke-width="1.7" stroke-linecap="round"/></svg>
-          <span class="grow">通知設定</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="#B9B3C4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <button class="menu-row" onclick="show('find')">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7.2-4.8-10.3-9C-0.3 8.3 1 3.9 4.8 2.9c2.2-.6 4.3.3 5.5 2.1h3.4c1.2-1.8 3.3-2.7 5.5-2.1 3.8 1 5.1 5.4 3.1 9.1C19.2 16.2 12 21 12 21Z" stroke="#574E66" stroke-width="1.7" stroke-linejoin="round"/></svg>
-          <span class="grow">お気に入りの聞き手</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="#B9B3C4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <button class="menu-row">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#574E66" stroke-width="1.7"/><path d="M9.2 9a3 3 0 0 1 5.8 1c0 2-2.9 2.6-2.9 4" stroke="#574E66" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="17.3" r="1" fill="#574E66"/></svg>
-          <span class="grow">ヘルプとサポート窓口</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="#B9B3C4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <button class="menu-row">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z" stroke="#574E66" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 2v6h6" stroke="#574E66" stroke-width="1.7" stroke-linejoin="round"/></svg>
-          <span class="grow">利用規約・ポリシー</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m9 6 6 6-6 6" stroke="#B9B3C4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <button class="menu-row danger">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="#F2837B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="m16 17 5-5-5-5M21 12H9" stroke="#F2837B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span class="grow">ログアウト</span>
-        </button>
+      <div class="listener-bio">心理系資格を持つ相談員です。恋愛と自己肯定感、繰り返す恋のパターンの相談が得意です。</div>
+      <div class="listener-foot">
+        <div class="price">15分相談 <b>100円</b></div>
+        <button class="small-primary" onclick="openProfile('yui')">プロフィール</button>
       </div>
     </div>
-    <div class="tabbar">
-      <button class="tab" onclick="show('home')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5V21h-6v-6h-6v6H3V10.5Z" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>ホーム</button>
-      <button class="tab" onclick="show('find')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke-width="1.8"/><path d="m21 21-4.35-4.35" stroke-width="1.8" stroke-linecap="round"/></svg>さがす</button>
-      <button class="tab on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke-width="1.8"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" stroke-width="1.8" stroke-linecap="round"/></svg>マイページ</button>
-    </div>
-  </section>
 
+    <div class="card listener reveal-item" data-track="exp" data-gender="male">
+      <div class="listener-top">
+        <span class="avatar" style="background:#F6E3C5">け</span>
+        <div class="listener-info">
+          <div class="listener-name">けんた <span class="badge exp">経験者</span></div>
+          <div class="rating">★ 4.9 ・ 76件</div>
+        </div>
+      </div>
+      <div class="listener-bio">男性目線の意見がほしいときに。否定せず、状況を一緒に整理します。</div>
+      <div class="listener-foot">
+        <div class="price">15分相談 <b>100円</b></div>
+        <button class="small-primary" onclick="openProfile('kenta')">プロフィール</button>
+      </div>
+    </div>
+    <div id="listener-empty" class="empty-state" hidden>
+      <div class="empty-bubble">♡</div>
+      <h3>条件に合う相談員がいません</h3>
+      <p>検索条件を変えるか、受付中になったら通知を受け取れます。</p>
+      <button class="primary" type="button" onclick="resetListenerSearch()">条件をリセット</button>
+      <button class="text-btn" type="button" onclick="openSheet('notification-sheet')">受付開始を通知してもらう</button>
+    </div>
+  </div>
+  <nav class="tabbar">
+    <button class="tab" onclick="show('home')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5V21h-6v-6h-6v6H3V10.5Z" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>ホーム</button>
+    <button class="tab on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke-width="1.8"/><path d="m21 21-4.35-4.35" stroke-width="1.8" stroke-linecap="round"/></svg>さがす</button>
+    <button class="tab" onclick="show('mypage')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke-width="1.8"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" stroke-width="1.8" stroke-linecap="round"/></svg>マイページ</button>
+  </nav>
+</section>
+
+<section id="screen-profile" class="screen">
+  <div class="topbar">
+    <button class="iconbtn" onclick="show('find')" aria-label="戻る">‹</button>
+    <div class="title">プロフィール</div>
+    <div style="width:42px"></div>
+  </div>
+  <div class="content">
+    <div class="card profile reveal-item">
+      <span id="profile-avatar" class="avatar">あ<span class="dot"></span></span>
+      <div id="profile-name" class="profile-name">あいり</div>
+      <div id="profile-role" class="profile-role"><span class="badge exp">経験者</span></div>
+      <div id="profile-copy" class="profile-copy">復縁や片思いの相談をよく受けています。まとまっていなくても、そのまま話してください。</div>
+      <div class="tags"><span class="tag">返信が早い</span><span class="tag">匿名OK</span><span class="tag">チャット相談</span></div>
+      <button class="primary" onclick="openSheet('consult-sheet')">15分100円で相談する</button>
+    </div>
+  </div>
+</section>
+
+<section id="screen-mypage" class="screen">
+  <div class="topbar">
+    <div class="title">マイページ</div>
+    <div style="width:42px"></div>
+  </div>
+  <div class="content">
+    <div class="section reveal-item">
+      <div class="card user-card reveal-item">
+        <span id="mypage-avatar" class="avatar" style="background:#F5D0DC"><span class="avatar-initial">も</span></span>
+        <div class="user-info"><div class="user-name">ももか</div><div class="user-sub">匿名で利用中</div></div>
+        <button class="outline" onclick="show('edit-profile')">編集</button>
+      </div>
+    </div>
+    <div class="section reveal-item">
+      <div class="menu reveal-item">
+        <button class="menu-row" onclick="show('history')"><span class="menu-icon">🕘</span><span class="grow">相談履歴</span><span>›</span></button>
+        <button class="menu-row" onclick="openSheet('payment-sheet')"><span class="menu-icon">💳</span><span class="grow">支払い方法</span><span>›</span></button>
+        <button class="menu-row" onclick="show('support')"><span class="menu-icon">💬</span><span class="grow">お問い合わせ</span><span>›</span></button>
+        <button class="menu-row" onclick="show('settings')"><span class="menu-icon">⚙️</span><span class="grow">設定</span><span>›</span></button>
+        <button class="menu-row" onclick="show('counselor')"><span class="menu-icon">♡</span><span class="grow">相談員モード</span><span>›</span></button>
+      </div>
+    </div>
+  </div>
+  <nav class="tabbar">
+    <button class="tab" onclick="show('home')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 10.5 12 3l9 7.5V21h-6v-6h-6v6H3V10.5Z" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>ホーム</button>
+    <button class="tab" onclick="show('find')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke-width="1.8"/><path d="m21 21-4.35-4.35" stroke-width="1.8" stroke-linecap="round"/></svg>さがす</button>
+    <button class="tab on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke-width="1.8"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" stroke-width="1.8" stroke-linecap="round"/></svg>マイページ</button>
+  </nav>
+</section>
+
+<section id="screen-history" class="screen">
+  <div class="topbar">
+    <button class="iconbtn" onclick="show('mypage')" aria-label="戻る">‹</button>
+    <div class="title">相談履歴</div>
+    <div style="width:42px"></div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="history-row">
+        <div class="history-top"><div class="history-name">あいり</div><div class="history-date">今日</div></div>
+        <div class="history-text">復縁について相談中です。現在もメッセージを続けられます。</div>
+      </div>
+      <div class="history-row">
+        <div class="history-top"><div class="history-name">ゆい</div><div class="history-date">9月12日</div></div>
+        <div class="history-text">恋愛で不安になりやすいときの考え方について相談しました。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section id="screen-edit-profile" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('mypage')" aria-label="戻る">‹</button><div class="title">プロフィール編集</div><div style="width:42px"></div></div>
+  <div class="content">
+    <div class="card form-card reveal-item">
+      <button id="user-profile-photo-button" class="avatar profile-edit-avatar avatar-photo-button" type="button" onclick="openPhotoSheet('user')" aria-label="プロフィール画像を変更">
+        <span class="avatar-initial">も</span>
+        <span class="avatar-camera" aria-hidden="true">⌁</span>
+      </button>
+      <label class="field-label">ニックネーム</label>
+      <input class="field" value="ももか" maxlength="20">
+      <label class="field-label">年代</label>
+      <select class="field"><option>20代</option><option>30代</option><option>40代</option><option>50代以上</option></select>
+      <label class="field-label">相談したいこと</label>
+      <textarea class="field textarea" placeholder="任意で入力">復縁・片思い</textarea>
+      <button class="primary" onclick="show('mypage')">保存する</button>
+    </div>
+  </div>
+</section>
+
+<section id="screen-support" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('mypage')" aria-label="戻る">‹</button><div class="title">お問い合わせ</div><div style="width:42px"></div></div>
+  <div class="content">
+    <div class="card reveal-item">
+      <div class="support-item"><b>よくある質問</b><span>›</span></div>
+      <div class="support-item"><b>決済について</b><span>›</span></div>
+      <div class="support-item"><b>相談中のトラブル</b><span>›</span></div>
+    </div>
+    <div class="card form-card reveal-item" style="margin-top:14px">
+      <label class="field-label">お問い合わせ内容</label>
+      <textarea id="support-text" class="field textarea tall" placeholder="内容を入力してください"></textarea>
+      <button class="primary" onclick="submitSupport()">送信する</button>
+      <div id="support-status" class="form-status" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<section id="screen-settings" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('mypage')" aria-label="戻る">‹</button><div class="title">設定</div><div style="width:42px"></div></div>
+  <div class="content">
+    <div class="menu reveal-item">
+      <button class="menu-row" onclick="show('terms')"><span class="menu-icon">📄</span><span class="grow">利用規約</span><span>›</span></button>
+      <button class="menu-row" onclick="show('privacy')"><span class="menu-icon">🔒</span><span class="grow">プライバシーポリシー</span><span>›</span></button>
+      <button class="menu-row" onclick="show('billing')"><span class="menu-icon">🧾</span><span class="grow">支払い履歴</span><span>›</span></button>
+      <button class="menu-row" onclick="show('connections')"><span class="menu-icon">🔗</span><span class="grow">ログイン方法・連携</span><span>›</span></button>
+      <button class="menu-row" onclick="show('blocked')"><span class="menu-icon">⊘</span><span class="grow">ブロック中の相談員</span><span>›</span></button>
+      <button class="menu-row" onclick="show('safety-guide')"><span class="menu-icon">🛟</span><span class="grow">安心・安全ガイド</span><span>›</span></button>
+      <button class="menu-row" onclick="show('refund-policy')"><span class="menu-icon">↩</span><span class="grow">料金・キャンセル・返金</span><span>›</span></button>
+      <button class="menu-row" onclick="show('operator-info')"><span class="menu-icon">ⓘ</span><span class="grow">運営情報</span><span>›</span></button>
+      <div class="setting-control-row"><span class="menu-icon">🔔</span><label class="grow" for="notification-switch">通知</label><input id="notification-switch" class="native-switch" type="checkbox" role="switch"></div>
+      <div class="setting-control-row compact"><span class="menu-icon">⏱</span><label class="grow" for="one-minute-alert">相談終了1分前に知らせる</label><input id="one-minute-alert" class="native-check" type="checkbox" checked></div>
+      <button class="menu-row" onclick="show('auth')"><span class="menu-icon">↪</span><span class="grow">ログアウト</span><span>›</span></button>
+      <button class="menu-row danger" onclick="openSheet('delete-sheet')"><span class="menu-icon">⚠</span><span class="grow">アカウントを削除</span><span>›</span></button>
+    </div>
+  </div>
+</section>
+
+<section id="screen-terms" class="screen legal-screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('settings')" aria-label="戻る">‹</button><div class="title">利用規約</div><div style="width:42px"></div></div>
+  <div class="content legal-scroll" data-scrollspy="terms">
+    <div class="legal-layout">
+      <nav class="legal-rail" aria-label="On this page">
+        <a href="#terms-service" aria-current="location">サービス</a>
+        <a href="#terms-payment">料金</a>
+        <a href="#terms-safety">禁止事項</a>
+        <a href="#terms-account">退会</a>
+      </nav>
+      <article class="card legal-card legal-article reveal-item">
+        <section id="terms-service" class="spy-section"><h3>サービスについて</h3><p>KoiRelaは、恋愛に関する悩みを相談員と1対1で話せる相談サービスです。正式公開時には提供内容と利用条件を確定した規約へ差し替えます。</p></section>
+        <section id="terms-payment" class="spy-section"><h3>料金と支払い</h3><p>現在の想定料金は15分100円です。相談開始の成立時点、延長、キャンセル、返金の条件を正式規約に明記します。</p></section>
+        <section id="terms-safety" class="spy-section"><h3>禁止事項と安全</h3><p>嫌がらせ、個人情報の要求、なりすまし等を禁止します。相談員によるLINE・Instagram・X・Discord・Telegram等への誘導、電話番号・メールアドレス・URL・QRコードを使った外部連絡先交換は禁止し、1回目は送信等をブロックして警告、2回目は相談員アカウントを停止する設計です。誤検知時は運営確認・異議申立てを行えるようにします。</p></section>
+        <section id="terms-account" class="spy-section"><h3>退会とアカウント削除</h3><p>ユーザーは設定からアカウント削除を申請できます。削除対象・保存が必要な情報・保存期間は正式公開前に確定します。</p></section>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="screen-privacy" class="screen legal-screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('settings')" aria-label="戻る">‹</button><div class="title">プライバシー</div><div style="width:42px"></div></div>
+  <div class="content legal-scroll" data-scrollspy="privacy">
+    <div class="legal-layout">
+      <nav class="legal-rail" aria-label="On this page">
+        <a href="#privacy-data" aria-current="location">取得情報</a>
+        <a href="#privacy-purpose">利用目的</a>
+        <a href="#privacy-storage">保存</a>
+        <a href="#privacy-delete">削除</a>
+      </nav>
+      <article class="card legal-card legal-article reveal-item">
+        <section id="privacy-data" class="spy-section"><h3>取得する情報</h3><p>アカウント情報、相談内容、決済に関する情報、利用ログ等を取り扱う想定です。</p></section>
+        <section id="privacy-purpose" class="spy-section"><h3>利用目的</h3><p>相談サービスの提供、安全対策、問い合わせ対応、決済、品質改善など必要な目的に限定して利用する設計にします。</p></section>
+        <section id="privacy-storage" class="spy-section"><h3>保存と保護</h3><p>違反検知・通報時は、確認に必要な該当メッセージと直前の会話のみを運営ログへ保存する設計です。デモでは保存期間を90日とし、本番では法務・運用方針を確認したうえで正式な保存期間、アクセス権限、暗号化、削除条件を明示します。</p></section>
+        <section id="privacy-delete" class="spy-section"><h3>削除について</h3><p>ユーザーは設定からアカウント削除を申請できます。法令上保存が必要な情報を除き、削除方針に従って処理します。</p></section>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="screen-counselor" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('mypage')" aria-label="戻る">‹</button><div class="title">相談員モード</div><div style="width:42px"></div></div>
+  <div class="content">
+    <div class="counselor-hero reveal-item">
+      <div><small>受付ステータス</small><h2 id="counselor-status">受付中</h2></div>
+      <button id="counselor-toggle" class="availability on" onclick="toggleCounselor()">ON</button>
+    </div>
+    <div class="quick-grid reveal-item">
+      <div class="quick-card"><div class="quick-icon">💬</div><div class="quick-title">今日の相談</div><div class="big-num">3件</div></div>
+      <div class="quick-card"><div class="quick-icon">¥</div><div class="quick-title">今月の報酬</div><div class="big-num">12,400円</div></div>
+    </div>
+    <div id="counselor-policy-card" class="policy-mini-card reveal-item">
+      <div><small>外部連絡先への誘導</small><b id="counselor-strike-label">違反 0 / 2</b></div>
+      <span id="counselor-policy-state">2回目で相談員アカウント停止</span>
+    </div>
+    <div class="section reveal-item" style="margin-top:16px">
+      <div class="section-head"><div class="section-title">新しい相談リクエスト</div></div>
+      <div class="card request-card">
+        <div><b>匿名ユーザー</b><div class="muted request-copy">片思いについて相談したいです</div></div>
+        <button class="small-primary" onclick="startCounselorChat()">受ける</button>
+      </div>
+    </div>
+    <div class="menu reveal-item">
+      <button class="menu-row" onclick="show('counselor-register')"><span class="menu-icon">＋</span><span class="grow">相談員登録・審査情報</span><span>›</span></button>
+      <button class="menu-row" onclick="show('counselor-profile')"><span class="menu-icon">👤</span><span class="grow">相談員プロフィール</span><span>›</span></button>
+      <button class="menu-row" onclick="show('payout')"><span class="menu-icon">💰</span><span class="grow">報酬・振込先</span><span>›</span></button>
+      <button class="menu-row" onclick="show('counselor-history')"><span class="menu-icon">🕘</span><span class="grow">過去の相談</span><span>›</span></button>
+    </div>
+  </div>
+</section>
+
+
+
+<section id="screen-counselor-suspended" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('mypage')" aria-label="戻る">‹</button><div class="title">相談員アカウント</div><div style="width:42px"></div></div>
+  <div class="content suspension-screen-content">
+    <div class="suspension-hero reveal-item"><div class="suspension-mark">×</div><small>相談員ステータス</small><h2>アカウント停止中</h2><p>外部連絡先・外部SNSへの誘導が2回確認されたため、新しい相談の受付を停止しています。</p></div>
+    <div class="card reveal-item">
+      <div class="suspension-row"><span>違反回数</span><b id="suspension-strikes">2 / 2</b></div>
+      <div class="suspension-row"><span>検索表示</span><b>非表示</b></div>
+      <div class="suspension-row"><span>報酬</span><b>運営確認まで一時保留</b></div>
+      <div class="suspension-row"><span>再登録</span><b>本人確認情報で照合</b></div>
+    </div>
+    <div class="card reveal-item">
+      <h3>異議申し立て</h3>
+      <p class="muted" style="font-size:11px;line-height:1.8">誤検知だと思われる場合は運営へお問い合わせください。運営は該当メッセージと必要な前後ログを確認します。</p>
+      <button class="primary" onclick="show('support')">運営へ問い合わせる</button>
+    </div>
+  </div>
+</section>
+
+<section id="screen-waiting" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="cancelWaiting()" aria-label="戻る">‹</button><div class="title">相談の準備中</div><div style="width:42px"></div></div>
+  <div class="content waiting-content">
+    <div class="waiting-orbit" aria-hidden="true"><div class="waiting-heart">♥</div><span></span><span></span><span></span></div>
+    <h2>相談員を呼び出しています</h2>
+    <p>まもなく15分相談が始まります。<br>開始するまで料金は確定しません。</p>
+    <div class="waiting-card">
+      <span class="avatar">あ<span class="dot"></span></span>
+      <div><b>あいり</b><div class="muted">オンライン・応答待ち</div></div>
+    </div>
+    <button class="outline wide-outline" onclick="openSheet('waiting-help-sheet')">応答がない場合</button>
+    <button class="text-btn danger" onclick="cancelWaiting()">キャンセル</button>
+  </div>
+</section>
+
+<section id="screen-billing" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('settings')" aria-label="戻る">‹</button><div class="title">支払い履歴</div><div style="width:42px"></div></div>
+  <div class="content">
+    <div class="summary-card reveal-item"><small>今月の利用額</small><strong>300円</strong><span>3回の相談</span></div>
+    <div class="card reveal-item">
+      <button class="bill-row bill-button" type="button" onclick="show('receipt')"><div><b>あいり・15分相談</b><small>2026/09/20 06:30</small></div><strong>100円 ›</strong></button>
+      <div class="bill-row"><div><b>ゆい・15分相談</b><small>2026/09/18 22:10</small></div><strong>100円</strong></div>
+      <div class="bill-row"><div><b>けんた・15分相談</b><small>2026/09/12 20:42</small></div><strong>100円</strong></div>
+    </div>
+    <button class="text-btn" onclick="show('refund-policy')">返金・キャンセルについて</button>
+  </div>
+</section>
+
+<section id="screen-blocked" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('settings')" aria-label="戻る">‹</button><div class="title">ブロック中</div><div style="width:42px"></div></div>
+  <div class="content">
+    <div id="blocked-list" class="card reveal-item">
+      <div class="blocked-empty"><div class="empty-icon">♡</div><b>ブロック中の相談員はいません</b><p>ブロックした相談員はここから解除できます。</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="screen-safety-guide" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('settings')" aria-label="戻る">‹</button><div class="title">安心・安全ガイド</div><div style="width:42px"></div></div>
+  <div class="content"><div class="card legal-card reveal-item">
+    <h3>安心して相談するために</h3>
+    <p>住所、電話番号、勤務先、SNSアカウント、決済情報など、個人を特定できる情報は相手に送らないでください。</p>
+    <p>不快な発言や勧誘、外部サービスへの誘導があった場合は、チャット右上のメニューから通報・ブロックできます。相談員による外部連絡先への誘導は1回目で警告、2回目で相談員アカウント停止となる設計です。</p>
+    <p>生命や身体に関わる緊急事態、医療・法律など専門的な判断が必要な内容については、適切な専門機関を利用してください。</p>
+  </div></div>
+</section>
+
+<section id="screen-refund-policy" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('settings')" aria-label="戻る">‹</button><div class="title">料金・返金</div><div style="width:42px"></div></div>
+  <div class="content"><div class="card legal-card reveal-item">
+    <h3>15分相談 100円</h3>
+    <p>相談開始が成立した時点で料金が確定する想定です。相談員が応答せず相談が開始できなかった場合は、請求しない、または返金する設計にします。</p>
+    <p>通信障害やサービス側の不具合など、返金対象となる条件は公開前に正式なルールへ差し替えます。</p>
+  </div></div>
+</section>
+
+<section id="screen-operator-info" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('settings')" aria-label="戻る">‹</button><div class="title">運営情報</div><div style="width:42px"></div></div>
+  <div class="content"><div class="card legal-card reveal-item">
+    <h3>KoiRela 運営情報</h3>
+    <p>公開前に、運営者名、所在地、連絡先、問い合わせ窓口、必要に応じた販売事業者情報を正式な内容へ差し替えます。</p>
+    <button class="outline wide-outline" onclick="show('support')">お問い合わせ</button>
+  </div></div>
+</section>
+
+<section id="screen-counselor-register" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('counselor')" aria-label="戻る">‹</button><div class="title">相談員登録</div><div style="width:42px"></div></div>
+  <div class="content">
+    <div class="step-head reveal-item"><span id="cr-step-label">STEP 1 / 4</span><div class="step-bar"><i id="cr-step-bar"></i></div></div>
+    <div class="card form-card reveal-item counselor-step on" data-step="1">
+      <h3>どちらで活動しますか？</h3>
+      <label class="choice-card selected">
+        <input type="radio" name="counselor-type" value="経験者" checked>
+        <span><b>経験者</b><small>自分の恋愛経験を活かして相談に乗る</small></span>
+      </label>
+      <label class="choice-card">
+        <input type="radio" name="counselor-type" value="資格者">
+        <span><b>資格者</b><small>保有資格・専門知識を活かして相談に乗る</small></span>
+      </label>
+      <button class="primary" onclick="nextCounselorStep()">次へ</button>
+    </div>
+    <div class="card form-card counselor-step" data-step="2">
+      <h3>本人情報</h3>
+      <label class="field-label">氏名</label><input class="field" placeholder="運営確認用・公開されません">
+      <label class="field-label" for="birthdate">生年月日</label>
+      <div class="date-picker">
+        <input id="birthdate" class="field" type="text" inputmode="numeric" autocomplete="bday" placeholder="yyyy-mm-dd" readonly aria-haspopup="dialog" aria-expanded="false">
+        <button id="birthdate-button" class="date-button" type="button" aria-label="生年月日のカレンダーを開く">▦</button>
+        <div id="calendar-popover" class="calendar-popover" role="dialog" aria-label="生年月日を選択" hidden>
+          <div class="calendar-head">
+            <button id="cal-prev" type="button" aria-label="前の月">‹</button>
+            <strong id="cal-title"></strong>
+            <button id="cal-next" type="button" aria-label="次の月">›</button>
+          </div>
+          <div class="calendar-weekdays" aria-hidden="true"><span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span></div>
+          <div id="calendar-grid" class="calendar-grid" role="grid" aria-label="日付"></div>
+        </div>
+      </div>
+      <label class="field-label">本人確認書類</label><button class="upload-box" onclick="demoUpload(this)">＋ 本人確認書類を選択</button>
+      <p class="identity-note">本人確認情報は、停止済み相談員による別アカウントでの再登録防止にも利用する想定です。</p>
+      <button class="primary" onclick="nextCounselorStep()">次へ</button>
+    </div>
+    <div class="card form-card counselor-step" data-step="3">
+      <h3>公開プロフィール</h3>
+      <label class="field-label">プロフィール画像</label>
+      <button id="counselor-register-photo" class="photo-register-row" type="button" onclick="openPhotoSheet('counselor-register')">
+        <span class="avatar"><span class="avatar-initial">あ</span></span>
+        <span class="photo-register-copy"><b>画像を登録</b><small>相談相手に表示される画像です</small></span>
+        <span aria-hidden="true">›</span>
+      </button>
+      <div class="profile-policy-note">公開プロフィールにLINE・Instagram等のID、電話番号、メール、URL、QRコードは掲載できません。</div>
+      <label class="field-label">表示名</label><input id="cr-display-name" class="field" value="あいり">
+      <label class="field-label" for="cr-gender">性別（任意）</label>
+      <select id="cr-gender" class="field">
+        <option value="">回答しない</option>
+        <option value="female" selected>女性</option>
+        <option value="male">男性</option>
+        <option value="other">その他</option>
+      </select>
+      <p class="gender-help">「さがす」の性別絞り込みに使用します。一覧には性別バッジを表示しません。</p>
+      <label class="field-label">自己紹介</label><textarea id="cr-bio" class="field textarea tall">復縁や片思いの相談をよく受けています。まとまっていなくても、そのまま話してください。</textarea>
+      <label class="field-label">資格証明（資格者のみ）</label><button class="upload-box" onclick="demoUpload(this)">＋ 資格証を選択</button>
+      <button class="primary" onclick="nextCounselorStep()">次へ</button>
+    </div>
+    <div class="card form-card counselor-step" data-step="4">
+      <div class="sheet-icon">✓</div>
+      <h3 style="text-align:center">内容を確認して申請</h3>
+      <div class="review-box"><span>活動タイプ</span><b id="cr-type-review">経験者</b><span>性別</span><b id="cr-gender-review">女性</b><span>料金</span><b>15分 100円</b><span>審査</span><b>運営確認後に開始</b></div>
+      <button class="primary" onclick="submitCounselor()">審査を申請する</button>
+    </div>
+    <div id="counselor-pending" class="card pending-card" hidden>
+      <div class="pending-orb">♡</div><h3>審査中です</h3><p>申請内容を確認しています。結果はアプリ内でお知らせします。</p><button class="outline wide-outline" onclick="show('counselor')">相談員モードへ戻る</button>
+    </div>
+  </div>
+</section>
+
+<section id="screen-counselor-profile" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('counselor')" aria-label="戻る">‹</button><div class="title">相談員プロフィール</div><div style="width:42px"></div></div>
+  <div class="content">
+    <div class="card form-card reveal-item">
+      <button id="counselor-profile-photo-button" class="avatar profile-edit-avatar avatar-photo-button" type="button" onclick="openPhotoSheet('counselor')" aria-label="相談員プロフィール画像を変更">
+        <span class="avatar-initial">あ</span><span class="dot"></span>
+        <span class="avatar-camera" aria-hidden="true">⌁</span>
+      </button>
+      <div class="profile-policy-note">外部SNS・連絡先・URL・QRコードの掲載は禁止されています。2回目の違反で相談員アカウントが停止されます。</div>
+      <label class="field-label">表示名</label><input id="counselor-display-name" class="field" value="あいり">
+      <label class="field-label">肩書き</label><select class="field"><option>経験者</option><option>資格者</option></select>
+      <label class="field-label" for="counselor-gender">性別（任意）</label>
+      <select id="counselor-gender" class="field">
+        <option value="">回答しない</option>
+        <option value="female" selected>女性</option>
+        <option value="male">男性</option>
+        <option value="other">その他</option>
+      </select>
+      <p class="gender-help">検索の絞り込みに使用します。一覧には性別バッジを表示しません。</p>
+      <label class="field-label">得意な相談</label><input id="counselor-specialty" class="field" value="復縁・片思い">
+      <label class="field-label">自己紹介</label><textarea id="counselor-bio" class="field textarea tall">まとまっていなくても、そのまま話してください。</textarea>
+      <button class="primary" onclick="saveCounselorProfile()">保存する</button>
+      <div id="cp-status" class="form-status" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<section id="screen-payout" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('counselor')" aria-label="戻る">‹</button><div class="title">報酬・振込先</div><div style="width:42px"></div></div>
+  <div class="content">
+    <div id="payout-summary" class="summary-card reveal-item"><small id="payout-label">振込予定額</small><strong>12,400円</strong><span id="payout-note">次回振込予定：10月末</span></div>
+    <div class="card form-card reveal-item">
+      <label class="field-label">銀行名</label><input class="field" value="○○銀行">
+      <label class="field-label">支店名</label><input class="field" value="五反田支店">
+      <label class="field-label">口座番号</label><input class="field" value="••••1234">
+      <label class="field-label">口座名義</label><input class="field" value="イケダ コウシロウ">
+      <button id="payout-save-button" class="primary" onclick="savePayout()">振込先を保存</button>
+      <div id="payout-status" class="form-status" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<section id="screen-counselor-history" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('counselor')" aria-label="戻る">‹</button><div class="title">過去の相談</div><div style="width:42px"></div></div>
+  <div class="content"><div class="card reveal-item">
+    <div class="history-row"><div class="history-top"><div class="history-name">匿名ユーザー</div><div class="history-date">9/20</div></div><div class="history-text">15分相談・完了　★★★★★</div></div>
+    <div class="history-row"><div class="history-top"><div class="history-name">匿名ユーザー</div><div class="history-date">9/19</div></div><div class="history-text">15分相談・完了　★★★★☆</div></div>
+    <div class="history-row"><div class="history-top"><div class="history-name">匿名ユーザー</div><div class="history-date">9/18</div></div><div class="history-text">15分相談・完了　★★★★★</div></div>
+  </div></div>
+</section>
+
+
+<section id="screen-connections" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('settings')" aria-label="戻る">‹</button><div class="title">ログイン方法・連携</div><div style="width:42px"></div></div>
+  <div class="content">
+    <div class="card reveal-item">
+      <p class="settings-lead">複数のログイン方法を連携しておくと、機種変更時も安心です。</p>
+      <div class="connection-row"><span class="connection-brand google-mark">G</span><div class="grow"><b>Google</b><small>連携済み</small></div><span class="connected-badge">連携済み</span></div>
+      <div class="connection-row"><span class="connection-brand"></span><div class="grow"><b>Apple</b><small>未連携</small></div><button class="outline" type="button" onclick="connectProvider(this,'Apple')">連携する</button></div>
+      <div class="connection-row"><span class="connection-brand line-brand">LINE</span><div class="grow"><b>LINE</b><small>未連携</small></div><button class="outline" type="button" onclick="connectProvider(this,'LINE')">連携する</button></div>
+    </div>
+    <p class="helper-copy">相談相手には、ログインに使ったサービスやメールアドレスは表示されません。</p>
+  </div>
+</section>
+
+<section id="screen-receipt" class="screen">
+  <div class="topbar"><button class="iconbtn" onclick="show('billing')" aria-label="戻る">‹</button><div class="title">利用明細</div><div style="width:42px"></div></div>
+  <div class="content">
+    <div class="receipt-card reveal-item">
+      <div class="receipt-check">✓</div>
+      <h2>お支払い済み</h2>
+      <strong class="receipt-amount">100円</strong>
+      <dl class="receipt-list">
+        <div><dt>内容</dt><dd>あいり・15分相談</dd></div>
+        <div><dt>利用日時</dt><dd>2026/09/20 06:30</dd></div>
+        <div><dt>支払い方法</dt><dd>Apple Pay</dd></div>
+        <div><dt>ステータス</dt><dd>完了</dd></div>
+        <div><dt>明細ID</dt><dd>KR-0920-001</dd></div>
+      </dl>
+      <button class="outline wide-outline" type="button" onclick="show('support')">この支払いについて問い合わせる</button>
+    </div>
+  </div>
+</section>
+
+<section id="screen-maintenance" class="screen system-screen">
+  <div class="system-content">
+    <div class="system-orbit"><span>♡</span></div>
+    <h1>ただいまメンテナンス中です</h1>
+    <p>より使いやすくするために更新しています。<br>しばらくしてからもう一度お試しください。</p>
+    <button class="primary" type="button" onclick="show('home')">再読み込み</button>
+    <button class="text-btn" type="button" onclick="show('support')">お問い合わせ</button>
+  </div>
+</section>
+
+<section id="screen-update-required" class="screen system-screen">
+  <div class="system-content">
+    <div class="update-icon">↻</div>
+    <h1>新しいバージョンがあります</h1>
+    <p>安全に相談を続けるため、KoiRelaを最新版にアップデートしてください。</p>
+    <button class="primary" type="button" onclick="showToast('App Storeを開く動作はアプリ版で接続します')">アップデートする</button>
+  </div>
+</section>
+
+<section id="screen-chat" class="screen chat">
+  <div class="chat-head">
+    <button id="chat-back-button" onclick="show('home')" aria-label="戻る" style="width:40px;height:40px;color:#fff;font-size:28px">‹</button>
+    <span id="chat-peer-avatar" class="avatar">あ<span class="dot" style="border-color:#574E66"></span></span>
+    <div class="chat-head-main"><div id="chat-peer-name" class="chat-head-name">あいり</div><div id="chat-connection" class="chat-head-sub">オンライン</div></div>
+    <div id="chat-timer" class="timer-pill" aria-label="残り時間">15:00</div>
+    <button class="chat-more" onclick="openSheet('safety-sheet')" aria-label="その他">•••</button>
+  </div>
+  <div class="chat-sheet">
+    <div id="msgs" class="msgs">
+      <div class="sys">匿名で相談を開始しました</div>
+      <div class="msg-l">はじめまして。今日はどんなことで悩んでいますか？</div>
+      <div id="typing-indicator" class="typing-indicator" hidden><span></span><span></span><span></span><em>入力中…</em></div>
+    </div>
+    <div class="composer">
+      <div class="composer-row">
+        <input id="chat-input" type="text" placeholder="メッセージを書く…" enterkeyhint="send" autocomplete="off">
+        <button id="send-btn" class="send">→</button>
+      </div>
+      <div id="chat-fee-label" class="fee">15分相談・100円</div>
+    </div>
+  </div>
+</section>
+
+
+<div id="sheet-backdrop" class="sheet-backdrop" onclick="closeSheet()"></div>
+
+<div id="consult-sheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-label="相談開始確認">
+  <div class="sheet-handle"></div>
+  <ol class="checkout-steps" aria-label="相談開始の手順">
+    <li data-checkout-step="0"><span class="step-circle">1</span><span>確認</span></li>
+    <li data-checkout-step="1"><span class="step-circle">2</span><span>支払い</span></li>
+    <li data-checkout-step="2"><span class="step-circle">3</span><span>開始</span></li>
+  </ol>
+  <div class="sheet-icon">♥</div>
+  <h3>15分相談をはじめますか？</h3>
+  <p>相談相手：<b id="sheet-counselor-name">あいり</b></p>
+  <div class="price-panel"><span>相談時間</span><b>15分</b><span>料金</span><b>100円</b></div>
+  <p class="sheet-note">15分経過後は自動で終了します。延長は終了時に選べます。</p>
+  <button class="primary" onclick="openSheet('payment-sheet')">支払い方法を確認</button>
+  <button class="sheet-cancel" onclick="closeSheet()">キャンセル</button>
 </div>
 
-<script>
-  function show(name) {
-    document.querySelectorAll('.screen').forEach(function (s) { s.classList.remove('active'); });
-    document.getElementById('screen-' + name).classList.add('active');
-    if (name === 'chat' && !chatStarted) startChat();
-  }
+<div id="payment-sheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-label="支払い方法">
+  <div class="sheet-handle"></div>
+  <ol class="checkout-steps" aria-label="相談開始の手順">
+    <li data-checkout-step="0"><span class="step-circle">1</span><span>確認</span></li>
+    <li data-checkout-step="1"><span class="step-circle">2</span><span>支払い</span></li>
+    <li data-checkout-step="2"><span class="step-circle">3</span><span>開始</span></li>
+  </ol>
+  <h3>支払い方法</h3>
+  <fieldset class="pay-fieldset">
+    <legend class="sr-only">支払い方法を選択</legend>
+    <label class="pay-option selected"><input type="radio" name="payment-method" value="apple-pay" checked><span class="pay-brand">Pay</span><span class="grow">Apple Pay</span><span class="radio-check">✓</span></label>
+    <label class="pay-option"><input type="radio" name="payment-method" value="card"><span class="pay-brand">••••</span><span class="grow">カードを追加</span><span class="radio-check">○</span></label>
+  </fieldset>
+  <div class="payment-total"><span>今回のお支払い</span><b>100円</b></div>
+  <button class="primary" onclick="startPaidConsult()">100円で相談を開始</button>
+  <button class="sheet-cancel" onclick="openSheet('payment-error-sheet')">支払いに問題がある場合（デモ）</button>
+  <button class="sheet-cancel" onclick="closeSheet()">あとで</button>
+</div>
 
-  // Find: track filter
-  document.querySelectorAll('.chip').forEach(function (chip) {
-    chip.addEventListener('click', function () {
-      document.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('on'); });
-      chip.classList.add('on');
-      var track = chip.dataset.track;
-      document.querySelectorAll('.t-card').forEach(function (card) {
-        card.style.display = (track === 'all' || card.dataset.track === track) ? '' : 'none';
-      });
+<div id="safety-sheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-label="安全メニュー">
+  <div class="sheet-handle"></div>
+  <h3>この相談について</h3>
+  <button class="sheet-menu" onclick="openSheet('report-sheet')">⚑ この相談を通報する</button>
+  <button class="sheet-menu danger" onclick="markBlocked()">⊘ この相談員をブロック</button>
+  <button class="sheet-cancel" onclick="closeSheet()">閉じる</button>
+</div>
+
+<div id="end-sheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-label="相談終了">
+  <div class="sheet-handle"></div>
+  <div class="sheet-icon">♡</div>
+  <h3>15分の相談が終了しました</h3>
+  <p>今回の相談はいかがでしたか？</p>
+  <div class="stars" aria-label="評価">
+    <button onclick="rate(1)">★</button><button onclick="rate(2)">★</button><button onclick="rate(3)">★</button><button onclick="rate(4)">★</button><button onclick="rate(5)">★</button>
+  </div>
+  <button class="primary" onclick="extendConsult()">もう15分延長する・100円</button>
+  <button class="sheet-cancel danger" onclick="reportExternalFromEnd()">外部サービスに誘導された</button>
+  <button class="sheet-cancel" onclick="finishConsult()">終了してホームへ</button>
+</div>
+
+
+<div id="profile-setup-sheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-label="初回プロフィール設定">
+  <div class="sheet-handle"></div>
+  <div class="sheet-icon">♥</div>
+  <h3>あと少しで完了です</h3>
+  <label class="field-label">ニックネーム</label><input id="setup-name" class="field" value="ももか" maxlength="20">
+  <label class="field-label">年代</label><select id="setup-age" class="field"><option>20代</option><option>30代</option><option>40代</option><option>50代以上</option></select>
+  <p class="sheet-note">相談相手には本名やログイン方法は表示されません。</p>
+  <button class="primary" onclick="completeRegistration()">登録してはじめる</button>
+</div>
+
+<div id="waiting-help-sheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-label="応答がない場合">
+  <div class="sheet-handle"></div><h3>相談員が応答しない場合</h3>
+  <p>一定時間内に相談が開始しなければキャンセルできます。相談が成立していない場合は料金を確定しない想定です。</p>
+  <button class="primary" onclick="retryWaiting()">もう少し待つ</button>
+  <button class="sheet-cancel danger" onclick="cancelWaiting()">キャンセルする</button>
+</div>
+
+<div id="payment-error-sheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-label="支払いエラー">
+  <div class="sheet-handle"></div><div class="sheet-icon danger-icon">!</div><h3>支払いを完了できませんでした</h3>
+  <p>支払い方法を確認して、もう一度お試しください。重複して請求されないよう相談は開始されていません。</p>
+  <button class="primary" onclick="openSheet('payment-sheet')">支払い方法を確認</button>
+  <button class="sheet-cancel" onclick="show('refund-policy')">返金・請求について</button>
+</div>
+
+<div id="report-sheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-label="通報理由">
+  <div class="sheet-handle"></div><h3>通報理由を選んでください</h3>
+  <button class="reason-option" onclick="selectReportReason(this)">嫌がらせ・攻撃的な発言</button>
+  <button class="reason-option" onclick="selectReportReason(this)">不適切・性的な内容</button>
+  <button class="reason-option" onclick="selectReportReason(this)">外部サービスへの勧誘</button>
+  <button class="reason-option" onclick="selectReportReason(this)">個人情報を求められた</button>
+  <button class="reason-option" onclick="selectReportReason(this)">その他</button>
+  <button id="report-submit" class="primary" onclick="submitReport()" disabled>この内容で通報</button>
+  <button class="sheet-cancel" onclick="closeSheet()">キャンセル</button>
+</div>
+
+<div id="report-done-sheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-label="通報完了">
+  <div class="sheet-handle"></div><div class="sheet-icon">✓</div><h3>通報を受け付けました</h3>
+  <p>必要に応じて運営が内容を確認します。相手をブロックすることもできます。</p>
+  <button class="primary" onclick="blockFromReport()">この相談員をブロック</button>
+  <button class="sheet-cancel" onclick="closeSheet()">閉じる</button>
+</div>
+
+
+<div id="notification-sheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-labelledby="notification-title">
+  <div class="sheet-handle"></div>
+  <div class="sheet-icon">🔔</div>
+  <h3 id="notification-title">大事なタイミングだけお知らせ</h3>
+  <div class="notification-points">
+    <div><span>💬</span><p><b>相談員からの返信</b><small>アプリを閉じていても気づけます</small></p></div>
+    <div><span>⏱</span><p><b>相談終了1分前</b><small>残り時間を見逃しません</small></p></div>
+    <div><span>♡</span><p><b>受付開始</b><small>相談したい相手が受付を始めた時</small></p></div>
+  </div>
+  <button class="primary" type="button" onclick="allowNotifications()">通知を許可する</button>
+  <button class="sheet-cancel" type="button" onclick="declineNotifications()">今はしない</button>
+</div>
+
+<div id="onboarding-sheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-labelledby="onboarding-title">
+  <div class="sheet-handle"></div>
+  <h3 id="onboarding-title">KoiRelaはかんたん3ステップ</h3>
+  <ol class="mini-onboarding">
+    <li><span>1</span><div><b>相談相手を選ぶ</b><small>経験者・資格者から選べます</small></div></li>
+    <li><span>2</span><div><b>15分100円</b><small>開始前に料金を確認できます</small></div></li>
+    <li><span>3</span><div><b>匿名で話す</b><small>本名やログイン方法は相手に表示されません</small></div></li>
+  </ol>
+  <button class="primary" type="button" onclick="finishOnboarding()">使ってみる</button>
+</div>
+
+<div id="status-sheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-labelledby="status-title">
+  <div class="sheet-handle"></div>
+  <div id="status-icon" class="sheet-icon">✓</div>
+  <h3 id="status-title">完了しました</h3>
+  <p id="status-message">処理が完了しました。</p>
+  <button class="primary" type="button" onclick="closeSheet()">OK</button>
+</div>
+
+
+
+
+<div id="gender-filter-sheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-labelledby="gender-filter-title">
+  <div class="sheet-handle"></div>
+  <h3 id="gender-filter-title">相談員の性別</h3>
+  <p>希望がある場合だけ選べます。</p>
+  <fieldset class="gender-filter-options">
+    <legend class="sr-only">相談員の性別で絞り込む</legend>
+    <label class="gender-filter-option selected"><input type="radio" name="listener-gender-filter" value="all" checked><span><b>指定なし</b><small>性別を指定せず探す</small></span><i>✓</i></label>
+    <label class="gender-filter-option"><input type="radio" name="listener-gender-filter" value="female"><span><b>女性</b><small>女性の相談員を表示</small></span><i></i></label>
+    <label class="gender-filter-option"><input type="radio" name="listener-gender-filter" value="male"><span><b>男性</b><small>男性の相談員を表示</small></span><i></i></label>
+    <label class="gender-filter-option"><input type="radio" name="listener-gender-filter" value="other"><span><b>その他</b><small>その他を選択した相談員を表示</small></span><i></i></label>
+  </fieldset>
+  <button class="primary" type="button" onclick="applyGenderFilterAndClose()">この条件で絞り込む</button>
+  <button class="sheet-cancel" type="button" onclick="clearGenderFilter()">指定なしに戻す</button>
+</div>
+
+<div id="counselor-warning-sheet" class="bottom-sheet moderation-sheet" role="dialog" aria-modal="true" aria-labelledby="counselor-warning-title">
+  <div class="sheet-handle"></div>
+  <div class="sheet-icon danger-icon">!</div>
+  <h3 id="counselor-warning-title">外部サービスへの誘導はできません</h3>
+  <p id="counselor-warning-message">このメッセージは送信されませんでした。次回違反時は相談員アカウントを停止します。</p>
+  <div class="strike-meter" aria-label="違反回数 1回目">
+    <span class="on"></span><span></span>
+  </div>
+  <button class="primary" type="button" onclick="closeSheet()">入力内容を修正する</button>
+</div>
+
+<div id="counselor-suspended-sheet" class="bottom-sheet moderation-sheet" role="dialog" aria-modal="true" aria-labelledby="counselor-suspended-title">
+  <div class="sheet-handle"></div>
+  <div class="sheet-icon danger-icon">×</div>
+  <h3 id="counselor-suspended-title">相談員アカウントを停止しました</h3>
+  <p>外部連絡先・外部SNSへの誘導が2回確認されたため、新しい相談の受付を停止しました。</p>
+  <div class="suspension-note">違反内容・日時・該当メッセージは運営ログに保存されています。</div>
+  <button class="primary" type="button" onclick="closeSheet();show('counselor')">相談員モードへ戻る</button>
+  <button class="sheet-cancel" type="button" onclick="show('support')">異議申し立て・お問い合わせ</button>
+</div>
+
+<div id="photo-sheet" class="bottom-sheet photo-sheet" role="dialog" aria-modal="true" aria-labelledby="photo-sheet-title">
+  <div class="sheet-handle"></div>
+  <div class="photo-sheet-preview-wrap">
+    <div id="photo-sheet-preview" class="avatar photo-sheet-preview"><span class="avatar-initial">も</span></div>
+  </div>
+  <h3 id="photo-sheet-title">画像を変更</h3>
+  <button class="photo-action" type="button" onclick="choosePhotoFromLibrary()">
+    <span class="photo-action-icon" aria-hidden="true">▧</span>
+    <span><b>写真を選ぶ</b><small>写真ライブラリから選択</small></span>
+    <span class="photo-chevron" aria-hidden="true">›</span>
+  </button>
+  <button class="photo-action" type="button" onclick="takeProfilePhoto()">
+    <span class="photo-action-icon" aria-hidden="true">◎</span>
+    <span><b>写真を撮る</b><small>カメラで新しく撮影</small></span>
+    <span class="photo-chevron" aria-hidden="true">›</span>
+  </button>
+  <button id="photo-delete-action" class="photo-action danger" type="button" onclick="deleteProfilePhoto()">
+    <span class="photo-action-icon" aria-hidden="true">×</span>
+    <span><b>現在の画像を削除</b><small>初期アイコンに戻します</small></span>
+  </button>
+  <button class="sheet-cancel" type="button" onclick="closeSheet()">キャンセル</button>
+</div>
+
+<input id="profile-photo-library-input" class="sr-only" type="file" accept="image/*" aria-label="プロフィール写真を選ぶ">
+<input id="profile-photo-camera-input" class="sr-only" type="file" accept="image/*" capture="user" aria-label="プロフィール写真を撮る">
+
+<div id="delete-sheet" class="bottom-sheet" role="dialog" aria-modal="true" aria-label="アカウント削除">
+  <div class="sheet-handle"></div>
+  <div class="sheet-icon danger-icon">!</div>
+  <h3>アカウントを削除しますか？</h3>
+  <p class="sheet-note">相談履歴などのアカウントデータが削除対象になります。実際のサービスでは削除ポリシーに従って処理します。</p>
+  <button class="danger-btn" onclick="deleteAccountDemo()">アカウントを削除</button>
+  <button class="sheet-cancel" onclick="closeSheet()">キャンセル</button>
+</div>
+
+</div>
+<script>
+const profiles={
+  airi:{name:'あいり',initial:'あ',role:'経験者',roleClass:'exp',copy:'復縁や片思いの相談をよく受けています。まとまっていなくても、そのまま話してください。',bg:'#F9D9D5'},
+  yui:{name:'ゆい',initial:'ゆ',role:'資格者',roleClass:'pro',copy:'心理系資格を持つ相談員です。恋愛と自己肯定感、繰り返す恋のパターンの相談が得意です。',bg:'#DCD6F0'},
+  kenta:{name:'けんた',initial:'け',role:'経験者',roleClass:'exp',copy:'男性目線の意見がほしいときに。否定せず、状況を一緒に整理します。',bg:'#F6E3C5'}
+};
+function show(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('screen-'+name);
+  if(el)el.classList.add('active');
+  history.replaceState(null,'','#'+name);
+}
+function openProfile(key){
+  if(key==='airi'&&getCounselorModerationState().suspended){show('find');showToast('この相談員は現在受付を停止しています');return}
+  const p=profiles[key];
+  const av=document.getElementById('profile-avatar');
+  av.style.background=p.bg;av.innerHTML=p.initial+'<span class="dot"></span>';
+  document.getElementById('profile-name').textContent=p.name;
+  document.getElementById('profile-role').innerHTML='<span class="badge '+p.roleClass+'">'+p.role+'</span>';
+  document.getElementById('profile-copy').textContent=p.copy;
+  show('profile');
+}
+
+let activeListenerTrack='all';
+let activeListenerGender='all';
+function applyListenerFilters(){
+  const q=(document.getElementById('listener-search')?.value||'').trim().toLowerCase();
+  let visible=0;
+  document.querySelectorAll('.listener').forEach(card=>{
+    const trackOk=activeListenerTrack==='all'||card.dataset.track===activeListenerTrack;
+    const textOk=!q||card.textContent.toLowerCase().includes(q);
+    const genderOk=activeListenerGender==='all'||card.dataset.gender===activeListenerGender;
+    const moderationOk=!(card.dataset.counselorId==='demo-airi'&&getCounselorModerationState().suspended);
+    const showCard=trackOk&&textOk&&genderOk&&moderationOk;
+    card.style.display=showCard?'':'none';
+    if(showCard)visible++;
+  });
+  const empty=document.getElementById('listener-empty');
+  if(empty)empty.hidden=visible>0;
+  const clear=document.getElementById('clear-listener-search');
+  if(clear)clear.hidden=!q;
+}
+document.querySelectorAll('.chip').forEach(chip=>{
+  chip.addEventListener('click',()=>{
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+    chip.classList.add('on');
+    activeListenerTrack=chip.dataset.track;
+    applyListenerFilters();
+  });
+});
+document.querySelectorAll('input[name="listener-gender-filter"]').forEach(radio=>{
+  radio.addEventListener('change',()=>{
+    document.querySelectorAll('.gender-filter-option').forEach(label=>{
+      const input=label.querySelector('input');
+      const selected=!!input?.checked;
+      label.classList.toggle('selected',selected);
+      const mark=label.querySelector('i');if(mark)mark.textContent=selected?'✓':'';
     });
   });
-
-  // Chat demo
-  var msgs = document.getElementById('msgs');
-  var input = document.getElementById('chat-input');
-  var chatStarted = false;
-  var replyIndex = 0;
-  var replies = [
-    'そうだったんですね。話してくれてありがとうございます。もう少し詳しく聞かせてもらえますか？',
-    'その気持ち、とても自然なことだと思います。いつ頃からそう感じていますか？',
-    'うんうん、聞いています。そのとき、あなたはどう感じましたか？',
-    'ゆっくりで大丈夫ですよ。ここでは、焦らなくていいので。'
-  ];
-
-  function nowTime() {
-    var d = new Date();
-    return d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0');
-  }
-
-  function addLeft(text) {
-    var wrap = document.createElement('div');
-    wrap.className = 'msg-l';
-    wrap.innerHTML = '<span class="avatar av-pink" style="width:28px;height:28px;font-size:11px">あ</span>' +
-      '<div class="msg-l-col"><div class="bubble-l"></div><div class="msg-time"></div></div>';
-    wrap.querySelector('.bubble-l').textContent = text;
-    wrap.querySelector('.msg-time').textContent = nowTime();
-    msgs.appendChild(wrap);
-    msgs.scrollTop = msgs.scrollHeight;
-  }
-
-  function addRight(text) {
-    var wrap = document.createElement('div');
-    wrap.className = 'msg-r';
-    wrap.innerHTML = '<div class="bubble-r"></div><div class="msg-time"></div>';
-    wrap.querySelector('.bubble-r').textContent = text;
-    wrap.querySelector('.msg-time').textContent = nowTime();
-    msgs.appendChild(wrap);
-    msgs.scrollTop = msgs.scrollHeight;
-  }
-
-  function showTyping() {
-    var t = document.createElement('div');
-    t.className = 'typing';
-    t.id = 'typing';
-    t.innerHTML = '<span class="avatar av-pink" style="width:28px;height:28px;font-size:11px">あ</span>' +
-      '<div class="typing-bubble"><i></i><i></i><i></i></div>';
-    msgs.appendChild(t);
-    msgs.scrollTop = msgs.scrollHeight;
-  }
-
-  function hideTyping() {
-    var t = document.getElementById('typing');
-    if (t) t.remove();
-  }
-
-  function therapistSay(text, delay) {
-    setTimeout(showTyping, delay);
-    setTimeout(function () { hideTyping(); addLeft(text); }, delay + 1400);
-  }
-
-  function startChat() {
-    chatStarted = true;
-    document.getElementById('date-chip').textContent = '今日 ' + nowTime();
-    therapistSay('はじめまして、あいりです。ここは匿名なので、どうぞ気楽に。今日は、どんなことがありましたか？', 500);
-  }
-
-  function send() {
-    var text = input.value.trim();
-    if (!text) return;
-    addRight(text);
-    input.value = '';
-    var reply = replies[replyIndex % replies.length];
-    replyIndex++;
-    therapistSay(reply, 900);
-  }
-
-  document.getElementById('send-btn').addEventListener('click', send);
-  input.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' && !e.isComposing) send();
+});
+function syncGenderFilterUI(){
+  document.querySelectorAll('input[name="listener-gender-filter"]').forEach(radio=>radio.checked=radio.value===activeListenerGender);
+  document.querySelectorAll('.gender-filter-option').forEach(label=>{
+    const input=label.querySelector('input'),selected=!!input?.checked;
+    label.classList.toggle('selected',selected);
+    const mark=label.querySelector('i');if(mark)mark.textContent=selected?'✓':'';
   });
+  const dot=document.getElementById('listener-filter-dot');if(dot)dot.hidden=activeListenerGender==='all';
+}
+function applyGenderFilterAndClose(){
+  const selected=document.querySelector('input[name="listener-gender-filter"]:checked');
+  activeListenerGender=selected?.value||'all';
+  syncGenderFilterUI();applyListenerFilters();closeSheet();
+}
+function clearGenderFilter(){
+  activeListenerGender='all';syncGenderFilterUI();applyListenerFilters();closeSheet();
+}
+const listenerSearch=document.getElementById('listener-search');
+if(listenerSearch)listenerSearch.addEventListener('input',applyListenerFilters);
+const clearListenerSearch=document.getElementById('clear-listener-search');
+if(clearListenerSearch)clearListenerSearch.addEventListener('click',()=>{listenerSearch.value='';listenerSearch.focus();applyListenerFilters()});
+function resetListenerSearch(){
+  activeListenerTrack='all';
+  activeListenerGender='all';
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.track==='all'));
+  if(listenerSearch)listenerSearch.value='';
+  syncGenderFilterUI();
+  applyListenerFilters();
+}
 
-  // Deep link: index.html#home / #find / #chat / #mypage
-  var initial = location.hash.slice(1);
-  if (initial && document.getElementById('screen-' + initial)) show(initial);
+syncGenderFilterUI();
+const MODERATION_LOG_KEY='koirela_moderation_logs_v1';
+const COUNSELOR_STATE_KEY='koirela_counselor_state_v1';
+const COUNSELOR_IDENTITY_BLOCK_KEY='koirela_counselor_identity_block_v1';
+const MODERATION_RETENTION_DAYS=90;
+let chatActor='user';
+
+function getCounselorModerationState(){
+  try{
+    const parsed=JSON.parse(localStorage.getItem(COUNSELOR_STATE_KEY)||'null');
+    return parsed&&typeof parsed==='object'?{violations:Number(parsed.violations)||0,suspended:!!parsed.suspended}:{violations:0,suspended:false};
+  }catch(_){return {violations:0,suspended:false}}
+}
+function saveCounselorModerationState(state){
+  try{localStorage.setItem(COUNSELOR_STATE_KEY,JSON.stringify(state))}catch(_){}
+  updateCounselorModerationUI();
+}
+function pruneModerationLogs(logs){
+  const cutoff=Date.now()-MODERATION_RETENTION_DAYS*86400000;
+  return logs.filter(log=>!log.occurredAt||Number.isNaN(Date.parse(log.occurredAt))||Date.parse(log.occurredAt)>=cutoff).slice(0,100);
+}
+function getModerationLogs(){
+  try{
+    const parsed=JSON.parse(localStorage.getItem(MODERATION_LOG_KEY)||'[]');
+    const raw=Array.isArray(parsed)?parsed:[];
+    const pruned=pruneModerationLogs(raw);
+    if(pruned.length!==raw.length)localStorage.setItem(MODERATION_LOG_KEY,JSON.stringify(pruned));
+    return pruned;
+  }catch(_){return []}
+}
+function saveModerationLogs(logs){
+  try{localStorage.setItem(MODERATION_LOG_KEY,JSON.stringify(pruneModerationLogs(logs)))}catch(_){}
+}
+function getIdentityBlocklist(){
+  try{const x=JSON.parse(localStorage.getItem(COUNSELOR_IDENTITY_BLOCK_KEY)||'[]');return Array.isArray(x)?x:[]}catch(_){return []}
+}
+function setIdentityBlocked(blocked){
+  const id='demo-identity-airi';
+  let list=getIdentityBlocklist().filter(x=>x!==id);
+  if(blocked)list.push(id);
+  try{localStorage.setItem(COUNSELOR_IDENTITY_BLOCK_KEY,JSON.stringify(list))}catch(_){}
+}
+function classifyExternalContact(text){
+  const normalized=text.normalize('NFKC').toLowerCase().replace(/[\u200B-\u200D\uFEFF]/g,'');
+  const compact=normalized.replace(/[\s._\-ー−・*☆★♡♥]/g,'');
+  const safeDiscussion=/(line|ライン|らいん|instagram|インスタ|discord|ディスコード|telegram|テレグラム|twitter|ツイッター|sns)(について|とは|という会社|の会社|の使い方|が怖い|で悩)/i.test(compact);
+  const checks=[
+    {type:'URL',re:/(https?:\/\/|www\.|(?:line\.me|instagram\.com|discord\.gg|discord\.com|t\.me|telegram\.me|x\.com|twitter\.com|threads\.net))/i,target:normalized},
+    {type:'メールアドレス',re:/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i,target:normalized},
+    {type:'電話番号',re:/(?:\+?81[-\s]?)?0?\d{1,4}[-ー−\s]?\d{1,4}[-ー−\s]?\d{3,4}|\b0\d{9,10}\b/,target:normalized},
+    {type:'LINE',re:/(line|l1ne|ライン|らいん).{0,14}(id|交換|追加|連絡|友だち|友達|教え|送る|dm)|(?:id|交換|追加|連絡|dm).{0,14}(line|l1ne|ライン|らいん)/i,target:compact},
+    {type:'Instagram',re:/(instagram|insta|インスタ|いんすた).{0,14}(id|交換|dm|フォロー|連絡|教え)|(?:id|交換|dm|フォロー|連絡).{0,14}(instagram|insta|インスタ|いんすた)/i,target:compact},
+    {type:'Discord',re:/(discord|ディスコード).{0,14}(id|交換|追加|連絡|教え)|(?:id|交換|追加|連絡).{0,14}(discord|ディスコード)/i,target:compact},
+    {type:'Telegram',re:/(telegram|テレグラム).{0,14}(id|交換|追加|連絡|教え)|(?:id|交換|追加|連絡).{0,14}(telegram|テレグラム)/i,target:compact},
+    {type:'X / Twitter',re:/(twitter|ツイッター|x).{0,10}(id|交換|dm|フォロー|連絡|教え)|(?:id|交換|dm|フォロー|連絡).{0,10}(twitter|ツイッター|x)/i,target:compact},
+    {type:'外部連絡先',re:/(電話|メール|sns|外部).{0,12}(しよ|しよう|交換|移動|連絡|教え|送る|話そ|話そう)/i,target:compact}
+  ];
+  for(const check of checks){
+    if(check.re.test(check.target)){
+      if(safeDiscussion&&!/(交換|追加|id|dm|フォロー|連絡|教え|送る|https?:\/\/|www\.|@)/i.test(normalized))return null;
+      return {type:check.type};
+    }
+  }
+  return null;
+}
+function recentChatContext(){
+  return [...document.querySelectorAll('#msgs .msg-l,#msgs .msg-r')]
+    .slice(-3)
+    .map(el=>el.childNodes[0]?.textContent?.trim()||el.textContent.trim())
+    .filter(Boolean);
+}
+function registerCounselorViolation(text,match,source='chat',context=null){
+  const state=getCounselorModerationState();
+  const nextCount=Math.min(2,state.violations+1);
+  const suspended=nextCount>=2;
+  const log={
+    id:'mod_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+    counselorId:'demo-airi',
+    counselorName:'あいり',
+    occurredAt:new Date().toISOString(),
+    type:match?.type||'外部連絡先',
+    attemptedMessage:text,
+    context:Array.isArray(context)?context:recentChatContext(),
+    source,
+    strike:nextCount,
+    action:suspended?'相談員アカウント自動停止':'送信ブロック＋警告',
+    reviewed:false,
+    overturned:false
+  };
+  const logs=getModerationLogs();logs.unshift(log);saveModerationLogs(logs.slice(0,100));
+  saveCounselorModerationState({violations:nextCount,suspended});
+  if(suspended)setIdentityBlocked(true);
+  if(suspended){
+    const composer=document.querySelector('#screen-chat .composer');if(composer)composer.classList.add('is-suspended');
+    openSheet('counselor-suspended-sheet');
+  }else{
+    document.getElementById('counselor-warning-message').textContent='「'+match.type+'」にあたる外部誘導を検知しました。このメッセージは送信されませんでした。次回違反時は相談員アカウントを停止します。';
+    openSheet('counselor-warning-sheet');
+  }
+}
+function updateCounselorModerationUI(){
+  const state=getCounselorModerationState();
+  const label=document.getElementById('counselor-strike-label');
+  const card=document.getElementById('counselor-policy-card');
+  const policy=document.getElementById('counselor-policy-state');
+  if(label)label.textContent='違反 '+state.violations+' / 2';
+  if(card)card.classList.toggle('suspended',state.suspended);
+  if(policy)policy.textContent=state.suspended?'相談員アカウント停止中':'2回目で相談員アカウント停止';
+  const toggle=document.getElementById('counselor-toggle');
+  const status=document.getElementById('counselor-status');
+  if(state.suspended){
+    if(toggle){toggle.classList.remove('on');toggle.textContent='停止';toggle.disabled=true}
+    if(status)status.textContent='アカウント停止中';
+  }else if(toggle){
+    toggle.disabled=false;
+  }
+  const payout=document.getElementById('payout-summary');
+  const payoutLabel=document.getElementById('payout-label');
+  const payoutNote=document.getElementById('payout-note');
+  const payoutButton=document.getElementById('payout-save-button');
+  if(payout)payout.classList.toggle('hold',state.suspended);
+  if(payoutLabel)payoutLabel.textContent=state.suspended?'確認中の報酬':'振込予定額';
+  if(payoutNote)payoutNote.textContent=state.suspended?'アカウント停止中のため運営確認まで一時保留':'次回振込予定：10月末';
+  if(payoutButton)payoutButton.disabled=state.suspended;
+  const strikes=document.getElementById('suspension-strikes');if(strikes)strikes.textContent=state.violations+' / 2';
+  if(typeof applyListenerFilters==='function')applyListenerFilters();
+}
+function configureChatRole(role){
+  chatActor=role;
+  const back=document.getElementById('chat-back-button');
+  const avatar=document.getElementById('chat-peer-avatar');
+  const name=document.getElementById('chat-peer-name');
+  const connection=document.getElementById('chat-connection');
+  const fee=document.getElementById('chat-fee-label');
+  const composer=document.querySelector('#screen-chat .composer');
+  if(composer)composer.classList.remove('is-suspended');
+  if(role==='counselor'){
+    if(back)back.onclick=()=>show('counselor');
+    if(avatar)avatar.innerHTML='匿<span class="dot" style="border-color:#574E66"></span>';
+    if(name)name.textContent='匿名ユーザー';
+    if(connection)connection.textContent='相談中';
+    if(fee)fee.textContent='相談員モード・外部連絡先への誘導は禁止';
+    const msgs=document.getElementById('msgs');
+    if(msgs&&!document.getElementById('counselor-policy-message')){
+      const notice=document.createElement('div');notice.id='counselor-policy-message';notice.className='sys';
+      notice.textContent='相談員から外部SNS・連絡先への誘導は禁止されています';
+      msgs.insertBefore(notice,msgs.firstChild);
+    }
+  }else{
+    if(back)back.onclick=()=>show('home');
+    if(avatar)avatar.innerHTML='あ<span class="dot" style="border-color:#574E66"></span>';
+    if(name)name.textContent='あいり';
+    if(connection)connection.textContent=navigator.onLine?'オンライン':'再接続中…';
+    if(fee)fee.textContent='15分相談・100円';
+  }
+}
+function startCounselorChat(){
+  const state=getCounselorModerationState();
+  if(state.suspended){show('counselor-suspended');return}
+  configureChatRole('counselor');
+  show('chat');
+}
+updateCounselorModerationUI();
+
+function send(){
+  const input=document.getElementById('chat-input');
+  const text=input.value.trim();if(!text)return;
+  if(chatActor==='counselor'){
+    const state=getCounselorModerationState();
+    if(state.suspended){openSheet('counselor-suspended-sheet');return}
+    const externalMatch=classifyExternalContact(text);
+    if(externalMatch){registerCounselorViolation(text,externalMatch);return}
+  }
+  const msg=document.createElement('div');msg.className='msg-r';msg.textContent=text;
+  const status=document.createElement('span');status.className='msg-status';
+  msg.appendChild(status);
+  document.getElementById('msgs').insertBefore(msg,document.getElementById('typing-indicator'));
+  input.value='';
+  const msgs=document.getElementById('msgs');msgs.scrollTop=msgs.scrollHeight;
+
+  if(!navigator.onLine){
+    msg.classList.add('failed');
+    status.textContent='送信できませんでした';
+    const retry=document.createElement('button');retry.type='button';retry.className='retry-msg';retry.textContent='再送';
+    retry.addEventListener('click',()=>{
+      if(!navigator.onLine){showToast('まだオフラインです');return}
+      msg.classList.remove('failed');status.textContent='送信済み';retry.remove();simulateReply();
+    });
+    msg.appendChild(retry);
+    return;
+  }
+  status.textContent='送信済み';
+  simulateReply();
+}
+function simulateReply(){
+  const typing=document.getElementById('typing-indicator');
+  typing.hidden=false;
+  const msgs=document.getElementById('msgs');msgs.scrollTop=msgs.scrollHeight;
+  setTimeout(()=>{
+    typing.hidden=true;
+    const reply=document.createElement('div');reply.className='msg-l';
+    reply.textContent='話してくれてありがとうございます。もう少し詳しく聞かせてもらえますか？';
+    msgs.insertBefore(reply,typing);msgs.scrollTop=msgs.scrollHeight;
+  },900);
+}
+document.getElementById('send-btn').addEventListener('click',send);
+document.getElementById('chat-input').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing)send()});
+
+// Motion interactions
+let chatStarted=false;
+let chatRemaining=15*60;
+let chatInterval=null;
+
+function startChatTimer(){
+  if(chatStarted) return;
+  chatStarted=true;
+  const timer=document.getElementById('chat-timer');
+  const render=()=>{
+    const m=Math.floor(chatRemaining/60);
+    const s=String(chatRemaining%60).padStart(2,'0');
+    timer.textContent=m+':'+s;
+    timer.classList.toggle('warning',chatRemaining<=60);
+    if(chatRemaining===60)showToast('相談終了まであと1分です');
+    if(chatRemaining<=0){
+      clearInterval(chatInterval);
+      timer.textContent='終了';
+      const end=document.createElement('div');
+      end.className='sys';
+      end.textContent='15分の相談時間が終了しました';
+      document.getElementById('msgs').appendChild(end);
+      setTimeout(()=>openSheet('end-sheet'),500);
+      return;
+    }
+    chatRemaining--;
+  };
+  render();
+  chatInterval=setInterval(render,1000);
+}
+
+function animateActiveScreen(){
+  const active=document.querySelector('.screen.active');
+  if(!active) return;
+  active.querySelectorAll('.reveal-item').forEach((el,i)=>{
+    el.style.animationDelay=(i*70)+'ms';
+  });
+}
+
+function setupMotionReveal(){
+  document.querySelectorAll('.content').forEach(scroller=>{
+    const items=[...scroller.querySelectorAll('.reveal-item')];
+    if(!items.length)return;
+    items.forEach(item=>item.classList.add('motion-reveal'));
+    const observer=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },{root:scroller,rootMargin:'0px 0px -9% 0px',threshold:.08});
+    items.forEach(item=>observer.observe(item));
+  });
+}
+setupMotionReveal();
+
+let scrollEndTimer=null;
+
+document.querySelectorAll('.content').forEach(scroller=>{
+  scroller.addEventListener('scroll',()=>{
+    const shift=Math.max(-36,Math.min(36,scroller.scrollTop*.05));
+    const phone=document.querySelector('.phone');
+    phone.style.setProperty('--scroll-shift',shift+'px');
+    phone.classList.add('is-scrolling');
+    clearTimeout(scrollEndTimer);
+    scrollEndTimer=setTimeout(()=>phone.classList.remove('is-scrolling'),130);
+  },{passive:true});
+});
+
+document.querySelectorAll('.card,.quick-card,.menu').forEach(el=>{
+  el.addEventListener('pointerdown',()=>{
+    el.classList.remove('tap-pop');
+    void el.offsetWidth;
+    el.classList.add('tap-pop');
+  });
+  el.addEventListener('animationend',e=>{
+    if(e.animationName==='tapPop') el.classList.remove('tap-pop');
+  });
+  if(matchMedia('(hover:hover) and (pointer:fine)').matches){
+    el.addEventListener('pointermove',e=>{
+      const r=el.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width-.5;
+      const y=(e.clientY-r.top)/r.height-.5;
+      el.style.transform='perspective(700px) rotateX('+(-y*5)+'deg) rotateY('+(x*6)+'deg) translateY(-3px)';
+    });
+    el.addEventListener('pointerleave',()=>{el.style.transform='';});
+  }
+});
+
+
+if(matchMedia('(hover:hover) and (pointer:fine)').matches){
+  document.querySelectorAll('.primary,.small-primary,.outline,.iconbtn').forEach(el=>{
+    el.addEventListener('pointermove',e=>{
+      const r=el.getBoundingClientRect();
+      const x=(e.clientX-(r.left+r.width/2))/r.width;
+      const y=(e.clientY-(r.top+r.height/2))/r.height;
+      el.style.transform='translate('+(x*8)+'px,'+(y*6)+'px) scale(1.025)';
+    });
+    el.addEventListener('pointerleave',()=>{el.style.transform=''});
+  });
+}
+
+let activeSheet=null;
+function openSheet(id){
+  closeSheet(false);
+  const sheet=document.getElementById(id);
+  if(!sheet)return;
+  lastFocusedElement=document.activeElement;
+  activeSheet=sheet;
+  document.getElementById('sheet-backdrop').classList.add('on');
+  sheet.classList.add('on');
+  const focusable=sheet.querySelector('button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled])');
+  if(focusable)requestAnimationFrame(()=>{try{focusable.focus({preventScroll:true})}catch(_){focusable.focus()}});
+}
+function closeSheet(clearBackdrop=true){
+  document.querySelectorAll('.bottom-sheet').forEach(s=>s.classList.remove('on'));
+  if(clearBackdrop)document.getElementById('sheet-backdrop').classList.remove('on');
+  activeSheet=null;
+  if(clearBackdrop&&lastFocusedElement&&document.contains(lastFocusedElement)){const el=lastFocusedElement;lastFocusedElement=null;requestAnimationFrame(()=>{try{el.focus({preventScroll:true})}catch(_){el.focus()}})}
+}
+function selectPay(el){
+  document.querySelectorAll('.pay-option').forEach(x=>x.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function startPaidConsult(){
+  closeSheet();
+  chatStarted=false; chatRemaining=15*60;
+  if(chatInterval)clearInterval(chatInterval);
+  show('chat');
+}
+function extendConsult(){
+  closeSheet();
+  chatStarted=false; chatRemaining=15*60;
+  if(chatInterval)clearInterval(chatInterval);
+  show('chat');
+}
+function finishConsult(){closeSheet();show('home')}
+function rate(n){
+  document.querySelectorAll('.stars button').forEach((b,i)=>b.classList.toggle('on',i<n));
+}
+function markReported(){showStatus('通報を受け付けました','必要に応じて運営が内容を確認します。','✓')}
+function markBlocked(){showBlockedUser();showStatus('ブロックしました','この相談員からの新しい相談表示を停止しました。','⊘')}
+function deleteAccountDemo(){closeSheet();showStatus('削除申請を受け付けました','実サービスでは本人確認後、削除ポリシーに従って処理します。','✓');setTimeout(()=>show('auth'),900)}
+function submitSupport(){
+  const t=document.getElementById('support-text');
+  const s=document.getElementById('support-status');
+  if(!t.value.trim()){s.textContent='内容を入力してください';s.style.color='#C85858';return}
+  s.textContent='お問い合わせを受け付けました（デモ）';s.style.color='var(--green)';t.value='';
+}
+function toggleCounselor(){
+  const moderation=getCounselorModerationState();
+  if(moderation.suspended){openSheet('counselor-suspended-sheet');return}
+  const b=document.getElementById('counselor-toggle');
+  const s=document.getElementById('counselor-status');
+  const on=b.classList.toggle('on');
+  b.textContent=on?'ON':'OFF';
+  s.textContent=on?'受付中':'受付停止中';
+}
+
+
+let counselorRegStep=1;
+let counselorType='経験者';
+let waitingTimer=null;
+let reportReason='';
+
+function socialLogin(provider){
+  window.demoProvider=provider;
+  openSheet('profile-setup-sheet');
+}
+function completeRegistration(){
+  const name=document.getElementById('setup-name').value.trim();
+  if(!name){document.getElementById('setup-name').focus();return}
+  openSheet('onboarding-sheet');
+}
+function startPaidConsult(){
+  closeSheet();
+  configureChatRole('user');
+  if(chatInterval)clearInterval(chatInterval);
+  chatStarted=false; chatRemaining=15*60;
+  renderCheckoutSteps(2);
+  show('waiting');
+  clearTimeout(waitingTimer);
+  waitingTimer=setTimeout(()=>{show('chat');setTimeout(()=>showToast('15分相談を開始しました・100円'),350)},1800);
+}
+function retryWaiting(){
+  configureChatRole('user');
+  renderCheckoutSteps(2);
+  closeSheet();
+  clearTimeout(waitingTimer);
+  waitingTimer=setTimeout(()=>{show('chat');setTimeout(()=>showToast('15分相談を開始しました・100円'),350)},1400);
+}
+function cancelWaiting(){
+  clearTimeout(waitingTimer);
+  closeSheet();
+  show('profile');
+}
+function selectReportReason(el){
+  document.querySelectorAll('.reason-option').forEach(x=>x.classList.remove('selected'));
+  el.classList.add('selected');
+  reportReason=el.textContent.trim();
+  document.getElementById('report-submit').disabled=false;
+}
+function submitReport(){
+  if(!reportReason)return;
+  const logs=getModerationLogs();
+  logs.unshift({
+    id:'report_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+    counselorId:'demo-airi',
+    counselorName:'あいり',
+    occurredAt:new Date().toISOString(),
+    type:'ユーザー通報: '+reportReason,
+    attemptedMessage:'',
+    context:recentChatContext(),
+    source:'user-report',
+    strike:0,
+    action:'運営確認待ち',
+    reviewed:false,
+    overturned:false
+  });
+  saveModerationLogs(logs);
+  openSheet('report-done-sheet');
+}
+function reportExternalFromEnd(){
+  reportReason='外部サービスへの勧誘';
+  submitReport();
+}
+function blockFromReport(){
+  markBlocked();
+  showBlockedUser();
+}
+function showBlockedUser(){
+  const list=document.getElementById('blocked-list');
+  if(!list)return;
+  list.innerHTML='<div class="bill-row"><div><b>あいり</b><small>ブロック中</small></div><button class="outline" onclick="unblockUser()">解除</button></div>';
+}
+function unblockUser(){
+  const list=document.getElementById('blocked-list');
+  list.innerHTML='<div class="blocked-empty"><div class="empty-icon">♡</div><b>ブロック中の相談員はいません</b><p>ブロックした相談員はここから解除できます。</p></div>';
+}
+function chooseCounselorType(el,type){
+  counselorType=type;
+  el.parentElement.querySelectorAll('.choice-card').forEach(x=>x.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function validateCounselorProfileText(source){
+  const fields=source==='register'
+    ?[document.getElementById('cr-display-name'),document.getElementById('cr-bio')]
+    :[document.getElementById('counselor-display-name'),document.getElementById('counselor-specialty'),document.getElementById('counselor-bio')];
+  for(const field of fields){
+    if(!field)continue;
+    const match=classifyExternalContact(field.value||'');
+    if(match){
+      registerCounselorViolation(field.value,match,'profile',[]);
+      field.focus({preventScroll:true});
+      return false;
+    }
+  }
+  return true;
+}
+async function detectQRCodeInImage(file){
+  if(typeof BarcodeDetector==='undefined'||!file)return false;
+  try{
+    const formats=await BarcodeDetector.getSupportedFormats();
+    if(!formats.includes('qr_code'))return false;
+    const detector=new BarcodeDetector({formats:['qr_code']});
+    const bitmap=await createImageBitmap(file);
+    const codes=await detector.detect(bitmap);
+    if(bitmap.close)bitmap.close();
+    return codes.length>0;
+  }catch(_){return false}
+}
+
+function renderCounselorStep(){
+  document.querySelectorAll('.counselor-step').forEach(el=>el.classList.toggle('on',Number(el.dataset.step)===counselorRegStep));
+  document.getElementById('cr-step-label').textContent='STEP '+counselorRegStep+' / 4';
+  document.getElementById('cr-step-bar').style.width=(counselorRegStep*25)+'%';
+  document.getElementById('cr-type-review').textContent=counselorType;
+  const gender=document.getElementById('cr-gender');
+  const review=document.getElementById('cr-gender-review');
+  if(gender&&review)review.textContent=gender.options[gender.selectedIndex]?.text||'回答しない';
+}
+function nextCounselorStep(){
+  if(counselorRegStep===3&&!validateCounselorProfileText('register'))return;
+  counselorRegStep=Math.min(4,counselorRegStep+1);renderCounselorStep()
+}
+function demoUpload(btn){btn.textContent='✓ 選択済み';btn.classList.add('done')}
+function submitCounselor(){
+  if(getIdentityBlocklist().includes('demo-identity-airi')){show('counselor-suspended');return}
+  if(!validateCounselorProfileText('register'))return;
+  document.querySelectorAll('.counselor-step').forEach(el=>el.classList.remove('on'));
+  document.querySelector('.step-head').style.display='none';
+  document.getElementById('counselor-pending').hidden=false;
+}
+function saveCounselorProfile(){
+  const status=document.getElementById('cp-status');
+  if(!validateCounselorProfileText('profile')){status.textContent='外部連絡先を削除してください';status.style.color='#C85858';return}
+  const gender=document.getElementById('counselor-gender')?.value||'';
+  const card=document.querySelector('[data-counselor-id="demo-airi"]');
+  if(card)card.dataset.gender=gender;
+  status.textContent='保存しました';status.style.color='var(--green)';
+  applyListenerFilters();
+}
+function savePayout(){
+  document.getElementById('payout-status').textContent='振込先を保存しました';
+}
+
+
+
+let toastTimer=null;
+let lastFocusedElement=null;
+function showToast(message){
+  const toast=document.getElementById('app-toast');if(!toast)return;
+  toast.textContent=message;toast.classList.add('on');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('on'),2200);
+}
+function showStatus(title,message,icon='✓'){
+  document.getElementById('status-title').textContent=title;
+  document.getElementById('status-message').textContent=message;
+  document.getElementById('status-icon').textContent=icon;
+  openSheet('status-sheet');
+}
+function updateNetworkState(){
+  const offline=!navigator.onLine;
+  const banner=document.getElementById('network-banner');
+  if(banner)banner.hidden=!offline;
+  const connection=document.getElementById('chat-connection');
+  if(connection)connection.textContent=offline?'再接続中…':'オンライン';
+  const sendBtn=document.getElementById('send-btn');
+  if(sendBtn)sendBtn.setAttribute('aria-label',offline?'オフライン中。送信すると再送できます':'メッセージを送信');
+}
+window.addEventListener('online',()=>{updateNetworkState();showToast('接続が戻りました')});
+window.addEventListener('offline',()=>{updateNetworkState();showToast('オフラインになりました')});
+updateNetworkState();
+
+function allowNotifications(){
+  const sw=document.getElementById('notification-switch');if(sw)sw.checked=true;
+  closeSheet();showToast('通知をオンにしました（デモ）');
+}
+function declineNotifications(){
+  const sw=document.getElementById('notification-switch');if(sw)sw.checked=false;
+  closeSheet();
+}
+const notificationSwitch=document.getElementById('notification-switch');
+if(notificationSwitch){
+  notificationSwitch.addEventListener('change',()=>{
+    if(notificationSwitch.checked)openSheet('notification-sheet');
+  });
+}
+function finishOnboarding(){closeSheet();show('home')}
+function connectProvider(btn,name){
+  btn.outerHTML='<span class="connected-badge">連携済み</span>';
+  showToast(name+'を連携しました（デモ）');
+}
+
+
+let profilePhotoTarget='user';
+const profilePhotoState={
+  user:{url:'',initial:'も'},
+  counselor:{url:'',initial:'あ'},
+  'counselor-register':{url:'',initial:'あ'}
+};
+
+function getPhotoTargetElement(target){
+  if(target==='user')return document.getElementById('user-profile-photo-button');
+  if(target==='counselor')return document.getElementById('counselor-profile-photo-button');
+  if(target==='counselor-register')return document.querySelector('#counselor-register-photo .avatar');
+  return null;
+}
+function syncPhotoPreview(){
+  const state=profilePhotoState[profilePhotoTarget];
+  const preview=document.getElementById('photo-sheet-preview');
+  if(!state||!preview)return;
+  preview.innerHTML='<span class="avatar-initial">'+state.initial+'</span>';
+  preview.style.backgroundImage=state.url?'url("'+state.url+'")':'';
+  preview.classList.toggle('has-photo',!!state.url);
+  document.getElementById('photo-delete-action').disabled=!state.url;
+  document.getElementById('photo-delete-action').style.opacity=state.url?'1':'.42';
+}
+function openPhotoSheet(target){
+  profilePhotoTarget=target;
+  syncPhotoPreview();
+  openSheet('photo-sheet');
+}
+function choosePhotoFromLibrary(){
+  document.getElementById('profile-photo-library-input').click();
+}
+function takeProfilePhoto(){
+  document.getElementById('profile-photo-camera-input').click();
+}
+async function applyProfilePhoto(file){
+  if(!file||!file.type.startsWith('image/')){showToast('画像ファイルを選んでください');return}
+  if(profilePhotoTarget==='counselor'||profilePhotoTarget==='counselor-register'){
+    const hasQr=await detectQRCodeInImage(file);
+    if(hasQr){
+      registerCounselorViolation('[プロフィール画像内のQRコード]',{type:'QRコード'},'profile-image',[]);
+      return;
+    }
+  }
+  const old=profilePhotoState[profilePhotoTarget].url;
+  if(old&&old.startsWith('blob:'))URL.revokeObjectURL(old);
+  const url=URL.createObjectURL(file);
+  profilePhotoState[profilePhotoTarget].url=url;
+
+  const target=getPhotoTargetElement(profilePhotoTarget);
+  if(target){
+    target.style.backgroundImage='url("'+url+'")';
+    target.classList.add('has-photo');
+  }
+  if(profilePhotoTarget==='user'){
+    const my=document.getElementById('mypage-avatar');
+    if(my){my.style.backgroundImage='url("'+url+'")';my.classList.add('has-photo')}
+  }
+  syncPhotoPreview();
+  closeSheet();
+  showToast('プロフィール画像を変更しました');
+}
+function deleteProfilePhoto(){
+  const state=profilePhotoState[profilePhotoTarget];
+  if(state.url&&state.url.startsWith('blob:'))URL.revokeObjectURL(state.url);
+  state.url='';
+  const target=getPhotoTargetElement(profilePhotoTarget);
+  if(target){target.style.backgroundImage='';target.classList.remove('has-photo')}
+  if(profilePhotoTarget==='user'){
+    const my=document.getElementById('mypage-avatar');
+    if(my){my.style.backgroundImage='';my.classList.remove('has-photo')}
+  }
+  closeSheet();
+  showToast('プロフィール画像を削除しました');
+}
+const photoLibraryInput=document.getElementById('profile-photo-library-input');
+const photoCameraInput=document.getElementById('profile-photo-camera-input');
+if(photoLibraryInput)photoLibraryInput.addEventListener('change',e=>{applyProfilePhoto(e.target.files&&e.target.files[0]);e.target.value=''});
+if(photoCameraInput)photoCameraInput.addEventListener('change',e=>{applyProfilePhoto(e.target.files&&e.target.files[0]);e.target.value=''});
+
+let checkoutStep=0;
+function renderCheckoutSteps(activeStep){
+  checkoutStep=activeStep;
+  document.querySelectorAll('.checkout-steps').forEach(list=>{
+    list.querySelectorAll('li').forEach((li,i)=>{
+      li.classList.toggle('completed',i<checkoutStep);
+      li.classList.toggle('current',i===checkoutStep);
+      if(i===checkoutStep) li.setAttribute('aria-current','step'); else li.removeAttribute('aria-current');
+      const circle=li.querySelector('.step-circle');
+      circle.textContent=i<checkoutStep?'✓':String(i+1);
+    });
+  });
+}
+const baseOpenSheet=openSheet;
+openSheet=function(id){
+  if(id==='consult-sheet') renderCheckoutSteps(0);
+  if(id==='payment-sheet') renderCheckoutSteps(1);
+  baseOpenSheet(id);
+};
+
+const signinForm=document.getElementById('signin-form');
+if(signinForm){
+  signinForm.addEventListener('submit',e=>{
+    e.preventDefault();
+    const email=document.getElementById('signin-email');
+    const password=document.getElementById('signin-password');
+    const status=document.getElementById('signin-status');
+    if(!email.validity.valid){status.textContent='メールアドレスを確認してください';status.style.color='#C85858';email.focus();return}
+    if(!password.validity.valid){status.textContent='パスワードは8文字以上で入力してください';status.style.color='#C85858';password.focus();return}
+    status.textContent='ログインしました（デモ）';status.style.color='var(--green)';
+    setTimeout(()=>show('home'),300);
+  });
+}
+const passwordToggle=document.getElementById('password-toggle');
+if(passwordToggle){
+  passwordToggle.addEventListener('click',()=>{
+    const input=document.getElementById('signin-password');
+    const showing=input.type==='text';
+    input.type=showing?'password':'text';
+    passwordToggle.textContent=showing?'表示':'非表示';
+    passwordToggle.setAttribute('aria-label',showing?'Show password':'Hide password');
+  });
+}
+
+document.querySelectorAll('input[name="payment-method"]').forEach(input=>{
+  input.addEventListener('change',()=>{
+    document.querySelectorAll('.pay-option').forEach(label=>label.classList.toggle('selected',!!label.querySelector('input:checked')));
+  });
+});
+document.querySelectorAll('input[name="counselor-type"]').forEach(input=>{
+  input.addEventListener('change',()=>{
+    counselorType=input.value;
+    document.querySelectorAll('input[name="counselor-type"]').forEach(r=>r.closest('.choice-card').classList.toggle('selected',r.checked));
+  });
+});
+
+// Scrollspy for long legal pages
+const scrollspyObservers=[];
+function setupScrollspy(screen){
+  const scroller=screen.querySelector('.legal-scroll');
+  const nav=screen.querySelector('.legal-rail');
+  if(!scroller||!nav)return;
+  const links=[...nav.querySelectorAll('a[href^="#"]')];
+  const sections=links.map(a=>document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+  links.forEach(a=>a.addEventListener('click',e=>{
+    e.preventDefault();
+    const target=document.getElementById(a.getAttribute('href').slice(1));
+    if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+  }));
+  const headerOffset=72;
+  const observer=new IntersectionObserver(entries=>{
+    const visible=entries.filter(x=>x.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);
+    if(!visible.length)return;
+    const id=visible[0].target.id;
+    links.forEach(a=>{
+      if(a.getAttribute('href')==='#'+id)a.setAttribute('aria-current','location');
+      else a.removeAttribute('aria-current');
+    });
+  },{root:scroller,rootMargin:'-'+headerOffset+'px 0px -62% 0px',threshold:[0,.1,.5]});
+  sections.forEach(section=>observer.observe(section));
+  scrollspyObservers.push(observer);
+}
+document.querySelectorAll('.legal-screen').forEach(setupScrollspy);
+
+// Civil-date calendar. Never parses yyyy-mm-dd with Date(string).
+const birthInput=document.getElementById('birthdate');
+const calendar=document.getElementById('calendar-popover');
+let calYear=new Date().getFullYear()-25, calMonth=new Date().getMonth(), selectedCivil='';
+function daysInMonth(y,m){return new Date(y,m+1,0).getDate()}
+function civil(y,m,d){return String(y).padStart(4,'0')+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0')}
+function renderCalendar(focusDay){
+  if(!calendar)return;
+  document.getElementById('cal-title').textContent=calYear+'年 '+(calMonth+1)+'月';
+  const grid=document.getElementById('calendar-grid'); grid.innerHTML='';
+  const firstWeekday=new Date(calYear,calMonth,1).getDay();
+  const total=daysInMonth(calYear,calMonth);
+  for(let i=0;i<firstWeekday;i++){const blank=document.createElement('span');blank.setAttribute('aria-hidden','true');grid.appendChild(blank)}
+  for(let d=1;d<=total;d++){
+    const btn=document.createElement('button');btn.type='button';btn.role='gridcell';btn.textContent=d;btn.dataset.day=d;
+    const value=civil(calYear,calMonth,d);btn.setAttribute('aria-label',value);
+    if(value===selectedCivil){btn.classList.add('selected');btn.setAttribute('aria-selected','true')}
+    btn.addEventListener('click',()=>{selectedCivil=value;birthInput.value=value;closeCalendar()});
+    btn.addEventListener('keydown',calendarKeydown);
+    grid.appendChild(btn);
+  }
+  const target=grid.querySelector('[data-day="'+Math.min(focusDay||1,total)+'"]');
+  if(target&&focusDay)requestAnimationFrame(()=>target.focus());
+}
+function openCalendar(){
+  calendar.hidden=false;birthInput.setAttribute('aria-expanded','true');renderCalendar();
+}
+function closeCalendar(){calendar.hidden=true;birthInput.setAttribute('aria-expanded','false')}
+function shiftCalendarMonth(delta,focusDay){
+  calMonth+=delta;if(calMonth<0){calMonth=11;calYear--}if(calMonth>11){calMonth=0;calYear++}renderCalendar(focusDay);
+}
+function calendarKeydown(e){
+  const day=Number(e.currentTarget.dataset.day);let next=day;
+  if(e.key==='ArrowLeft')next=day-1;
+  else if(e.key==='ArrowRight')next=day+1;
+  else if(e.key==='ArrowUp')next=day-7;
+  else if(e.key==='ArrowDown')next=day+7;
+  else if(e.key==='PageUp'){e.preventDefault();shiftCalendarMonth(-1,day);return}
+  else if(e.key==='PageDown'){e.preventDefault();shiftCalendarMonth(1,day);return}
+  else if(e.key==='Escape'){e.preventDefault();closeCalendar();document.getElementById('birthdate-button').focus();return}
+  else return;
+  e.preventDefault();
+  const total=daysInMonth(calYear,calMonth);
+  if(next<1){shiftCalendarMonth(-1,daysInMonth(calYear,calMonth-1)+next);return}
+  if(next>total){shiftCalendarMonth(1,next-total);return}
+  const btn=document.getElementById('calendar-grid').querySelector('[data-day="'+next+'"]');if(btn)btn.focus();
+}
+const birthButton=document.getElementById('birthdate-button');
+if(birthButton){
+  birthButton.addEventListener('click',()=>calendar.hidden?openCalendar():closeCalendar());
+  birthInput.addEventListener('click',openCalendar);
+  document.getElementById('cal-prev').addEventListener('click',()=>shiftCalendarMonth(-1));
+  document.getElementById('cal-next').addEventListener('click',()=>shiftCalendarMonth(1));
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&activeSheet){e.preventDefault();closeSheet();}});
+const originalShow=show;
+show=function(name){
+  closeSheet();
+  originalShow(name);
+  const active=document.getElementById('screen-'+name);
+  const scroller=active&&active.querySelector('.content');
+  if(scroller)scroller.scrollTop=0;
+  if(name==='chat') startChatTimer();
+  if(name==='payout')updateCounselorModerationUI();
+  if(name==='counselor'){updateCounselorModerationUI();if(getCounselorModerationState().suspended){setTimeout(()=>show('counselor-suspended'),80);return}}
+  requestAnimationFrame(()=>{
+    animateActiveScreen();
+    const activeNow=document.getElementById('screen-'+name);
+    if(activeNow){
+      activeNow.querySelectorAll('.motion-reveal').forEach((el,i)=>{
+        const r=el.getBoundingClientRect();
+        if(r.top<window.innerHeight&&r.bottom>0)setTimeout(()=>el.classList.add('is-visible'),i*45);
+      });
+    }
+  });
+};
+const initial=location.hash.slice(1);if(initial&&document.getElementById('screen-'+initial))show(initial);
+requestAnimationFrame(animateActiveScreen);
 </script>
 </body>
 </html>

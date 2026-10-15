@@ -1,2 +1,13 @@
 # Seeded design canvas payload (large, regenerated from *.dc.html + canvas.json)
 renai-therapist-lp.html
+
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+config.local.js
+.DS_Store
+*.log
+ios/App/Pods/
+ios/App/App/public/
