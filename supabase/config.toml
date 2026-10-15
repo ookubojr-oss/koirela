@@ -1,0 +1,58 @@
+project_id = "koirela"
+
+[functions.create-payment-intent]
+verify_jwt = true
+
+[functions.create-extension-payment-intent]
+verify_jwt = true
+
+[functions.start-consultation]
+verify_jwt = true
+
+[functions.set-counselor-availability]
+verify_jwt = true
+
+[functions.submit-counselor-application]
+verify_jwt = true
+
+[functions.update-counselor-profile]
+verify_jwt = true
+
+[functions.end-consultation]
+verify_jwt = true
+
+[functions.cancel-consultation]
+verify_jwt = true
+
+[functions.send-message]
+verify_jwt = true
+
+[functions.moderate-message]
+verify_jwt = true
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.admin-operations]
+verify_jwt = true
+
+[functions.delete-account]
+verify_jwt = true
+
+[functions.report-error]
+verify_jwt = true
+
+[functions.line-auth-start]
+verify_jwt = false
+
+[functions.line-auth-callback]
+verify_jwt = false
+
+[functions.payout-connect]
+verify_jwt = true
+
+[functions.admin-process-payout]
+verify_jwt = true
+
+[functions.sync-consultation-state]
+verify_jwt = true

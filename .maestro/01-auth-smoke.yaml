@@ -1,0 +1,12 @@
+appId: jp.koirela.app
+---
+- launchApp:
+    clearState: true
+- assertVisible: "KoiRela"
+- assertVisible: "Appleで続ける"
+- assertVisible: "Googleで続ける"
+- assertVisible: "LINEで続ける"
+- tapOn: "アカウントを作成"
+- assertVisible: "新規登録"
+- tapOn: "ログインに戻る"
+- assertVisible: "ログイン"

@@ -1,0 +1,16 @@
+appId: jp.koirela.app
+---
+- launchApp
+- tapOn: "メールアドレス"
+- inputText: ${TEST_EMAIL}
+- tapOn: "パスワード"
+- inputText: ${TEST_PASSWORD}
+- tapOn: "ログイン"
+- assertVisible: "ホーム"
+- assertVisible: "さがす"
+- assertVisible: "マイページ"
+- tapOn: "さがす"
+- assertVisible: "相談相手をさがす"
+- tapOn: "マイページ"
+- assertVisible: "お気に入り相談員"
+- assertVisible: "決済履歴・領収情報"
